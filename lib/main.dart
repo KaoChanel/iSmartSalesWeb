@@ -9,12 +9,10 @@ import 'package:ismart_crm/src/loginPage.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight])
+          [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight])
       .then((_) {
-
     runApp(MyApp());
-  }
-  );
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -36,20 +34,34 @@ class MyApp extends StatelessWidget {
         // primarySwatch: Colors.indigo,
         primaryColor: Color.fromRGBO(50, 54, 130, 1.0),
         accentColor: Color.fromRGBO(50, 54, 130, 1.0),
+        highlightColor: Color.fromRGBO(50, 54, 130, 1.0),
+        focusColor: Color.fromRGBO(50, 54, 130, 1.0),
+
+        textSelectionTheme: TextSelectionThemeData(
+          // cursorColor: Color.fromRGBO(50, 54, 130, 1.0),
+          // selectionColor: Color.fromRGBO(50, 54, 130, 1.0),
+          selectionHandleColor: Color.fromRGBO(50, 54, 130, 1.0),
+        ),
+
         elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
-              primary: Color.fromRGBO(50, 54, 130, 1.0), // background color
-                // padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                // shape: RoundedRectangleBorder(
-                //     borderRadius: BorderRadius.circular(20)),
+          primary: Color.fromRGBO(50, 54, 130, 1.0), // background color
+          // padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+          // shape: RoundedRectangleBorder(
+          //     borderRadius: BorderRadius.circular(20)),
 
-                // textStyle: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)
-            )),
+          // textStyle: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)
+        )),
+
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: Color.fromRGBO(50, 54, 130, 1.0),
         ),
+
         appBarTheme: AppBarTheme(
-          textTheme: GoogleFonts.sarabunTextTheme(Theme.of(context).textTheme.copyWith(headline6: TextStyle(color: Colors.white, fontSize: 20))),
+          textTheme: GoogleFonts.sarabunTextTheme(Theme.of(context)
+              .textTheme
+              .copyWith(
+                  headline6: TextStyle(color: Colors.white, fontSize: 20))),
         ),
         // This makes the visual density adapt to the platform that you run
         // the app on. For desktop platforms, the controls will be smaller and
@@ -81,9 +93,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
-  void initState(){
+  void initState() {
     super.initState();
   }
 

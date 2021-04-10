@@ -1428,9 +1428,9 @@ class _SaleOrderState extends State<SaleOrder> {
                     ),
                     // Expanded(flex:2, child: SizedBox()),
                     //Spacer(),
-                    // SizedBox(
-                    //   width: 235,
-                    // ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.shortestSide < 400 ? 0 : 235,
+                    ),
                     Expanded(
                         child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -1517,7 +1517,7 @@ class _SaleOrderState extends State<SaleOrder> {
                         )),
                     //Spacer(),
                     SizedBox(
-                      width: 210,
+                      width: MediaQuery.of(context).size.shortestSide < 400 ? 0 : 210,
                     ),
                     Expanded(
                         flex: 1,
@@ -1804,6 +1804,13 @@ class _SaleOrderState extends State<SaleOrder> {
                         padding: const EdgeInsets.only(top: 30.0),
                         child: ElevatedButton(
                             onPressed: () {
+                              if(txtDocuNo.text == ''){
+                                return globals.showAlertDialog(
+                                    'ยังไม่มีเลขที่เอกสาร',
+                                    'กรุณาลองเข้าหน้าทำรายการอีกครั้ง',
+                                    context);
+                              }
+
                               if (globals.productCart.length == 0) {
                                 return globals.showAlertDialog(
                                     'โปรดเพิ่มรายการสินค้า',
@@ -1820,6 +1827,9 @@ class _SaleOrderState extends State<SaleOrder> {
                                 desc: 'Are you sure to create sales order ?',
                                 btnCancelOnPress: () {},
                                 btnOkOnPress: () async {
+                                  if(this.txtDocuNo.text == ''){
+
+                                  }
                                   setState(() {});
                                   await postSaleOrder('N');
                                   // postSaleOrder().then((value) => setState((){}));

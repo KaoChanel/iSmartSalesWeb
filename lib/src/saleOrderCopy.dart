@@ -1622,9 +1622,9 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
                       ),
                       //Expanded(child: SizedBox()),
                       //Spacer(),
-                      // SizedBox(
-                      //   width: 235,
-                      // ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.shortestSide < 400 ? 0 : 235,
+                      ),
                       Expanded(
                           child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -1696,9 +1696,9 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
                             ),
                           )),
                       //Spacer(),
-                      // SizedBox(
-                      //   width: 210,
-                      // ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.shortestSide < 400 ? 0 : 210,
+                      ),
                       Expanded(
                           flex: 1,
                           child: Column(children: [

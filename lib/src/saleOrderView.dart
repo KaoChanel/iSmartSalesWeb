@@ -820,9 +820,9 @@ class _SaleOrderViewState extends State<SaleOrderView> {
                     ),
                     //Expanded(child: SizedBox()),
                     //Spacer(),
-                    // SizedBox(
-                    //   width: 410,
-                    // ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.shortestSide < 400 ? 0 : 410,
+                    ),
                     Expanded(
                         child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -906,9 +906,9 @@ class _SaleOrderViewState extends State<SaleOrderView> {
                           ),
                         )),
                     //Spacer(),
-                    // SizedBox(
-                    //   width: 210,
-                    // ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.shortestSide < 400 ? 0 : 210,
+                    ),
                     Expanded(
                         flex: 1,
                         child: Column(children: [

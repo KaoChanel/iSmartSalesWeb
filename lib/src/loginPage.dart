@@ -116,6 +116,7 @@ Widget build(BuildContext context) {
     final String username = prefs.getString('username');
     final String password = prefs.getString('password');
     final String company = prefs.getString('company');
+    // globals.isLockPrice = prefs.getBool('lockPrice');
 
     if(username != null && password != null && company != null){
       getUser(company, username, password);
@@ -137,6 +138,7 @@ Widget build(BuildContext context) {
     prefs.setString('password', '');
     prefs.setString('company', '');
     prefs.setString('customer', '');
+    prefs.setString('lockPrice', '');
 
     // setState(() {
     //   name = '';
@@ -166,7 +168,9 @@ Widget build(BuildContext context) {
           prefs.setString('username', globals.employee.empCode);
           prefs.setString('password', password);
           prefs.setString('company', company);
+          globals.isLockPrice = globals.employee.isLockPrice == 'Y' ? true : false;
           final int custId = prefs.getInt('customer');
+
           if(custId != null){
             print('custId != null ${globals.customer}');
             globals.customer = await _apiService.getCustomer(globals.employee.empId, custId);
@@ -189,7 +193,7 @@ Widget build(BuildContext context) {
         }
         else {
           Navigator.pop(context);
-          showAlertDialog(context, 'เข้าสู่ระบบไม่สำเร็จ');
+          showAlertDialog(context, 'ไม่พบข้อมูลพนักงาน');
         }
         // Navigator.pop(context);
         //print(_user);

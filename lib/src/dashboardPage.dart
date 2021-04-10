@@ -58,7 +58,11 @@ class DashboardPageState extends State<DashboardPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(globals.allCustomer == null || globals.allProduct == null || globals.allGoodsUnit == null || globals.allShipto == null || globals.allStock == null){
+    if (globals.allCustomer == null ||
+        globals.allProduct == null ||
+        globals.allGoodsUnit == null ||
+        globals.allShipto == null ||
+        globals.allStock == null) {
       //_apiService.getCompany();
       _apiService.getAllCustomer();
       _apiService.getProduct();
@@ -78,176 +82,193 @@ class DashboardPageState extends State<DashboardPage> {
     });
     return Scaffold(
       body: SafeArea(
-          child: ListView(
-            children: <Widget>[
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                    children: [
-                      //Padding(padding: null)
-                      // SizedBox(
-                      // width: 60,
-                      // child: Text('ลูกค้า : ',
-                      //       style: TextStyle(fontSize: 18)),
-                      // ),
-                      Flexible(
-                          child: TextFormField(
-                            readOnly: true,
-                            controller: txtCustomer,
-                            textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          suffixIcon: Icon(Icons.arrow_drop_down),
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20))),
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                          //labelText: "ลูกค้าของคุณ",
-                          hintText: "ลูกค้าของคุณ",
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                  builder: (context) => ContainerCustomer())
-                          ).then((value) {setState(() {
-                            
-                          });});
-                        },
-                      )),
-                    ],
-                  )),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                      child: Container(
-                          child: Stack(
-                              //height: 200,
-                              children: [
-                                MenuCard(title:'ใบเสนอราคา', path:'assets/business_drawing.jpg'),
-                        new Positioned.fill(
-                            child: new Material(
-                                color: Colors.transparent,
-                                child: new InkWell(
-                                  borderRadius: BorderRadius.circular(10),
-                                  onTap: () => null,
-                                )))
-                      ]))),
-                  Expanded(
-                      child: Container(
-                          child: MenuCard(title:'ตารางงาน', path:'assets/work_schedule_03.jpg'))
-                  ),
-                  Expanded(
-                      child: Container(
-                          child: Stack(
-                              //height: 200,
-                              children: [
-                                MenuCard(title:'เข้าเยี่ยม', path:'assets/shakehand_03.jpg'),
-                        new Positioned.fill(
-                            child: new Material(
-                                color: Colors.transparent,
-                                child: new InkWell(
-                                  borderRadius: BorderRadius.circular(10),
-                                  onTap: () => null,
-                                )))
-                      ]))),
-                  Expanded(
-                      child: Container(
-                          child: MenuCard(title:'บันทึกการเข้าเยี่ยม', path:'assets/shakehand_01.jpg'))),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
+        child: ListView(
+          children: <Widget>[
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    //Padding(padding: null)
+                    // SizedBox(
+                    // width: 60,
+                    // child: Text('ลูกค้า : ',
+                    //       style: TextStyle(fontSize: 18)),
+                    // ),
+                    Flexible(
+                        child: TextFormField(
+                      readOnly: true,
+                      controller: txtCustomer,
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(Icons.arrow_drop_down),
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20))),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                        //labelText: "ลูกค้าของคุณ",
+                        hintText: "ลูกค้าของคุณ",
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) => ContainerCustomer()))
+                            .then((value) {
+                          setState(() {});
+                        });
+                      },
+                    )),
+                  ],
+                )),
+            Row(
+              children: <Widget>[
+                Expanded(
                     child: Container(
                         child: Stack(
-                          //height: 200,
+                            //height: 200,
                             children: [
-                              MenuCard(title:'สั่งสินค้า', path:'assets/order_01.jpg'),
-                              new Positioned.fill(
-                                  child: new Material(
-                                      color: Colors.transparent,
-                                      child: new InkWell(
-                                        borderRadius: BorderRadius.circular(10),
-                                        onTap: () {
-                                          if(globals.customer == null){
-                                            return showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) => new CupertinoAlertDialog(
-                                                title: new Text("แจ้งเตือน"),
-                                                content: new Text("กรุณาเลือกลูกค้าของคุณ", style: TextStyle(fontSize: 18),),
-                                                actions: [
-                                                  CupertinoDialogAction(
-                                                      isDefaultAction: true, onPressed: () => Navigator.pop(context), child: Text("ปิดหน้าต่าง"))
-                                                ],
-                                              ),
-                                            );
-                                          }
+                      MenuCard(
+                          title: 'ใบเสนอราคา',
+                          path: 'assets/business_drawing.jpg'),
+                      new Positioned.fill(
+                          child: new Material(
+                              color: Colors.transparent,
+                              child: new InkWell(
+                                borderRadius: BorderRadius.circular(10),
+                                onTap: () => null,
+                              )))
+                    ]))),
+                Expanded(
+                    child: Container(
+                        child: MenuCard(
+                            title: 'ตารางงาน',
+                            path: 'assets/work_schedule_03.jpg'))),
+                Expanded(
+                    child: Container(
+                        child: Stack(
+                            //height: 200,
+                            children: [
+                      MenuCard(
+                          title: 'เข้าเยี่ยม', path: 'assets/shakehand_03.jpg'),
+                      new Positioned.fill(
+                          child: new Material(
+                              color: Colors.transparent,
+                              child: new InkWell(
+                                borderRadius: BorderRadius.circular(10),
+                                onTap: () => null,
+                              )))
+                    ]))),
+                Expanded(
+                    child: Container(
+                        child: MenuCard(
+                            title: 'บันทึกการเข้าเยี่ยม',
+                            path: 'assets/shakehand_01.jpg'))),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                      child: Stack(
+                          //height: 200,
+                          children: [
+                        MenuCard(
+                            title: 'สั่งสินค้า', path: 'assets/order_01.jpg'),
+                        new Positioned.fill(
+                            child: new Material(
+                                color: Colors.transparent,
+                                child: new InkWell(
+                                  borderRadius: BorderRadius.circular(10),
+                                  onTap: () {
+                                    if (globals.customer == null) {
+                                      return showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            new CupertinoAlertDialog(
+                                          title: new Text("แจ้งเตือน"),
+                                          content: new Text(
+                                            "กรุณาเลือกลูกค้าของคุณ",
+                                            style: TextStyle(fontSize: 18),
+                                          ),
+                                          actions: [
+                                            CupertinoDialogAction(
+                                                isDefaultAction: true,
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                                child: Text("ปิดหน้าต่าง"))
+                                          ],
+                                        ),
+                                      );
+                                    }
 
-                                          Navigator.push(
-                                              context,
-                                              CupertinoPageRoute(
-                                                  builder: (context) => SaleOrder()));
-                                        },
-                                      )))
-                            ])),
+                                    Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                            builder: (context) => SaleOrder()));
+                                  },
+                                )))
+                      ])),
+                ),
+                Expanded(
+                  child: Visibility(
+                    visible: true,
+                    child: Container(
+                        child: MenuCard(
+                            title: 'แจ้งคืนสินค้า',
+                            path: 'assets/goods_return.jpg')),
                   ),
-
-                  Expanded(
-                    child: Visibility(
-                      visible: true,
-                      child: Container(
-                          child: MenuCard(title:'แจ้งคืนสินค้า', path:'assets/goods_return.jpg')),
-                    ),
+                ),
+                Expanded(
+                  child: Visibility(
+                    visible: true,
+                    child: Container(
+                        child: Stack(children: [
+                      MenuCard(
+                        title: 'สถานะเอกสาร',
+                        path: 'assets/cloud_02.jpg',
+                      ),
+                      Positioned.fill(
+                          child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(10),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                          builder: (context) =>
+                                              StatusTransferDoc()));
+                                },
+                              )))
+                    ])),
                   ),
-                  Expanded(
-                    child: Visibility(
-                      visible: true,
-                      child: Container(
-                          child: Stack(children: [
-                            MenuCard(title:'สถานะเอกสาร', path:'assets/cloud_02.jpg',),
-                            Positioned.fill(
-                                child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(10),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            CupertinoPageRoute(
-                                                builder: (context) => StatusTransferDoc()));
-                                      },
-                                    )))
-                          ]
-                          )),
-
-                    ),
+                ),
+                Expanded(
+                  child: Visibility(
+                    visible: false,
+                    child: Container(
+                        child: MenuCard(
+                            title: 'แบบสอบถาม',
+                            path: 'assets/business_support.jpg')),
                   ),
-                  Expanded(
-                    child: Visibility(
-                      visible: false,
-                      child: Container(
-                          child: MenuCard(title:'แบบสอบถาม', path:'assets/business_support.jpg')),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.refresh),
         onPressed: () async {
-          setState(() {
-            _apiService.getAllCustomer();
-            _apiService.getProduct();
-            _apiService.getUnit();
-            _apiService.getShipto();
-            _apiService.getStock();
-          });
+          _apiService.getAllCustomer();
+          _apiService.getProduct();
+          _apiService.getUnit();
+          _apiService.getShipto();
+          _apiService.getStock();
         },
       ),
     );

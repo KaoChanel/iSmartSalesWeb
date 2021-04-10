@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ismart_crm/models/product_cart.dart';
+import 'package:ismart_crm/src/containerCustomer.dart';
 import 'package:ismart_crm/src/loginPage.dart';
 import 'package:ismart_crm/globals.dart' as globals;
 import 'package:ismart_crm/api_service.dart';
+import 'package:ismart_crm/src/saleOrder.dart';
+import 'package:ismart_crm/src/setting.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NavDrawer extends StatelessWidget {
@@ -12,6 +15,7 @@ class NavDrawer extends StatelessWidget {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('password', null);
     prefs.setString('company', null);
+    prefs.setString('lockPrice', null);
   }
 
   @override
@@ -40,7 +44,9 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.shopping_basket),
             title: Text('Sale Order'),
-            onTap: () => {},
+            onTap: () => {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SaleOrder()))
+            },
           ),
           // ListTile(
           //   leading: Icon(Icons.monetization_on),
@@ -50,12 +56,14 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.people_alt),
             title: Text('Customers'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {Navigator.push(context, MaterialPageRoute(builder: (context) => ContainerCustomer()))},
           ),
           ListTile(
             leading: Icon(Icons.settings),
             title: Text('Settings'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => Setting()))
+            },
           ),
           ListTile(
             leading: Icon(Icons.border_color),

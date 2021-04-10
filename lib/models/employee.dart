@@ -29,7 +29,9 @@ class Employee {
     this.remark,
     this.username,
     this.empStatus,
-    this.isLock
+    this.isLock,
+    this.isLockPrice,
+    this.password
   });
 
   int deptId;
@@ -45,13 +47,15 @@ class Employee {
   String empTitleEng;
   String empName;
   String empNameEng;
-  dynamic email;
+  String email;
   dynamic teamId;
   dynamic dummyCode;
-  dynamic remark;
-  dynamic username;
+  String remark;
+  String username;
   String empStatus;
   String isLock;
+  String isLockPrice;
+  String password;
 
   factory Employee.fromJson(Map<String, dynamic> json) => Employee(
     deptId: json["deptId"] == null ? null : json["deptId"],
@@ -73,7 +77,9 @@ class Employee {
     remark: json["remark"],
     username: json["username"],
     empStatus: json["empStatus"],
-    isLock: json["isLock"]
+    isLock: json["isLock"],
+    isLockPrice: json["isLockPrice"],
+    password: json["password"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -96,6 +102,8 @@ class Employee {
     "remark": remark,
     "username": username,
     "empStatus": empStatus,
-    "isLock": isLock
+    "isLock": isLock,
+    "isLockPrice" : isLockPrice,
+    "password" : password
   };
 }

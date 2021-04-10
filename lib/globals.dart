@@ -61,6 +61,7 @@ annualCycle selectedCycle = annualCycle.monthly;
 String docKeyword = '';
 int docTypeKeyword;
 String docTransferKeyword;
+bool isLockPrice;
 
 void clearOrder(){
   productCart = new List<ProductCart>();

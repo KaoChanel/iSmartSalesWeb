@@ -47,31 +47,37 @@ class _ItemCustomerState extends State<ItemCustomer> {
   @override
   Widget build(BuildContext context) {
     getScrollAtElement(widget.allCustomer?.indexWhere((x) => x.custCode == widget.selectedItem?.custCode));
-    return Scrollbar(
-      controller: _scroll,
-      isAlwaysShown: false,
-      thickness: 3.0,
-      radius: Radius.circular(20.0),
-      child: ListView(
+    return ListTileTheme(
+      selectedTileColor: Color.fromRGBO(50, 54, 130, 1.0),
+      selectedColor: Color.fromRGBO(50, 54, 130, 1.0),
+      style: ListTileStyle.list,
+      child: Scrollbar(
         controller: _scroll,
-        // children: widget.allCustomer?.map((item) {
-        children: widget.allCustomer.map((item) {
-          return Container(
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom:
-                    BorderSide(width: 0.5, color: Colors.black26))),
-            child: ListTile(
-              title: Text(item?.custName),
-              subtitle: Text(item?.custCode),
-              onTap: () => widget.itemSelectedCallback(item),
-              selected: widget.selectedItem?.custCode == item?.custCode,
-              selectedTileColor: Colors.grey[200],
-              hoverColor: Colors.grey,
-            ),
-          );
-        })?.toList() ??
-            [],
+        isAlwaysShown: false,
+        thickness: 3.0,
+        radius: Radius.circular(20.0),
+        child: ListView(
+          controller: _scroll,
+          // children: widget.allCustomer?.map((item) {
+          children: widget.allCustomer.map((item) {
+            return Container(
+              decoration: BoxDecoration(
+                  border: Border(
+                      bottom:
+                      BorderSide(width: 0.5, color: Colors.black26))),
+              child: ListTile(
+                title: Text(item?.custName),
+                subtitle: Text(item?.custCode),
+                onTap: () => widget.itemSelectedCallback(item),
+                selected: widget.selectedItem?.custCode == item?.custCode,
+                hoverColor: Colors.grey.shade200,
+                // selectedTileColor: Colors.grey,
+                trailing: widget.selectedItem?.custCode == item?.custCode ? Icon(Icons.arrow_forward_ios_rounded) : Text(""),
+              ),
+            );
+          })?.toList() ??
+              [],
+        ),
       ),
     );
   }

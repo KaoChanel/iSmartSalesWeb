@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 // Import the client from the Http Packages
+import 'package:ismart_crm/models/employee.dart';
+
 import 'models/companies.dart';
 import 'models/customer.dart';
 import 'models/product.dart';
@@ -78,6 +80,25 @@ class ApiService {
       globals.allProduct = productFromJson(response.body);
     } else {
       globals.allProduct = null;
+    }
+  }
+
+  Future<bool> updateEmployee(Employee data) async {
+    final response = await client.put(
+      "$baseUrl/Employees/${globals.company}/${data.empId}",
+      headers: {
+        "content-type": "application/json",
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
+        "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+        "Access-Control-Allow-Methods": "PUT, OPTIONS"
+      },
+      body: json.encode(data.toJson()),
+    );
+    if (response.statusCode == 204) {
+      return true;
+    } else {
+      return false;
     }
   }
 
