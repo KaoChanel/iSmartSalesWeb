@@ -180,6 +180,7 @@ class _SaleOrderState extends State<SaleOrder> {
   }
 
   void setHeader() async {
+    // globals.showLoaderDialog(context, true);
     runningNo = await _apiService.getRefNo();
     custPONo = '${globals.employee?.empCode}-${runningNo ?? ''}';
     txtCustPONo.text = custPONo ?? '';
@@ -358,7 +359,7 @@ class _SaleOrderState extends State<SaleOrder> {
 
   Future<dynamic> postSaleOrder(String status) async {
     try {
-      globals.showLoaderDialog(context);
+      globals.showLoaderDialog(context, false);
       SaleOrderHeader header = new SaleOrderHeader();
       List<SaleOrderDetail> detail = new List<SaleOrderDetail>();
       _apiService.getRefNo().then((value) {
@@ -606,12 +607,12 @@ class _SaleOrderState extends State<SaleOrder> {
               style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
             ),
           ),
-          // DataColumn(
-          //   label: Text(
-          //     'ประเภท',
-          //     style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-          //   ),
-          // ),
+          DataColumn(
+            label: Text(
+              'ประเภท',
+              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+            ),
+          ),
           DataColumn(
             label: Text(
               'รหัสสินค้า',
@@ -749,7 +750,12 @@ class _SaleOrderState extends State<SaleOrder> {
     setHeader();
     setSelectedShipto();
     calculateSummary();
+
     print('Build Sale Order');
+
+    // if(txtDocuNo.text != ''){
+    //   Navigator.pop(context);
+    // }
 
     return Scaffold(
         appBar: AppBar(
@@ -1385,7 +1391,8 @@ class _SaleOrderState extends State<SaleOrder> {
                 ),
                 SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: Row(children: [
+                    child: Row(
+                        children: [
                       SaleOrderDetails(),
                     ])),
                 Row(

@@ -8,6 +8,7 @@ import 'package:ismart_crm/models/product_cart.dart';
 import 'package:ismart_crm/models/saleOrder_header.dart';
 import 'package:intl/intl.dart';
 import 'package:ismart_crm/api_service.dart';
+import 'package:ismart_crm/models/dropdown.dart';
 import 'package:ismart_crm/src/saleOrderDraft.dart';
 import 'saleOrderView.dart';
 import 'package:ismart_crm/models/customer.dart';
@@ -22,29 +23,62 @@ class _StatusTransferDocState extends State<StatusTransferDoc> {
   List<SaleOrderHeader> tempSOHD;
   SaleOrderHeader selectedItem;
   List<SaleOrderHeader> selectedTempSOHD = new List<SaleOrderHeader>();
-  String _selectedType = 'ทั้งหมด';
-  String _selectedStatus = 'ทั้งหมด';
+  Dropdown _selectedType;
+  Dropdown _selectedStatus;
   String _selectedSort = 'สถานะเอกสาร (Z-A)';
   ApiService _apiService = new ApiService();
   int docCount = 0;
-  TextEditingController txtKeyword = TextEditingController();
+  TextEditingController txtKeyword = TextEditingController(text: globals.docKeyword);
   StreamController<int> streamController = new StreamController<int>();
 
-  static const _docType = [
-    'ทั้งหมด',
-    'เข้าเยี่ยม',
-    'บันทึกการเข้าเยี่ยม',
-    'ใบเสนอราคา',
-    'สั่งสินค้า',
-    'แจ้งคืนสินค้า',
-    'แบบสอบถาม',
+  final _docType = <Dropdown>[
+    Dropdown(
+      value: 'A',
+      title: 'ทั้งหมด',
+    ),
+    Dropdown(
+      value: 'A',
+      title: 'เข้าเยี่ยม',
+    ),
+    Dropdown(
+      value: 'A',
+      title: 'บันทึกากรเข้าเยี่ยม',
+    ),
+    Dropdown(
+      value: 'A',
+      title: 'ใบเสนอราคา',
+    ),
+    Dropdown(
+      value: 'A',
+      title: 'สั่งสินค้า',
+    ),
+    Dropdown(
+      value: 'A',
+      title: 'แจ้งคืนสินค้า',
+    ),
+    Dropdown(
+      value: 'A',
+      title: 'แบบสอบถาม',
+    ),
   ];
 
-  static const _status = [
-    'ทั้งหมด',
-    'ฉบับร่าง',
-    'รอดำเนินการ',
-    'เข้าระบบแล้ว',
+  final _status = <Dropdown>[
+    Dropdown(
+      value: 'A',
+      title: 'ทั้งหมด',
+    ),
+    Dropdown(
+      value: 'D',
+      title: 'ฉบับร่าง',
+    ),
+    Dropdown(
+      value: 'N',
+      title: 'รอดำเนินการ',
+    ),
+    Dropdown(
+      value: 'Y',
+      title: 'เข้าระบบแล้ว',
+    ),
   ];
 
   static const _orderBy = [
@@ -92,6 +126,8 @@ class _StatusTransferDocState extends State<StatusTransferDoc> {
     // TODO: implement initState
     super.initState();
     streamController.add(docCount);
+    _selectedType = _docType.first;
+    _selectedStatus = _status.first;
   }
 
   onSort(int columnIndex, bool ascending) {
@@ -372,11 +408,11 @@ class _StatusTransferDocState extends State<StatusTransferDoc> {
                             items: _docType.map((item) {
                               return DropdownMenuItem(
                                 value: item,
-                                child: Text(item),
+                                child: Text(item.title),
                               );
                             }).toList(),
                             onChanged: (selectedItem) => setState(
-                              () => _selectedType = selectedItem,
+                              () => _selectedType = _docType.firstWhere((e) => e.title == selectedItem),
                             ),
                           ),
                         ))),
@@ -398,17 +434,24 @@ class _StatusTransferDocState extends State<StatusTransferDoc> {
                       child: DropdownButton(
                         isExpanded: true,
                         isDense: true,
+                        autofocus: true,
                         // Reduces the dropdowns height by +/- 50%
                         icon: Icon(Icons.keyboard_arrow_down),
                         value: _selectedStatus,
                         items: _status.map((item) {
                           return DropdownMenuItem(
                             value: item,
-                            child: Text(item),
+                            child: Text(item.title),
                           );
                         }).toList(),
-                        onChanged: (selectedItem) => setState(
-                          () => _selectedStatus = selectedItem,
+                        onChanged: (selectedItem) => setState (
+                          () {
+                            _selectedStatus = _status.firstWhere((element) => element == selectedItem);
+                            // String docStatusValue = _selectedStatus == 'รอดำเนินการ' ? 'N' : _selectedStatus == 'ฉบับร่าง' ? 'D' : _selectedStatus == 'เข้าระบบแล้ว' ? 'Y' : 'A';
+                            globals.tempSOHD.where((element) => element.isTransfer == _selectedStatus.value);
+                            FocusScope.of(context).requestFocus(new FocusNode());
+                            print('onChange => is Transfer: ' + _selectedStatus.value + ' => ' + _selectedStatus.title);
+                          }
                         ),
                       ),
                   ),
@@ -431,6 +474,7 @@ class _StatusTransferDocState extends State<StatusTransferDoc> {
                       onEditingComplete: () {
                     setState(() {
                       globals.docKeyword = txtKeyword.text;
+                      // globals.tempSOHD.where((element) => element.custName.contains(txtKeyword.text));
                     });
                       },
                     )),
@@ -447,7 +491,21 @@ class _StatusTransferDocState extends State<StatusTransferDoc> {
                     ),
                     onPressed: () {
                       setState(() {
+                        // String docStatusValue = _selectedStatus == 'รอดำเนินการ' ? 'N' : _selectedStatus == 'ฉบับร่าง' ? 'D' : _selectedStatus == 'เข้าระบบแล้ว' ? 'Y' : 'A';
                         globals.docKeyword = txtKeyword.text;
+                        int headerCount = globals.tempSOHD.where(
+                                (element) => _selectedStatus.value == 'A'
+                                    ? element.custName.contains(txtKeyword.text)
+                                    : element.isTransfer == _selectedStatus.value && element.custName.contains(txtKeyword.text)).length;
+
+                        streamController.add(headerCount);
+
+                        globals.tempSOHD.where(
+                                (element) => _selectedStatus.value == 'A'
+                                    ? element.custName.contains(txtKeyword.text)
+                                    : element.isTransfer == _selectedStatus.value && element.custName.contains(txtKeyword.text));
+
+                        print('is Transfer: ' + _selectedStatus.value);
                         // globals.docTransferKeyword =
                       });
                     },
@@ -521,12 +579,20 @@ class _StatusTransferDocState extends State<StatusTransferDoc> {
                       (BuildContext context, AsyncSnapshot<Object> snapShot) {
                     if (snapShot.hasData) {
                       globals.tempSOHD = snapShot.data;
-                      streamController.add(globals.tempSOHD.length);
+
+                        streamController.add(globals.tempSOHD.where((x) =>
+                            _selectedStatus.value != 'A'
+                                ? x.isTransfer == _selectedStatus.value && x.custName.contains(txtKeyword.text)
+                                : x.custName.contains(txtKeyword.text)).length);
+
                       print('snapShot ==>> ${snapShot.data}');
                       return Expanded(
                           child: dataBody(globals.tempSOHD
                               .where((x) =>
-                                  x.custName.contains(globals.docKeyword))
+                                  x.custName.contains(txtKeyword.text) &&
+                                      _selectedStatus.value != 'A'
+                                      ? x.isTransfer == _selectedStatus.value && x.custName.contains(txtKeyword.text)
+                                      : x.custName.contains(txtKeyword.text))
                               .toList()));
                     } else {
                       //return Expanded(child: Center(child: CircularProgressIndicator()));

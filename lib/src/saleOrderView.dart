@@ -271,7 +271,7 @@ class _SaleOrderViewState extends State<SaleOrderView> {
                     .map((i, e) => MapEntry(
                         i,
                         DataRow(cells: [
-                          DataCell(Text('${i + 1}')),
+                          DataCell(Center(child: Text('${i + 1}'))),
                           // DataCell(Text(
                           //     '${globals.allProduct.firstWhere((element) => element.goodId == e.goodId).goodTypeFlag}')),
                           DataCell(Text(

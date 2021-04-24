@@ -345,7 +345,7 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
 
   Future<dynamic> postSaleOrder(String status) async {
     try {
-      globals.showLoaderDialog(context);
+      globals.showLoaderDialog(context, false);
       SaleOrderHeader header = new SaleOrderHeader();
       List<SaleOrderDetail> detail = new List<SaleOrderDetail>();
       // runningNo = custPono;
@@ -836,7 +836,7 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
           DataCell(Text('${e.rowIndex}')),
           // DataCell(Text('${e.goodTypeFlag}')),
           DataCell(Text('${e.goodCode}')),
-          DataCell(Text('${e.goodName1}')),
+          DataCell(Container(width: 300, child: Text('${e.goodName1}'))),
           DataCell(Text('${currency.format(e.goodQty ?? 0)}')),
           DataCell(Text('${currency.format(e.goodPrice ?? 0)}')),
           DataCell(

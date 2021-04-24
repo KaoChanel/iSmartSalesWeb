@@ -58,28 +58,22 @@ class DashboardPageState extends State<DashboardPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (globals.allCustomer == null ||
-        globals.allProduct == null ||
-        globals.allGoodsUnit == null ||
-        globals.allShipto == null ||
-        globals.allStock == null) {
-      //_apiService.getCompany();
-      _apiService.getAllCustomer();
-      _apiService.getProduct();
-      _apiService.getUnit();
-      _apiService.getShipto();
-      _apiService.getStock();
-    }
+
+    //_apiService.getCompany();
+    _apiService.getAllCustomer();
+    _apiService.getProduct();
+    _apiService.getUnit();
+    _apiService.getShipto();
+    _apiService.getStock();
+
   }
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
       txtCustomer.text = globals.customer?.custName;
       // globals.selectedShipto = globals.allShipto?.firstWhere((element) => element.custId == globals.customer?.custId);
       // print(globals.customer?.custId.toString());
       // print(globals.selectedShipto?.shiptoAddr1);
-    });
     return Scaffold(
       body: SafeArea(
         child: ListView(
@@ -264,11 +258,19 @@ class DashboardPageState extends State<DashboardPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.refresh),
         onPressed: () async {
-          _apiService.getAllCustomer();
-          _apiService.getProduct();
-          _apiService.getUnit();
-          _apiService.getShipto();
-          _apiService.getStock();
+          try {
+            globals.showLoaderDialog(context, false);
+            await _apiService.getAllCustomer();
+            await _apiService.getProduct();
+            await _apiService.getUnit();
+            await _apiService.getShipto();
+            await _apiService.getStock();
+            Navigator.pop(context);
+          }
+          catch (error){
+            Navigator.pop(context);
+            globals.showAlertDialog('Exception', error.toString(), context);
+          }
         },
       ),
     );

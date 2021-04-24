@@ -86,10 +86,6 @@ flare_flutter
 2.2
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/flare_flutter-2.0.6/
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/flare_flutter-2.0.6/lib/
-flutter_automation
-2.1
-file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_automation-1.4.0/
-file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_automation-1.4.0/lib/
 flutter_launcher_icons
 2.3
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_launcher_icons-0.8.1/
@@ -99,9 +95,9 @@ flutter_plugin_android_lifecycle
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-1.0.11/
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-1.0.11/lib/
 fluttertoast
-2.12
-file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/fluttertoast-8.0.3/
-file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/fluttertoast-8.0.3/lib/
+2.7
+file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/fluttertoast-7.1.8/
+file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/fluttertoast-7.1.8/lib/
 font_awesome_flutter
 2.0
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/font_awesome_flutter-8.12.0/

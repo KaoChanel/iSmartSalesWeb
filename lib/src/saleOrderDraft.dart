@@ -336,7 +336,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
 
   Future<dynamic> putSaleOrder(String status) async {
     try {
-      globals.showLoaderDialog(context);
+      globals.showLoaderDialog(context, false);
       SaleOrderHeader header = new SaleOrderHeader();
       List<SaleOrderDetail> detail = new List<SaleOrderDetail>();
       runningNo = '';

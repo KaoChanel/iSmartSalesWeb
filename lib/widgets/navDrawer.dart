@@ -15,6 +15,7 @@ class NavDrawer extends StatelessWidget {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('password', null);
     prefs.setString('company', null);
+    prefs.setString('customer', null);
     prefs.setString('lockPrice', null);
   }
 

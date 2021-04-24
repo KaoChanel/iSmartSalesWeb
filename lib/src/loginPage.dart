@@ -149,7 +149,7 @@ Widget build(BuildContext context) {
   Future<Employee> getUser(String company, String username, String password) async {
     try
     {
-      globals.showLoaderDialog(context);
+      globals.showLoaderDialog(context, false);
       String strUrl = '${globals.publicAddress}/api/login/LoginByEmpCode/$company/$username/$password';
       http.Response response = await http.get(strUrl);
       if(response.body.isNotEmpty) {
@@ -172,6 +172,7 @@ Widget build(BuildContext context) {
           final int custId = prefs.getInt('customer');
 
           if(custId != null){
+            print('custId = ${custId}');
             print('custId != null ${globals.customer}');
             globals.customer = await _apiService.getCustomer(globals.employee.empId, custId);
             print('globals.customer ${globals.customer}');
@@ -185,11 +186,14 @@ Widget build(BuildContext context) {
           }
 
           Navigator.pop(context);
-          _apiService.getCompany().then((value) =>
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => Launcher()))
-          );
+          await _apiService.getCompany();
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Launcher()));
+
+          // _apiService.getCompany().then((value) =>
+          //     Navigator.pushReplacement(
+          //         context,
+          //         MaterialPageRoute(builder: (context) => Launcher()))
+          // );
         }
         else {
           Navigator.pop(context);
@@ -235,9 +239,9 @@ Widget build(BuildContext context) {
       Navigator.pop(context);
       globals.showAlertDialog('Internet Connection', 'ไม่สามารถเชื่อมต่อกับอินเตอร์เน็ต', context);
     }
-    catch(e){
+    catch(error) {
       Navigator.pop(context);
-      showAlertDialog(context, '<Get User> ' + e.toString());
+      showAlertDialog(context, '<Get User> ' + error.toString());
     }
   }
 
@@ -246,13 +250,15 @@ Widget build(BuildContext context) {
       content: new Row(
         children: [
           CircularProgressIndicator(),
-          Container(margin: EdgeInsets.only(left: 7),child:Text("Loading..." )),
+          Container(margin: EdgeInsets.only(left: 7), child:Text("Loading..." )),
         ],),
     );
-    showDialog(barrierDismissible: false,
+
+    showDialog(
+      barrierDismissible: false,
       context:context,
       builder:(BuildContext context){
-        return alert;
+        return WillPopScope(child: alert, onWillPop: () => Future.value(false));
       },
     );
   }

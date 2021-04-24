@@ -123,7 +123,7 @@ void showAlertDialog(String title, String content, BuildContext context) {
   );
 }
 
-showLoaderDialog(BuildContext context){
+showLoaderDialog(BuildContext context, bool dismiss){
   var alert = AlertDialog(
     content: new Row(
       children: [
@@ -136,10 +136,17 @@ showLoaderDialog(BuildContext context){
   );
 
   showDialog(
-    barrierDismissible: false,
+    barrierDismissible: dismiss,
     context:context,
     builder:(BuildContext context){
-      return alert;
+      if(dismiss == false){
+        return WillPopScope(
+            child: alert,
+            onWillPop: () async => false);
+      }
+      else {
+        return alert;
+      }
     },
   );
 }

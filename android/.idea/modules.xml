@@ -5,10 +5,10 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/android.iml" filepath="$PROJECT_DIR$/.idea/modules/android.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/android.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/-715717019/android.flutter_plugin_android_lifecycle.iml" filepath="$PROJECT_DIR$/.idea/modules/-715717019/android.flutter_plugin_android_lifecycle.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/51281295/android.fluttertoast.iml" filepath="$PROJECT_DIR$/.idea/modules/51281295/android.fluttertoast.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-396056428/android.fluttertoast.iml" filepath="$PROJECT_DIR$/.idea/modules/-396056428/android.fluttertoast.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/363909138/android.google_maps_flutter.iml" filepath="$PROJECT_DIR$/.idea/modules/363909138/android.google_maps_flutter.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/258821163/android.path_provider.iml" filepath="$PROJECT_DIR$/.idea/modules/258821163/android.path_provider.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-241368354/android.shared_preferences.iml" filepath="$PROJECT_DIR$/.idea/modules/-241368354/android.shared_preferences.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-578609437/android.path_provider.iml" filepath="$PROJECT_DIR$/.idea/modules/-578609437/android.path_provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/512978827/android.shared_preferences.iml" filepath="$PROJECT_DIR$/.idea/modules/512978827/android.shared_preferences.iml" />
     </modules>
   </component>
 </project>
