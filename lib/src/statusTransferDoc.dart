@@ -503,7 +503,8 @@ class _StatusTransferDocState extends State<StatusTransferDoc> {
                         globals.tempSOHD.where(
                                 (element) => _selectedStatus.value == 'A'
                                     ? element.custName.contains(txtKeyword.text)
-                                    : element.isTransfer == _selectedStatus.value && element.custName.contains(txtKeyword.text));
+                                    : element.isTransfer == _selectedStatus.value && element.custName.contains(txtKeyword.text)
+                        );
 
                         print('is Transfer: ' + _selectedStatus.value);
                         // globals.docTransferKeyword =

@@ -126,9 +126,9 @@ class ApiService {
     }
   }
 
-  Future<double> getPrice(String goodCode, double quantity) async {
+  Future<double> getPrice(int custId, String goodCode, double quantity) async {
     var response = await client.get(
-        '${globals.publicAddress}/api/product/${globals.company}/$goodCode/$quantity');
+        '${globals.publicAddress}/api/product/${globals.company}/$custId/$goodCode/$quantity');
     Map values = json.decode(response.body);
 
     return double.parse(values['price'].toString());

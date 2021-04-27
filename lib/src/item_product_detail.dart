@@ -180,6 +180,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
         _totalAmount = 0;
         _totalNet = 0;
         _discount = 0;
+        txtPrice.text = '0.00';
+        widget.price = 0;
       } else {
         if (_price != null) {
           widget.editedPrice = 1;
@@ -689,7 +691,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
                       double discAmnt =
                           double.parse(txtDiscount.text.replaceAll(',', ''));
                       double priceList = await _apiService.getPrice(
-                          widget.product.goodCode, qty);
+                          globals.customer.custId, widget.product.goodCode, qty);
 
                       print('Price List: ' + priceList.toString());
 

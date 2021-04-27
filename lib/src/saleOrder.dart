@@ -607,12 +607,12 @@ class _SaleOrderState extends State<SaleOrder> {
               style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
             ),
           ),
-          DataColumn(
-            label: Text(
-              'ประเภท',
-              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-            ),
-          ),
+          // DataColumn(
+          //   label: Text(
+          //     'ประเภท',
+          //     style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+          //   ),
+          // ),
           DataColumn(
             label: Text(
               'รหัสสินค้า',
