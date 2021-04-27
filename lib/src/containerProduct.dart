@@ -72,7 +72,7 @@ class _ContainerProductState extends State<ContainerProduct> {
 
   Future<void> getPrice() async {
     var response = await http.get(
-        '${globals.publicAddress}/api/product/${globals.company}/${_selectedItem?.goodCode}/1');
+        '${globals.publicAddress}/api/product/${globals.company}/${globals.customer.custId}/${_selectedItem?.goodCode}/1');  /// Add custId  2021-04-26
     Map values = json.decode(response.body);
 
     _goodQty = 1;
@@ -80,6 +80,7 @@ class _ContainerProductState extends State<ContainerProduct> {
     _total = double.parse(values['total'].toString());
 
     print('Price / Unit: ' + _goodPrice.toString() + ' Total: ' + values['total'].toString());
+
   }
 
   Widget _buildTabletLayout() {
@@ -155,12 +156,17 @@ class _ContainerProductState extends State<ContainerProduct> {
                   // our state now.
                   allProduct: allProduct,
                   selectedItem: _selectedItem,
-                  itemSelectedCallback: (item) {
+                  itemSelectedCallback: (item) async {
+                    _selectedItem = item;
+                    await getPrice();
+                    // globals.customer = item;
+                    print('Item selected: ${_selectedItem.goodName1}');
+                    print('Item selected: ${item.goodName1}');
+                    print('Item Price: $_goodPrice');
+                    print('Item Total: $_total');
+
                     setState(() {
-                      _selectedItem = item;
-                      getPrice();
-                      // globals.customer = item;
-                      print('Item selected: ${item.goodName1}');
+
                     });
                   },
                 ),

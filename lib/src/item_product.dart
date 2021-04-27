@@ -66,8 +66,9 @@ class _ItemProductState extends State<ItemProduct> {
               child: ListTile(
                   title: Text(item?.goodName1),
                   subtitle: Text(item?.goodCode),
-                  onTap: () {
+                  onTap: () async {
                     widget.itemSelectedCallback(item);
+                    print('OnTap() : ${item.goodName1}');
                     },
                   selected: widget.selectedItem?.goodCode == item?.goodCode,
                   selectedTileColor: Colors.grey[200],
