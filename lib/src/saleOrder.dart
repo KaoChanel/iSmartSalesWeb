@@ -256,24 +256,36 @@ class _SaleOrderState extends State<SaleOrder> {
       print('globals.discountBill.discountAmount: >>>> ' +
           globals.discountBill.amount.toString());
 
-      double sumPriceIncludeVat = 0;
+      double sumGoodsHasVat = 0;
+      double sumGoodsHasNoVat = 0;
+
       if (globals.productCart != null) {
         globals.productCart
-            .where((element) => element?.vatRate != null)
+            .where((x) => x.vatRate > 0)
             .toList()
-            .forEach((element) {
-          sumPriceIncludeVat += element.goodAmount;
-        });
+            .forEach((element) => sumGoodsHasVat += element.goodAmount);
+        globals.productCart
+            .where((x) => x.vatRate == 0)
+            .toList()
+            .forEach((element) => sumGoodsHasNoVat += element.goodAmount);
       }
 
       // vatTotal = (priceAfterDiscount * vat) / 100;
       // vatTotal = (sumPriceIncludeVat * vat) / 100;
-      sumPriceIncludeVat = sumPriceIncludeVat - (globals.discountBill.amount);
-      print('sumPriceIncludeVat:  ' + sumPriceIncludeVat.toString());
-      //print('sumPriceIncludeVat * 0.07:  ' + (sumPriceIncludeVat + (sumPriceIncludeVat * vat)).toString());
-      print((sumPriceIncludeVat * vat).toString());
-      vatTotal = (sumPriceIncludeVat * 0.07);
-      netTotal = priceAfterDiscount + vatTotal;
+
+      sumGoodsHasVat = sumGoodsHasVat - globals.discountBill.amount;
+      double vatBase = 0;
+      if (globals.vatGroup.vatgroupCode == 'IN7') {
+        vatBase = sumGoodsHasVat / 1.07;
+        vatTotal = (sumGoodsHasVat / 1.07) * 0.07;
+        netTotal = vatBase + vatTotal + sumGoodsHasNoVat;
+      } else if (globals.vatGroup.vatgroupCode == 'EX7') {
+        vatBase = sumGoodsHasVat;
+        vatTotal = (sumGoodsHasVat * 0.07);
+        netTotal = vatBase + vatTotal + sumGoodsHasNoVat;
+      } else {
+        netTotal = priceAfterDiscount;
+      }
 
       setState(() {
         txtDiscountTotal.text = currency.format(discountTotal);
@@ -362,154 +374,142 @@ class _SaleOrderState extends State<SaleOrder> {
       globals.showLoaderDialog(context, false);
       SaleOrderHeader header = new SaleOrderHeader();
       List<SaleOrderDetail> detail = new List<SaleOrderDetail>();
-      _apiService.getRefNo().then((value) {
-        runningNo = value;
-        refNo =
-            '${globals.company}${globals.employee?.empCode}-${runningNo ?? ''}';
 
-        _apiService.getDocNo().then((value) {
-          docuNo = value;
+      runningNo = await _apiService.getRefNo();
+      docuNo = await _apiService.getDocNo();
+      refNo =
+          '${globals.company}${globals.employee?.empCode}-${runningNo ?? ''}';
 
-          /// Company Info
-          header.brchId = 1;
+      /// Company Info
+      header.brchId = 1;
 
-          /// document header.
-          header.soid = 0;
-          header.saleAreaId = 1004;
-          header.vatgroupId = 1000;
-          header.docuNo = docuNo;
-          header.refNo = refNo;
-          header.docuType = 104;
-          header.docuDate = _docuDate;
-          header.shipDate = _shiptoDate;
-          header.custPodate = _orderDate;
-          header.custPono = txtCustPONo.text;
-          header.validDays = 0;
-          header.onHold = 'N';
-          header.goodType = '1';
-          header.docuStatus = 'Y';
-          header.isTransfer = status;
-          header.remark = txtRemark.text ?? '';
-          header.postdocutype = 1702;
+      /// document header.
+      header.soid = 0;
+      header.saleAreaId = globals.customer.saleAreaId;
+      header.docuNo = docuNo;
+      header.refNo = refNo;
+      header.docuType = 104;
+      header.docuDate = _docuDate;
+      header.shipDate = _shiptoDate;
+      header.custPodate = _orderDate;
+      header.custPono = txtCustPONo.text;
+      header.validDays = 0;
+      header.onHold = 'N';
+      header.goodType = '1';
+      header.docuStatus = 'Y';
+      header.isTransfer = status;
+      header.remark = txtRemark.text ?? '';
+      header.postdocutype = 1702;
 
-          /// VAT Info
-          header.vatgroupId = 1000;
-          header.vatRate = 7;
-          header.vatType = '2';
-          header.vatamnt = vatTotal;
+      /// VAT Info
+      header.vatgroupId = 1000;
+      header.vatRate = 7;
+      header.vatType = '2';
+      header.vatamnt = vatTotal;
 
-          /// employee information.
-          header.empId = globals.employee.empId;
-          header.deptId = globals.employee.deptId;
+      /// employee information.
+      header.empId = globals.employee.empId;
+      header.deptId = globals.employee.deptId;
 
-          /// customer information.
-          header.custId = globals.customer.custId;
-          header.custName = globals.customer.custName;
-          header.creditDays = globals.customer.creditDays;
+      /// customer information.
+      header.custId = globals.customer.custId;
+      header.custName = globals.customer.custName;
+      header.creditDays = globals.customer.creditDays;
 
-          /// Cost Summary.
-          header.sumGoodAmnt = priceTotal;
-          header.billAftrDiscAmnt = priceAfterDiscount;
-          header.netAmnt = netTotal;
-          header.billDiscAmnt = globals.discountBill.amount;
+      /// Cost Summary.
+      header.sumGoodAmnt = priceTotal;
+      header.billAftrDiscAmnt = priceAfterDiscount;
+      header.netAmnt = netTotal;
+      header.billDiscAmnt = globals.discountBill.amount;
 
-          /// Discount
+      /// Discount
 
-          /// shipment to customer.
-          header.shipToCode = globals.selectedShipto.shiptoCode;
-          header.transpId = globals.selectedShipto.transpId;
-          header.transpAreaId = globals.selectedShipto.transpAreaId;
-          header.shipToAddr1 = globals.selectedShipto.shiptoAddr1;
-          header.shipToAddr2 = globals.selectedShipto.shiptoAddr2;
-          header.district = globals.selectedShipto.district;
-          header.amphur = globals.selectedShipto.amphur;
-          header.province = globals.selectedShipto.province;
-          header.postCode = globals.selectedShipto.postcode;
-          header.isTransfer = status;
+      /// shipment to customer.
+      header.shipToCode = globals.selectedShipto.shiptoCode;
+      header.transpId = globals.selectedShipto.transpId;
+      header.transpAreaId = globals.selectedShipto.transpAreaId;
+      header.shipToAddr1 = globals.selectedShipto.shiptoAddr1;
+      header.shipToAddr2 = globals.selectedShipto.shiptoAddr2;
+      header.district = globals.selectedShipto.district;
+      header.amphur = globals.selectedShipto.amphur;
+      header.province = globals.selectedShipto.province;
+      header.postCode = globals.selectedShipto.postcode;
+      header.isTransfer = status;
 
-          _apiService.addSaleOrderHeader(header).then((value) {
-            header = value;
-            print('Add result: ${header.soid}');
-            if (header != null) {
-              globals.productCart.forEach((e) {
-                SaleOrderDetail obj = new SaleOrderDetail();
-                obj.soid = header.soid;
-                obj.listNo = e.rowIndex;
-                obj.docuType = 104;
-                obj.goodType = '1';
-                obj.goodId = e.goodId;
-                obj.goodName = e.goodName1;
-                obj.goodUnitId2 = e.mainGoodUnitId;
-                obj.goodQty2 = e.goodQty;
-                obj.goodPrice2 = e.goodPrice;
-                obj.goodAmnt = e.goodAmount;
-                obj.afterMarkupamnt = e.goodAmount;
-                obj.goodDiscAmnt = e.discountBase;
-                obj.isTransfer = status;
+      header = await _apiService.addSaleOrderHeader(header);
+      print('Add result: ${header.soid}');
+      if (header != null) {
+        globals.productCart.forEach((e) {
+          SaleOrderDetail obj = new SaleOrderDetail();
+          obj.soid = header.soid;
+          obj.listNo = e.rowIndex;
+          obj.docuType = 104;
+          obj.goodType = '1';
+          obj.goodId = e.goodId;
+          obj.goodName = e.goodName1;
+          obj.goodUnitId2 = e.mainGoodUnitId;
+          obj.goodQty2 = e.goodQty;
+          obj.goodPrice2 = e.goodPrice;
+          obj.goodAmnt = e.goodAmount;
+          obj.afterMarkupamnt = e.goodAmount;
+          obj.goodDiscAmnt = e.discountBase;
+          obj.isTransfer = status;
 
-                /// Empty Field
-                obj.goodQty1 = 0.00;
-                obj.goodPrice1 = 0.00;
-                obj.goodCompareQty = 0;
-                obj.goodCost = 0;
-                detail.add(obj);
-              });
-
-              _apiService.addSaleOrderDetail(detail).then((value) {
-                if (value == true) {
-                  globals.clearOrder();
-                  Navigator.pop(context);
-                  print('Order Successful.');
-                  setState(() {});
-                  return showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return RichAlertDialog(
-                          //uses the custom alert dialog
-                          alertTitle: status == 'N'
-                              ? richTitle("Transaction Successfully.")
-                              : richTitle("Your draft has saved."),
-                          alertSubtitle:
-                              richSubtitle("Your order has created. "),
-                          alertType: RichAlertType.SUCCESS,
-                        );
-                      });
-                  // globals.clearOrder();
-                  // print('Order Successful.');
-                } else {
-                  Navigator.pop(context);
-                  return showDialog<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return RichAlertDialog(
-                          //uses the custom alert dialog
-                          alertTitle:
-                              richTitle("Details of Sales Order was failed."),
-                          alertSubtitle: richSubtitle(
-                              "Something was wrong while creating SO Details."),
-                          alertType: RichAlertType.ERROR,
-                        );
-                      });
-                }
-              });
-            } else {
-              Navigator.pop(context);
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return RichAlertDialog(
-                      //uses the custom alert dialog
-                      alertTitle:
-                          richTitle("Header of Sales Order was failed."),
-                      alertSubtitle: richSubtitle(
-                          "Something was wrong while creating SO Header."),
-                      alertType: RichAlertType.ERROR,
-                    );
-                  });
-            }
-          });
+          /// Empty Field
+          obj.goodQty1 = 0.00;
+          obj.goodPrice1 = 0.00;
+          obj.goodCompareQty = 0;
+          obj.goodCost = 0;
+          detail.add(obj);
         });
-      });
+
+        if (await _apiService.addSaleOrderDetail(detail) == true) {
+          globals.clearOrder();
+          Navigator.pop(context);
+          print('Order Successful.');
+          setState(() {});
+          return showDialog<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return RichAlertDialog(
+                  //uses the custom alert dialog
+                  alertTitle: status == 'N'
+                      ? richTitle("Transaction Successfully.")
+                      : richTitle("Your draft has saved."),
+                  alertSubtitle: richSubtitle("Your order has created. "),
+                  alertType: RichAlertType.SUCCESS,
+                );
+              });
+          // globals.clearOrder();
+          // print('Order Successful.');
+        } else {
+          Navigator.pop(context);
+          return showDialog<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return RichAlertDialog(
+                  //uses the custom alert dialog
+                  alertTitle: richTitle("Details of Sales Order was failed."),
+                  alertSubtitle: richSubtitle(
+                      "Something was wrong while creating SO Details."),
+                  alertType: RichAlertType.ERROR,
+                );
+              });
+        }
+      } else {
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return RichAlertDialog(
+                //uses the custom alert dialog
+                alertTitle: richTitle("Header of Sales Order was failed."),
+                alertSubtitle: richSubtitle(
+                    "Something was wrong while creating SO Header."),
+                alertType: RichAlertType.ERROR,
+              );
+            });
+      }
     } catch (e) {
       Navigator.pop(context);
       return showAboutDialog(
@@ -1319,10 +1319,11 @@ class _SaleOrderState extends State<SaleOrder> {
                                   Navigator.push(
                                       context,
                                       CupertinoPageRoute(
-                                          builder: (context) => ContainerProduct(
-                                              'สั่งรายการสินค้า ลำดับที่ ',
-                                              null,
-                                              'ORDER'))).then((value) {
+                                          builder: (context) =>
+                                              ContainerProduct(
+                                                  'สั่งรายการสินค้า ลำดับที่ ',
+                                                  null,
+                                                  'ORDER'))).then((value) {
                                     globals.editingProductCart = null;
                                     setState(() {});
                                   });
@@ -1346,10 +1347,11 @@ class _SaleOrderState extends State<SaleOrder> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => ContainerProduct(
-                                              'สั่งรายการสินค้า ลำดับที่ ',
-                                              null,
-                                              'ORDER')));
+                                          builder: (context) =>
+                                              ContainerProduct(
+                                                  'สั่งรายการสินค้า ลำดับที่ ',
+                                                  null,
+                                                  'ORDER')));
                                 },
                                 icon: Icon(Icons.local_fire_department,
                                     color: Colors.white),
@@ -1369,10 +1371,11 @@ class _SaleOrderState extends State<SaleOrder> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => ContainerProduct(
-                                              'สั่งรายการสินค้า ลำดับที่ ',
-                                              null,
-                                              'ORDER')));
+                                          builder: (context) =>
+                                              ContainerProduct(
+                                                  'สั่งรายการสินค้า ลำดับที่ ',
+                                                  null,
+                                                  'ORDER')));
                                 },
                                 icon: Icon(Icons.list, color: Colors.white),
                                 color: Colors.blueAccent,
@@ -1386,13 +1389,11 @@ class _SaleOrderState extends State<SaleOrder> {
                         ],
                       ),
                     )
-
                   ],
                 ),
                 SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: Row(
-                        children: [
+                    child: Row(children: [
                       SaleOrderDetails(),
                     ])),
                 Row(
@@ -1436,7 +1437,9 @@ class _SaleOrderState extends State<SaleOrder> {
                     // Expanded(flex:2, child: SizedBox()),
                     //Spacer(),
                     SizedBox(
-                      width: MediaQuery.of(context).size.shortestSide < 400 ? 0 : 235,
+                      width: MediaQuery.of(context).size.shortestSide < 400
+                          ? 0
+                          : 235,
                     ),
                     Expanded(
                         child: Row(
@@ -1524,7 +1527,9 @@ class _SaleOrderState extends State<SaleOrder> {
                         )),
                     //Spacer(),
                     SizedBox(
-                      width: MediaQuery.of(context).size.shortestSide < 400 ? 0 : 210,
+                      width: MediaQuery.of(context).size.shortestSide < 400
+                          ? 0
+                          : 210,
                     ),
                     Expanded(
                         flex: 1,
@@ -1811,7 +1816,7 @@ class _SaleOrderState extends State<SaleOrder> {
                         padding: const EdgeInsets.only(top: 30.0),
                         child: ElevatedButton(
                             onPressed: () {
-                              if(txtDocuNo.text == ''){
+                              if (txtDocuNo.text == '') {
                                 return globals.showAlertDialog(
                                     'ยังไม่มีเลขที่เอกสาร',
                                     'กรุณาลองเข้าหน้าทำรายการอีกครั้ง',
@@ -1834,9 +1839,7 @@ class _SaleOrderState extends State<SaleOrder> {
                                 desc: 'Are you sure to create sales order ?',
                                 btnCancelOnPress: () {},
                                 btnOkOnPress: () async {
-                                  if(this.txtDocuNo.text == ''){
-
-                                  }
+                                  if (this.txtDocuNo.text == '') {}
                                   setState(() {});
                                   await postSaleOrder('N');
                                   // postSaleOrder().then((value) => setState((){}));

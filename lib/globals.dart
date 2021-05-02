@@ -16,11 +16,15 @@ import 'models/saleOrder_detail.dart';
 import 'models/master_remark.dart';
 import 'models/discount.dart';
 import'package:data_connection_checker/data_connection_checker.dart';
+import 'models/option.dart';
+import 'models/vat.dart';
 
 enum DiscountType{ THB, PER }
 enum annualCycle{ monthly, quarterly, yearly }
 
 String publicAddress = 'https://smartsalesbis.com';
+Option options;
+Vat vatGroup;
 String company;
 List<Company> allCompany;
 bool enableEditPrice = false;
@@ -82,6 +86,16 @@ void clearCopyOrder(){
   editingProductCart = null;
   selectedProduct = null;
   discountBillCopy = Discount(number: 0, amount: 0, type: 'THB');
+}
+
+double vatInclude(double summary, double vatBase) {
+  double vatTotal = (summary / 1.07) * 0.07;
+  return vatBase + vatTotal;
+}
+
+double vatExclude(double summary, double vatBase) {
+  double vatTotal = vatBase * 0.07;
+  return vatBase + vatTotal;
 }
 
 Future<DataConnectionStatus> checkConnection(BuildContext context) async{

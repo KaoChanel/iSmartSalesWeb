@@ -60,12 +60,12 @@ class DashboardPageState extends State<DashboardPage> {
     super.initState();
 
     //_apiService.getCompany();
+    _apiService.getOption();
     _apiService.getAllCustomer();
     _apiService.getProduct();
     _apiService.getUnit();
     _apiService.getShipto();
     _apiService.getStock();
-
   }
 
   @override
@@ -260,6 +260,7 @@ class DashboardPageState extends State<DashboardPage> {
         onPressed: () async {
           try {
             globals.showLoaderDialog(context, false);
+            await _apiService.getOption();
             await _apiService.getAllCustomer();
             await _apiService.getProduct();
             await _apiService.getUnit();

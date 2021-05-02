@@ -5,6 +5,7 @@ import 'package:ismart_crm/models/employee.dart';
 
 import 'models/companies.dart';
 import 'models/customer.dart';
+import 'models/option.dart';
 import 'models/product.dart';
 import 'models/goods_unit.dart';
 import 'models/shipto.dart';
@@ -15,6 +16,8 @@ import 'models/stock.dart';
 import 'package:ismart_crm/src/saleOrder.dart';
 import 'globals.dart' as globals;
 import 'package:http/http.dart' show Client;
+
+import 'models/vat.dart';
 
 class ApiService {
   // Replace this with your computer's IP Address
@@ -259,6 +262,29 @@ class ApiService {
     }
   }
 
+  Future<Option> getOption() async {
+    String strUrl =
+        '${globals.publicAddress}/api/Option/${globals.company}';
+    var response = await client.get(strUrl);
+    if (response.statusCode == 200) {
+      globals.options = optionFromJson(response.body).first;
+      await getVat();
+    } else {
+      globals.options = null;
+    }
+  }
+
+  Future<List<Vat>> getVat() async {
+    String strUrl =
+        '${globals.publicAddress}/api/Option/GetVat/${globals.company}';
+    var response = await client.get(strUrl);
+    if (response.statusCode == 200) {
+      globals.vatGroup = vatFromJson(response.body).firstWhere((e) => e.vatgroupId == globals.options.vatgroupId);
+    } else {
+      globals.vatGroup = null;
+    }
+  }
+
   // Create a new sohd
   Future<SaleOrderHeader> addSaleOrderHeader(SaleOrderHeader data) async {
     final response = await client.post(
@@ -295,6 +321,28 @@ class ApiService {
         "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
         "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
         "Access-Control-Allow-Methods": "POST, OPTIONS"
+      },
+      body: saleOrderDetailToJson(data),
+    );
+
+    var str = saleOrderDetailToJson(data);
+    print(response.headers);
+    print(response.body);
+    print('Status Code: ${response.statusCode}');
+    print('$str');
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> addSORemarkDetail(List<SaleOrderDetail> data) async {
+    final response = await client.post(
+      "$baseUrl/SaleOrderDetail/${globals.company}/",
+      headers: {
+        "content-type": "application/json",
       },
       body: saleOrderDetailToJson(data),
     );

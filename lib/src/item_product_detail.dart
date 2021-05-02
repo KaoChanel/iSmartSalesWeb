@@ -184,14 +184,22 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
         widget.price = 0;
       } else {
         if (_price != null) {
+          print('<<<<<<<<<<< Quantity >>>>>>>>>>: ' + _quantity.toString());
+          print('<<<<<<<<<<< Price >>>>>>>>>>: ' + _price.toString());
+          //print('Quantity: ' + _goodQty.toString());
           widget.editedPrice = 1;
           globals.newPrice = _price;
           _totalAmount = globals.newPrice * _goodQty;
+
+          print('New Price : ' +
+              globals.newPrice.toString() +
+              ' Total: ' +
+              _totalAmount.toString());
           txtPrice.text = currency.format(globals.newPrice) ?? 'รอราคา...';
           print('Edited Price / Unit: ' +
               globals.newPrice.toString() +
               ' Total: ' +
-              _totalNet.toString());
+              _totalAmount.toString());
         } else {
           widget.editedPrice = 0;
           globals.newPrice = 0;
@@ -532,9 +540,11 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
     setSelectedItem();
 
     if (globals.newPrice == 0) {
+      print('globals.newPrice == 0');
       globals.newPrice = widget.price;
     }
     if (globals.newPrice != widget.price) {
+      print('globals.newPrice != widget.price');
       calculatedPrice(_goodQty, _discount, globals.newPrice);
     } else {
       print('globals.newPrice == widget.price');
@@ -685,18 +695,28 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
                     //     calculatedPrice(double.parse(value));
                     //   }
                     // },
+
                     onEditingComplete: () async {
+
                       double qty =
                           double.parse(txtQty.text.replaceAll(',', ''));
                       double discAmnt =
                           double.parse(txtDiscount.text.replaceAll(',', ''));
+
                       double priceList = await _apiService.getPrice(
                           globals.customer.custId, widget.product.goodCode, qty);
 
-                      print('Price List: ' + priceList.toString());
+                      print('<<<<<<<<<<<<<<<<<< Price List >>>>>>>>>>>>>>>>>> : ' + priceList.toString());
+                      txtPrice.text = priceList.toString();
 
                       if (widget.editedPrice == 1) {
-                        priceList = globals.newPrice;
+                        print('<<<<<<<<<<<<<<<<<< editedPrice >>>>>>>>>>>>>>>>>> : == 1');
+                        if(priceList == widget.price) {
+                          priceList = widget.price;
+                        }
+                        else {
+                          globals.newPrice = priceList;
+                        }
                       }
 
                       calculatedPrice(qty, discAmnt, priceList);
@@ -729,7 +749,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
               Flexible(
                 flex: 2,
                 child: ListTile(
-                  title: TextFormField(
+                  title: TextFormField (
                     controller: txtPrice,
                     focusNode: focusPrice,
                     keyboardType:
@@ -744,6 +764,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
                           double.parse(txtQty.text.replaceAll(',', '')),
                           double.parse(txtDiscount.text.replaceAll(',', '')),
                           double.parse(txtPrice.text.replaceAll(',', '')));
+
                       FocusScope.of(context).unfocus();
                     },
                     textAlign: TextAlign.right,
