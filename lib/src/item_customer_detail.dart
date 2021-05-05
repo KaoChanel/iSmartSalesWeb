@@ -58,7 +58,7 @@ class _ItemCustomerDetailState extends State<ItemCustomerDetail> {
       txtCreditDays.text = widget.customer?.creditDays.toString();
       txtCreditAmnt.text = currency.format(widget.customer?.creditAmnt ?? 0);
       txtCreditState.text = widget.customer?.creditState == '2' ? 'ปกติ' : 'ทั่วไป';
-      txtInactive.text = widget.customer?.inactive == 'A' ? 'พร้อมใช้งาน' : widget.customer?.inactive == 'I' ? 'ไม่พร้อมใช้งาน' : 'Holding';
+      txtInactive.text = widget.customer?.inactive == 'A' ? 'ปกติ' : widget.customer?.inactive == 'I' ? 'Inactive' : 'On Hold';
     });
 
     final TextTheme textTheme = Theme.of(context).textTheme;

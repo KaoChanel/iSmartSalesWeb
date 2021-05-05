@@ -11,6 +11,9 @@ import 'package:ismart_crm/models/product.dart';
 import 'package:ismart_crm/models/product_cart.dart';
 import 'package:ismart_crm/models/shipto.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ismart_crm/src/dashboardPage.dart';
+import 'package:ismart_crm/src/launcher.dart';
+import 'package:ismart_crm/src/statusTransferDoc.dart';
 import 'containerProduct.dart';
 import 'package:http/http.dart' as http;
 import 'package:ismart_crm/globals.dart' as globals;
@@ -153,7 +156,7 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
 
     docuNo = await _apiService.getDocNo();
     txtDocuNo.text = docuNo ?? '';
-    refNo = '${globals.company}${globals.employee?.empCode}${docuNo ?? ''}';
+    refNo = '${globals.company}${globals.employee?.empCode}-${docuNo ?? ''}';
     txtRefNo.text = refNo;
     txtEmpCode.text = globals.employee.empCode;
 
@@ -441,7 +444,8 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
           _apiService.addSaleOrderDetail(detail).then((value) {
             if (value == true) {
               globals.clearCopyOrder();
-              Navigator.pop(context);
+              // Navigator.pop(context);
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
               setState(() {});
               return showDialog<void>(
                   context: context,
@@ -923,17 +927,20 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
             title: Text('บันทึกฉบับร่าง ?'),
             content: Text('คุณต้องการบันทึกฉบับร่างนี้หรือไม่ ?'),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   globals.isCopyInitial = false;
                   Navigator.of(context).pop(true);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Launcher(pageIndex: 0,)));
                   },
                 child: Text('ไม่ต้องการ'),
               ),
-              FlatButton(
-                onPressed: () {
+              TextButton(
+                onPressed: () async {
                   globals.isCopyInitial = false;
-                  postSaleOrder('D').then((value) => Navigator.of(context).pop(true));
+                  await postSaleOrder('D');
+                  Navigator.of(context).pop(true);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Launcher(pageIndex: 0,)));
                 },
                 /*Navigator.of(context).pop(true)*/
                 child: Text('บันทึก'),

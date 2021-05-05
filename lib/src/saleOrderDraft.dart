@@ -11,6 +11,9 @@ import 'package:ismart_crm/models/product.dart';
 import 'package:ismart_crm/models/product_cart.dart';
 import 'package:ismart_crm/models/shipto.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ismart_crm/src/dashboardPage.dart';
+import 'package:ismart_crm/src/launcher.dart';
+import 'package:ismart_crm/src/statusTransferDoc.dart';
 import 'containerProduct.dart';
 import 'package:http/http.dart' as http;
 import 'package:ismart_crm/globals.dart' as globals;
@@ -422,9 +425,10 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
 
       var res = await _apiService.saveDraft(header, detail);
       if (res) {
-        Navigator.pop(context);
+        // Navigator.pop(context);
         //setState(() {});
         globals.clearDraftOrder();
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
         return showDialog<void>(
             context: context,
             builder: (BuildContext context) {
@@ -974,17 +978,19 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
             title: Text('บันทึกฉบับร่าง ?'),
             content: Text('คุณต้องการบันทึกฉบับร่างนี้หรือไม่ ?'),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   globals.isDraftInitial = false;
-                  Navigator.of(context).pop(true);
+                  // Navigator.of(context).pop(true);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Launcher(pageIndex: 0,)));
                   },
                 child: Text('ไม่ต้องการ'),
               ),
-              FlatButton(
-                onPressed: () {
+              TextButton(
+                onPressed: () async {
                   globals.isDraftInitial = false;
-                  putSaleOrder('D').then((value) => Navigator.of(context).pop(true));
+                  await putSaleOrder('D');
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Launcher(pageIndex: 0,)));
                 },
                 /*Navigator.of(context).pop(true)*/
                 child: Text('บันทึก'),

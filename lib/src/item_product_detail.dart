@@ -460,23 +460,28 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
               ' (' +
               widget.product.goodCode +
               ')'),
-          content: Container(
-            height: 350.0,
-            width: 400,
-            child: ListView(
-              children: StockByProd.map((e) => ListTile(
-                        title: Text('Lot No. ' +
-                            e.lotNo +
-                            '               คงเหลือ:  ' +
-                            currency.format(e.remaqty)),
-                        subtitle: Text('Expire: ' +
-                            dateFormat.format(e.expiredate) +
-                            '                        ' +
-                            e.goodUnitCode),
-                        onTap: () {},
-                      )).toList() ??
-                  [],
-            ),
+          content: Row(
+            children: [
+              Container(
+                height: 350.0,
+                width: 400,
+                child: ListView(
+                  children: StockByProd.map((e) => ListTile(
+                            title: Text('Lot No. ' +
+                                e.lotNo +
+                                '               คงเหลือ:  ' +
+                                currency.format(e.remaqty)),
+                            subtitle: Text('Expire: ' +
+                                dateFormat.format(e.expiredate) +
+                                '                        ' +
+                                e.goodUnitCode),
+                            onTap: () {},
+                          )).toList() ??
+                      [],
+                ),
+              ),
+              Expanded(child: Text('Reserves'))
+            ],
           ),
         );
       },
@@ -606,8 +611,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
                         if (widget.product == null) {
                           return showDialog(
                               builder: (context) => AlertDialog(
-                                title: Text('แจ้งเตือน'),
-                                content: Text('กรุณาเลือกลูกค้า'),
+                                title: Text('กรุณาเลือกสินค้า'),
+                                content: Text('คุณยังไม่ได้เลือกรายการสินค้า'),
                               ), context: context);
                         } else {
                           _showStockDialog(context);
@@ -1028,7 +1033,12 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
                   padding: const EdgeInsets.all(15.0),
                   child: ElevatedButton.icon(
                       onPressed: () {
-                        addProductToCart();
+                        if(widget.product != null){
+                          addProductToCart();
+                        }
+                        else{
+                          globals.showAlertDialog('กรุณาเลือกสินค้า', 'คุณยังไม่ได้เลือกรายการสินค้า', context);
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                           primary: Colors.green,

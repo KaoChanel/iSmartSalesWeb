@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ismart_crm/models/shipto.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ismart_crm/src/dashboardPage.dart';
+import 'package:ismart_crm/src/statusTransferDoc.dart';
 import 'containerProduct.dart';
 import 'package:http/http.dart' as http;
 import 'package:ismart_crm/globals.dart' as globals;
@@ -465,7 +467,8 @@ class _SaleOrderState extends State<SaleOrder> {
 
         if (await _apiService.addSaleOrderDetail(detail) == true) {
           globals.clearOrder();
-          Navigator.pop(context);
+          // Navigator.pop(context);
+          // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
           print('Order Successful.');
           setState(() {});
           return showDialog<void>(
@@ -1794,7 +1797,8 @@ class _SaleOrderState extends State<SaleOrder> {
                                 btnOkOnPress: () async {
                                   setState(() {});
                                   await postSaleOrder('D');
-                                  Navigator.pop(context);
+                                  // Navigator.pop(context);
+                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
                                   // postSaleOrder().then((value) => setState((){}));
                                 },
                               )..show();
@@ -1842,6 +1846,7 @@ class _SaleOrderState extends State<SaleOrder> {
                                   if (this.txtDocuNo.text == '') {}
                                   setState(() {});
                                   await postSaleOrder('N');
+                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
                                   // postSaleOrder().then((value) => setState((){}));
                                 },
                               )..show();

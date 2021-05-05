@@ -9,12 +9,14 @@ import 'employee_profile.dart';
 import 'package:ismart_crm/globals.dart' as globals;
 
 class Launcher extends StatefulWidget {
+  Launcher({ this.pageIndex });
+  int pageIndex;
   @override
   _LauncherState createState() => _LauncherState();
 }
 
 class _LauncherState extends State<Launcher> {
-  int _selectedIndex = 3;
+  int _selectedIndex;
   PageController _pageController = new PageController();
   List<Widget> _pageWidget = <Widget>[
     DashboardPage(),
@@ -44,6 +46,7 @@ class _LauncherState extends State<Launcher> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _selectedIndex = widget.pageIndex ?? 3;
   }
   @override
   void dispose() {

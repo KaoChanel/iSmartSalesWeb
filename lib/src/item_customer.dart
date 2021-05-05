@@ -71,7 +71,7 @@ class _ItemCustomerState extends State<ItemCustomer> {
                 onTap: () => widget.itemSelectedCallback(item),
                 selected: widget.selectedItem?.custCode == item?.custCode,
                 hoverColor: Colors.grey.shade200,
-                // selectedTileColor: Colors.grey,
+                selectedTileColor: Colors.grey[200],
                 trailing: widget.selectedItem?.custCode == item?.custCode ? Icon(Icons.arrow_forward_ios_rounded) : Text(""),
               ),
             );
