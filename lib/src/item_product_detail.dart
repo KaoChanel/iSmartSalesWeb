@@ -62,17 +62,19 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
   TextEditingController txtDiscount = TextEditingController();
   TextEditingController txtTotal = TextEditingController();
   TextEditingController txtTotalNet = TextEditingController();
+  TextEditingController txtRemark = TextEditingController();
   List<Stock> StockByProd = new List<Stock>();
 
   @override
   void initState() {
     // TODO: implement initState
+    super.initState();
+    txtRemark.text = widget.productCart?.remark ?? '';
     globals.newPrice = widget.price;
     //_goodQty = widget.isDraft == true ? widget.quantity : _goodQty;
     _isFreeProduct = widget.docType != 'ORDER'
         ? widget.productCart?.isFree ?? false
         : globals.editingProductCart?.isFree ?? false;
-    super.initState();
     //calculatedPrice(1, 0, widget.editedPrice);
     // txtQty = TextEditingController(text: _goodQty.toString());
     // txtQty.selection = new TextSelection(baseOffset: 0, extentOffset: _goodQty.toString().length,);
@@ -92,6 +94,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
     txtDiscount.dispose();
     txtTotal.dispose();
     txtTotalNet.dispose();
+    txtRemark.dispose();
   }
 
   void setSelectedItem() {
@@ -268,6 +271,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
             widget.product.vatGroupCode;
         globals.productCart[startIndex].vatType = widget.product.vatType;
         globals.productCart[startIndex].vatRate = widget.product.vatRate;
+        globals.productCart[startIndex].remark = txtRemark.text;
         globals.editingProductCart = null;
         // List<ProductCart> temp = globals.productCart.where((element) => element.rowIndex == globals.editingProductCart.rowIndex).toList();
         // print('Index: $startIndex');
@@ -292,7 +296,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
           ..vatGroupId = widget.product.vatGroupId
           ..vatGroupCode = widget.product.vatGroupCode
           ..vatType = widget.product.vatType
-          ..vatRate = widget.product.vatRate;
+          ..vatRate = widget.product.vatRate
+          ..remark = txtRemark.text;
 
         if (widget.editedPrice > 0) {
           order.goodPrice = globals.newPrice;
@@ -340,6 +345,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
             widget.product.vatGroupCode;
         globals.productCartCopy[startIndex].vatType = widget.product.vatType;
         globals.productCartCopy[startIndex].vatRate = widget.product.vatRate;
+        globals.productCartCopy[startIndex].remark = txtRemark.text;
         globals.editingProductCart = null;
         // List<ProductCart> temp = globals.productCart.where((element) => element.rowIndex == globals.editingProductCart.rowIndex).toList();
         // print('Index: $startIndex');
@@ -364,7 +370,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
           ..vatGroupId = widget.product.vatGroupId
           ..vatGroupCode = widget.product.vatGroupCode
           ..vatType = widget.product.vatType
-          ..vatRate = widget.product.vatRate;
+          ..vatRate = widget.product.vatRate
+          ..remark = txtRemark.text;
 
         if (widget.editedPrice > 0) {
           order.goodPrice = globals.newPrice;
@@ -411,6 +418,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
             widget.product.vatGroupCode;
         globals.productCartDraft[startIndex].vatType = widget.product.vatType;
         globals.productCartDraft[startIndex].vatRate = widget.product.vatRate;
+        globals.productCartCopy[startIndex].remark = txtRemark.text;
         globals.editingProductCart = null;
         // List<ProductCart> temp = globals.productCart.where((element) => element.rowIndex == globals.editingProductCart.rowIndex).toList();
         // print('Index: $startIndex');
@@ -435,7 +443,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
           ..vatGroupId = widget.product.vatGroupId
           ..vatGroupCode = widget.product.vatGroupCode
           ..vatType = widget.product.vatType
-          ..vatRate = widget.product.vatRate;
+          ..vatRate = widget.product.vatRate
+          ..remark = txtRemark.text;
 
         if (widget.editedPrice > 0) {
           order.goodPrice = globals.newPrice;
@@ -450,6 +459,17 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
   }
 
   void _showStockDialog(context) {
+    // print(globals.allStockReserve.first.goodId);
+    double goodRemainQty = 0;
+    String unitName = '';
+    var numberFormat = NumberFormat("###.00", "en_US");
+    var reserve = globals.allStockReserve.where((e) => e.goodId == widget.product.goodId) ?? null;
+
+    if(reserve.length > 0){
+      goodRemainQty = reserve.first.goodRemaQty1;
+      unitName = reserve.first.goodUnitName;
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -460,27 +480,47 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
               ' (' +
               widget.product.goodCode +
               ')'),
-          content: Row(
+          content: Column(
             children: [
-              Container(
-                height: 350.0,
-                width: 400,
-                child: ListView(
-                  children: StockByProd.map((e) => ListTile(
-                            title: Text('Lot No. ' +
-                                e.lotNo +
-                                '               คงเหลือ:  ' +
-                                currency.format(e.remaqty)),
-                            subtitle: Text('Expire: ' +
-                                dateFormat.format(e.expiredate) +
-                                '                        ' +
-                                e.goodUnitCode),
-                            onTap: () {},
-                          )).toList() ??
-                      [],
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        // height: 350.0,
+                        width: 400,
+                        alignment: Alignment.center,
+                        child: ListView(
+                          children: StockByProd.map((e) => ListTile(
+                                    title: Text('Lot No. ' +
+                                        e.lotNo +
+                                        '               คงเหลือ:  ' +
+                                        currency.format(e.remaqty)),
+                                    subtitle: Text('Expire: ' +
+                                        dateFormat.format(e.expiredate) +
+                                        '                        ' +
+                                        e.goodUnitCode),
+                                    onTap: () {},
+                                  )).toList() ??
+                              [],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Expanded(child: Text('Reserves'))
+              Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                            alignment: Alignment.topCenter,
+                            child: goodRemainQty > 0 ? Text('จองไปแล้ว                    ${numberFormat.format(goodRemainQty)}               $unitName') : Text('ยังไม่มียอดจองสินค้า')
+                        ),
+                      ),
+                    ],
+                  )
+              )
             ],
           ),
         );
@@ -1013,7 +1053,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
                 flex: 6,
                 child: ListTile(
                   title: TextFormField(
-                    initialValue: '',
+                    controller: txtRemark,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       contentPadding:

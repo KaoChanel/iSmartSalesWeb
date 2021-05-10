@@ -66,6 +66,7 @@ class DashboardPageState extends State<DashboardPage> {
     _apiService.getUnit();
     _apiService.getShipto();
     _apiService.getStock();
+    _apiService.getStockReserve();
   }
 
   @override
@@ -266,6 +267,7 @@ class DashboardPageState extends State<DashboardPage> {
             await _apiService.getUnit();
             await _apiService.getShipto();
             await _apiService.getStock();
+            await _apiService.getStockReserve();
             Navigator.pop(context);
           }
           catch (error){

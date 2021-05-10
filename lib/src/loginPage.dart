@@ -163,6 +163,7 @@ Widget build(BuildContext context) {
           // String strUrl = '${globals.publicAddress}/api/employees/$company/${_user.empId}';
           // response = await http.get(strUrl);
           globals.employee = employeeFromJson(response.body);
+          if(globals.employee.empHead == null) globals.employee.empHead = globals.employee.empId;
           globals.company = company;
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.setString('username', globals.employee.empCode);

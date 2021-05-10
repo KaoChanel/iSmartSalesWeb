@@ -2,6 +2,9 @@ import 'dart:convert';
 
 // Import the client from the Http Packages
 import 'package:ismart_crm/models/employee.dart';
+import 'package:ismart_crm/models/saleOrder_detail_remark.dart';
+import 'package:ismart_crm/models/saleOrder_header_remark.dart';
+import 'package:ismart_crm/models/stock_reserve.dart';
 
 import 'models/companies.dart';
 import 'models/customer.dart';
@@ -36,7 +39,7 @@ class ApiService {
 
   Future<void> getAllCustomer() async {
     String strUrl =
-        '${globals.publicAddress}/api/customers/${globals.company}/${globals.employee.empId}';
+        '${globals.publicAddress}/api/customers/${globals.company}/${globals.employee.empId}/${globals.employee.empHead}';
     var response = await client.get(strUrl);
       if (response.statusCode == 200) {
         globals.allCustomer = customerFromJson(response.body);
@@ -152,15 +155,26 @@ class ApiService {
 
   Future<void> getStock() async {
     String strUrl;
-
     strUrl = '${globals.publicAddress}/api/stock/${globals.company}';
-    var response = await client.get(strUrl).then((value) => {
-    if (value.statusCode == 200) {
-        globals.allStock = stockFromJson(value.body)
+
+    var response = await client.get(strUrl);
+    if (response.statusCode == 200) {
+        globals.allStock = stockFromJson(response.body);
     } else {
-      globals.allStock = null
-      }
-    });
+      globals.allStock = null;
+    }
+  }
+
+  Future<void> getStockReserve() async {
+    String strUrl;
+    strUrl = '${globals.publicAddress}/api/stock/GetStockReserve/${globals.company}';
+
+    var response = await client.get(strUrl);
+    if (response.statusCode == 200) {
+        globals.allStockReserve = stockReserveFromJson(response.body);
+    } else {
+        globals.allStockReserve = null;
+    }
   }
 
   Future<void> getShipto() async {
@@ -199,16 +213,14 @@ class ApiService {
     }
   }
 
-  List<SaleOrderHeader> getSOHDByEmp(int id) {
-    final response = client.get('${globals.publicAddress}/api/SaleOrderHeader/GetTempSohdByEmp/${globals.company}/$id')
-        .then((value) {
-      if (value.statusCode == 200) {
-        List<SaleOrderHeader> data = saleOrderHeaderFromJson(value.body);
+  Future<List<SaleOrderHeader>> getSOHDByEmp(int id) async {
+    final response = await client.get('${globals.publicAddress}/api/SaleOrderHeader/GetTempSohdByEmp/${globals.company}/$id');
+      if (response.statusCode == 200) {
+        List<SaleOrderHeader> data = saleOrderHeaderFromJson(response.body);
         return data;
       } else {
         return null;
       }
-    });
   }
 
   Future<List<SaleOrderDetail>> getSODT(int soId) async {
@@ -285,6 +297,28 @@ class ApiService {
     }
   }
 
+  Future<SoHeaderRemark> getHeaderRemark(int soId) async {
+    String strUrl =
+        '${globals.publicAddress}/api/SoHeaderRemark/${globals.company}/$soId';
+    var response = await client.get(strUrl);
+    if (response.statusCode == 200) {
+      return soHeaderRemarkFromJson(response.body);
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<SoDetailRemark>> getDetailRemark(int soId) async {
+    String strUrl =
+        '${globals.publicAddress}/api/SoDetailRemarks/${globals.company}/$soId';
+    var response = await client.get(strUrl);
+    if (response.statusCode == 200) {
+      return soDetailRemarkFromJson(response.body);
+    } else {
+      return null;
+    }
+  }
+
   // Create a new sohd
   Future<SaleOrderHeader> addSaleOrderHeader(SaleOrderHeader data) async {
     final response = await client.post(
@@ -299,11 +333,9 @@ class ApiService {
       body: json.encode(data.toJson()),
     );
 
-    var str = json.encode(data.toJson());
+    print('Status Code: ${response.statusCode}');
     print(response.headers);
     print(response.body);
-    print(json.encode(data.toJson()));
-    print('Status Code: ${response.statusCode}');
 
     if (response.statusCode == 201) {
       return SaleOrderHeader.fromJson(json.decode(response.body));
@@ -325,11 +357,9 @@ class ApiService {
       body: saleOrderDetailToJson(data),
     );
 
-    var str = saleOrderDetailToJson(data);
+    print('Status Code: ${response.statusCode}');
     print(response.headers);
     print(response.body);
-    print('Status Code: ${response.statusCode}');
-    print('$str');
 
     if (response.statusCode == 201) {
       return true;
@@ -338,20 +368,46 @@ class ApiService {
     }
   }
 
-  Future<bool> addSORemarkDetail(List<SaleOrderDetail> data) async {
+  Future<bool> addSOHeaderRemark(SoHeaderRemark data) async {
     final response = await client.post(
-      "$baseUrl/SaleOrderDetail/${globals.company}/",
+      "$baseUrl/SoHeaderRemark/${globals.company}/",
       headers: {
         "content-type": "application/json",
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
+        "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+        "Access-Control-Allow-Methods": "POST, OPTIONS"
       },
-      body: saleOrderDetailToJson(data),
+      body: soHeaderRemarkToJson(data),
     );
 
-    var str = saleOrderDetailToJson(data);
+    print('Status Code: ${response.statusCode}');
     print(response.headers);
     print(response.body);
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> addSODetailRemark(List<SoDetailRemark> data) async {
+    final response = await client.post(
+      "$baseUrl/SoDetailRemarks/${globals.company}/",
+      headers: {
+        "content-type": "application/json",
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
+        "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+        "Access-Control-Allow-Methods": "POST, OPTIONS"
+      },
+      body: soDetailRemarkToJson(data),
+    );
+
     print('Status Code: ${response.statusCode}');
-    print('$str');
+    print(response.headers);
+    print(response.body);
 
     if (response.statusCode == 201) {
       return true;

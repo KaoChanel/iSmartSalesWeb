@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ismart_crm/models/discount.dart';
 import 'package:ismart_crm/models/product_cart.dart';
+import 'package:ismart_crm/models/saleOrder_detail_remark.dart';
+import 'package:ismart_crm/models/saleOrder_header_remark.dart';
 import 'package:ismart_crm/models/shipto.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ismart_crm/src/saleOrderCopy.dart';
@@ -33,6 +35,8 @@ class _SaleOrderViewState extends State<SaleOrderView> {
   ApiService _apiService = ApiService();
   SaleOrderHeader SOHD = SaleOrderHeader();
   List<SaleOrderDetail> SODT = List<SaleOrderDetail>();
+  SoHeaderRemark headerRemark = SoHeaderRemark();
+  List<SoDetailRemark> detailRemark = List<SoDetailRemark>();
   Shipto selectedShipTo = Shipto();
   final currency = NumberFormat("#,##0.00", "en_US");
   String runningNo;
@@ -103,6 +107,12 @@ class _SaleOrderViewState extends State<SaleOrderView> {
   void setHeader() async {
     SOHD = widget.saleOrderHD;
     SODT = await _apiService.getSODT(SOHD.soid);
+    headerRemark = await _apiService.getHeaderRemark(SOHD.soid);
+    detailRemark = await _apiService.getDetailRemark(SOHD.soid);
+    SODT.forEach((x) {
+      print('' + detailRemark.firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo).remark);
+      // x.goodsRemark = detailRemark.firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo).remark;
+    });
     runningNo = SOHD.docuNo ?? '';
     refNo = SOHD.refNo ?? '';
     // _docuDate = editedDocuDate == false ? SOHD.docuDate : _docuDate;
@@ -127,9 +137,13 @@ class _SaleOrderViewState extends State<SaleOrderView> {
         '';
     txtCustName.text = SOHD.custName ?? '';
     txtCredit.text = SOHD.creditDays.toString() ?? '0';
-    txtRemark.text = SOHD.remark ?? '';
+    // txtRemark.text = SOHD.remark ?? '';
+    txtRemark.text = headerRemark?.remark ?? '';
     double DiscountTotal = 0;
-    SODT.where((element) => element.soid == SOHD.soid).forEach((element) {DiscountTotal += element.goodDiscAmnt;});
+    SODT.where((element) => element.soid == SOHD.soid)
+        .forEach((x) {
+          DiscountTotal += x.goodDiscAmnt;
+        });
     txtDiscountTotal.text = currency.format(DiscountTotal);
     txtPriceTotal.text = currency.format(SOHD.sumGoodAmnt);
     txtDiscountBill.text = currency.format(SOHD.billDiscAmnt);

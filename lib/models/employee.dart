@@ -18,6 +18,7 @@ class Employee {
     this.postCode,
     this.postName,
     this.empId,
+    this.empHead,
     this.empCode,
     this.empTitle,
     this.empTitleEng,
@@ -42,6 +43,7 @@ class Employee {
   dynamic postCode;
   dynamic postName;
   int empId;
+  int empHead;
   String empCode;
   String empTitle;
   String empTitleEng;
@@ -66,6 +68,7 @@ class Employee {
     postCode: json["postCode"],
     postName: json["postName"],
     empId: json["empId"] == null ? null : json["empId"],
+      empHead: json["empHead"] == null ? null : json["empHead"],
     empCode: json["empCode"] == null ? null : json["empCode"],
     empTitle: json["empTitle"] == null ? null : json["empTitle"],
     empTitleEng: json["empTitleEng"] == null ? null : json["empTitleEng"],
@@ -91,6 +94,7 @@ class Employee {
     "postCode": postCode,
     "postName": postName,
     "empId": empId == null ? null : empId,
+    "empHead": empHead == null ? null : empHead,
     "empCode": empCode == null ? null : empCode,
     "empTitle": empTitle == null ? null : empTitle,
     "empTitleEng": empTitleEng == null ? null : empTitleEng,

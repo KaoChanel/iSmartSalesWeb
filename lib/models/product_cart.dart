@@ -34,6 +34,7 @@ class ProductCart {
     this.discountBase,
     this.discountType,
     this.isFree,
+    this.remark
   });
 
   int rowIndex;
@@ -67,6 +68,7 @@ class ProductCart {
   double discountBase;
   String discountType;
   bool isFree;
+  String remark;
 
   Map<String, dynamic> toJson() => {
     "rowIndex": rowIndex == null ? null : rowIndex,

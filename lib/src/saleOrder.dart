@@ -17,6 +17,8 @@ import 'package:ismart_crm/models/saleOrder_header.dart';
 import 'package:ismart_crm/models/saleOrder_detail.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:ismart_crm/models/saleOrder_header_remark.dart';
+import 'package:ismart_crm/models/saleOrder_detail_remark.dart';
 
 dynamic _selectDate(BuildContext context, DateTime _selectedDate,
     TextEditingController _textEditController) async {
@@ -374,6 +376,7 @@ class _SaleOrderState extends State<SaleOrder> {
   Future<dynamic> postSaleOrder(String status) async {
     try {
       globals.showLoaderDialog(context, false);
+
       SaleOrderHeader header = new SaleOrderHeader();
       List<SaleOrderDetail> detail = new List<SaleOrderDetail>();
 
@@ -399,14 +402,13 @@ class _SaleOrderState extends State<SaleOrder> {
       header.onHold = 'N';
       header.goodType = '1';
       header.docuStatus = 'Y';
-      header.isTransfer = status;
-      header.remark = txtRemark.text ?? '';
+      // header.remark = txtRemark.text ?? '';
       header.postdocutype = 1702;
 
       /// VAT Info
-      header.vatgroupId = 1000;
-      header.vatRate = 7;
-      header.vatType = '2';
+      header.vatgroupId = globals.vatGroup.vatgroupId;
+      header.vatRate = globals.vatGroup.vatRate;
+      header.vatType = globals.vatGroup.vatType;
       header.vatamnt = vatTotal;
 
       /// employee information.
@@ -436,6 +438,10 @@ class _SaleOrderState extends State<SaleOrder> {
       header.amphur = globals.selectedShipto.amphur;
       header.province = globals.selectedShipto.province;
       header.postCode = globals.selectedShipto.postcode;
+      header.contactName = globals.selectedShipto.contName;
+      header.tel = globals.selectedShipto.tel;
+      header.condition = globals.selectedShipto.condition;
+      header.remark = globals.selectedShipto.remark;
       header.isTransfer = status;
 
       header = await _apiService.addSaleOrderHeader(header);
@@ -455,6 +461,7 @@ class _SaleOrderState extends State<SaleOrder> {
           obj.goodAmnt = e.goodAmount;
           obj.afterMarkupamnt = e.goodAmount;
           obj.goodDiscAmnt = e.discountBase;
+          obj.goodsRemark = e.remark;
           obj.isTransfer = status;
 
           /// Empty Field
@@ -466,23 +473,45 @@ class _SaleOrderState extends State<SaleOrder> {
         });
 
         if (await _apiService.addSaleOrderDetail(detail) == true) {
-          globals.clearOrder();
-          // Navigator.pop(context);
-          // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
-          print('Order Successful.');
-          setState(() {});
-          return showDialog<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return RichAlertDialog(
-                  //uses the custom alert dialog
-                  alertTitle: status == 'N'
-                      ? richTitle("Transaction Successfully.")
-                      : richTitle("Your draft has saved."),
-                  alertSubtitle: richSubtitle("Your order has created. "),
-                  alertType: RichAlertType.SUCCESS,
-                );
-              });
+          // var hdRemark = SoHeaderRemark()..soId = header.soid..listNo = 1..remark = txtRemark.text;
+          SoHeaderRemark headerRemark = SoHeaderRemark()
+            ..soId = header.soid
+            ..listNo = 1
+            ..remark = txtRemark.text;
+
+          if (await _apiService.addSOHeaderRemark(headerRemark)) {
+            var dtRemarkAll = List<SoDetailRemark>();
+            detail.forEach((e) {
+              var dtRemark = SoDetailRemark();
+              dtRemark.soId = e.soid;
+              dtRemark.refListNo = e.listNo;
+              dtRemark.listNo = e.listNo;
+              dtRemark.remark = e.goodsRemark;
+              dtRemarkAll.add(dtRemark);
+            });
+
+            if (await _apiService.addSODetailRemark(dtRemarkAll)) {
+              globals.clearOrder();
+              txtRemark.text = '';
+              Navigator.pop(context);
+              // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
+              print('Order Successful.');
+              setState(() {});
+              return showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return RichAlertDialog(
+                      //uses the custom alert dialog
+                      alertTitle: status == 'N'
+                          ? richTitle("Transaction Successfully.")
+                          : richTitle("Your draft has saved."),
+                      alertSubtitle: richSubtitle("Your order has created. "),
+                      alertType: RichAlertType.SUCCESS,
+                    );
+                  });
+            }
+          }
+
           // globals.clearOrder();
           // print('Order Successful.');
         } else {
@@ -1798,7 +1827,11 @@ class _SaleOrderState extends State<SaleOrder> {
                                   setState(() {});
                                   await postSaleOrder('D');
                                   // Navigator.pop(context);
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              StatusTransferDoc()));
                                   // postSaleOrder().then((value) => setState((){}));
                                 },
                               )..show();
@@ -1846,7 +1879,11 @@ class _SaleOrderState extends State<SaleOrder> {
                                   if (this.txtDocuNo.text == '') {}
                                   setState(() {});
                                   await postSaleOrder('N');
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              StatusTransferDoc()));
                                   // postSaleOrder().then((value) => setState((){}));
                                 },
                               )..show();

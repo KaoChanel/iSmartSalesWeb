@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         // primarySwatch: Colors.indigo,
         primaryColor: Color.fromRGBO(50, 54, 130, 1.0),
         accentColor: Color.fromRGBO(50, 54, 130, 1.0),
-        // highlightColor: Color.fromRGBO(50, 54, 130, 1.0),
+        highlightColor: Color.fromRGBO(50, 54, 130, 1.0),
         // focusColor: Color.fromRGBO(50, 54, 130, 1.0),
 
         textSelectionTheme: TextSelectionThemeData(

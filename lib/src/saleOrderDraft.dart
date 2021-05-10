@@ -20,6 +20,8 @@ import 'package:ismart_crm/globals.dart' as globals;
 import 'package:ismart_crm/api_service.dart';
 import 'package:ismart_crm/models/saleOrder_header.dart';
 import 'package:ismart_crm/models/saleOrder_detail.dart';
+import 'package:ismart_crm/models/saleOrder_detail_remark.dart';
+import 'package:ismart_crm/models/saleOrder_header_remark.dart';
 import 'package:rich_alert/rich_alert.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 
@@ -55,10 +57,12 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
   double vatTotal = 0.0;
   double netTotal = 0.0;
   DateTime _docuDate = DateTime.now();
-  DateTime _shiptoDate = DateTime.now().add(new Duration(hours: 24));
+  DateTime _shiptoDate = DateTime.now().add(Duration(hours: 24));
   DateTime _orderDate = DateTime.now();
   SaleOrderHeader SOHD = SaleOrderHeader();
   List<SaleOrderDetail> SODT = List<SaleOrderDetail>();
+  SoHeaderRemark headerRemark = SoHeaderRemark();
+  List<SoDetailRemark> detailRemark = List<SoDetailRemark>();
   List<ProductCart> productCart = List<ProductCart>();
 
   FocusNode focusDiscount = FocusNode();
@@ -120,8 +124,10 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
     ctrl_netTotal.close();
   }
 
-  void setHeader() {
+  void setHeader() async {
     SOHD = widget.saleOrderHeader;
+    headerRemark = await _apiService.getHeaderRemark(SOHD.soid);
+    detailRemark = await _apiService.getDetailRemark(SOHD.soid);
     // SODT = await _apiService.getSODT(SOHD.soid);
     //
     // /// Mapping
@@ -169,7 +175,8 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
     txtCredit.text = globals.allCustomer.firstWhere((element) => element.custId == SOHD.custId).creditDays.toString() ?? '0';
     creditState = globals.allCustomer.firstWhere((element) => element.custId == SOHD.custId).creditState ?? '';
     txtStatus.text = creditState == 'H' ? 'Holding' : creditState == 'I' ? 'Inactive' : 'ปกติ' ;
-    txtRemark.text = SOHD.remark ?? '';
+    // txtRemark.text = SOHD.remark ?? '';
+    txtRemark.text = headerRemark.remark;
     // double DiscountTotal = 0;
     // SODT.where((element) => element.soid == SOHD.soid).forEach((element) {DiscountTotal += element.goodDiscAmnt;});
     // txtDiscountTotal.text = currency.format(DiscountTotal);
@@ -780,6 +787,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
             if (globals.isDraftInitial == false) {
               globals.isDraftInitial = true;
               globals.productCartDraft = List<ProductCart>();
+
               SODT.forEach((x) {
                 ProductCart cart = ProductCart()
                   ..rowIndex = x.listNo
@@ -797,7 +805,8 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
                   ..discountBase = x.goodDiscAmnt
                   ..mainGoodUnitId = x.goodUnitId2
                   ..vatRate = x.vatrate
-                  ..vatType = x.vatType;
+                  ..vatType = x.vatType
+                  ..remark = detailRemark.firstWhere((element) => element.soId == x.soid && element.refListNo == x.listNo).remark;
 
                 globals.productCartDraft.add(cart);
               });

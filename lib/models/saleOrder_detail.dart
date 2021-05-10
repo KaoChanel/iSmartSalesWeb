@@ -172,6 +172,7 @@ class SaleOrderDetail {
   double remaamnt;
   dynamic serialsNo;
   String isTransfer;
+  String goodsRemark;
 
   factory SaleOrderDetail.fromJson(Map<String, dynamic> json) => SaleOrderDetail(
     refSoid: json["refSoid"] == null ? null : json["refSoid"],

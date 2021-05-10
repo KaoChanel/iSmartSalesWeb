@@ -44,6 +44,7 @@ class Customer {
     this.empId,
     this.empCode,
     this.empName,
+    this.empHead,
   });
 
   int custId;
@@ -80,6 +81,7 @@ class Customer {
   int empId;
   String empCode;
   String empName;
+  int empHead;
 
   factory Customer.fromJson(Map<String, dynamic> json) => Customer(
     custId: json["custId"] == null ? null : json["custId"],
@@ -116,6 +118,7 @@ class Customer {
     empId: json["empId"] == null ? null : json["empId"],
     empCode: json["empCode"] == null ? null : json["empCode"],
     empName: json["empName"] == null ? null : json["empName"],
+    empHead: json["empHead"] == null ? null : json["empHead"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -153,5 +156,6 @@ class Customer {
     "empId": empId == null ? null : empId,
     "empCode": empCode == null ? null : empCode,
     "empName": empName == null ? null : empName,
+    "empHead": empHead == null ? null : empHead,
   };
 }

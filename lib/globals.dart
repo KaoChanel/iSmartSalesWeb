@@ -17,6 +17,7 @@ import 'models/master_remark.dart';
 import 'models/discount.dart';
 import'package:data_connection_checker/data_connection_checker.dart';
 import 'models/option.dart';
+import 'models/stock_reserve.dart';
 import 'models/vat.dart';
 
 enum DiscountType{ THB, PER }
@@ -38,6 +39,7 @@ List<Product> allProduct;
 Stock selectedStock;
 List<Stock> groupStock;
 List<Stock> allStock;
+List<StockReserve> allStockReserve;
 MasterRemark selectedRemark = MasterRemark();
 MasterRemark selectedRemarkDraft = MasterRemark();
 MasterRemark selectedRemarkDuplicate = MasterRemark();
@@ -98,7 +100,7 @@ double vatExclude(double summary, double vatBase) {
   return vatBase + vatTotal;
 }
 
-Future<DataConnectionStatus> checkConnection(BuildContext context) async{
+Future<DataConnectionStatus> checkConnection(BuildContext context) async {
   var internetStatus = "Unknown";
   var contentMessage = "Unknown";
   listener = DataConnectionChecker().onStatusChange.listen((status) {
