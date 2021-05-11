@@ -71,11 +71,12 @@ class _ContainerProductState extends State<ContainerProduct> {
   }
 
   Future<void> getPrice() async {
+    print('********************************************************************** Goods Quantity : ${globals.goodsQuantity}');
     var response = await http.get(
-        '${globals.publicAddress}/api/product/${globals.company}/${globals.customer.custId}/${_selectedItem?.goodCode}/1');  /// Add custId  2021-04-26
+        '${globals.publicAddress}/api/product/${globals.company}/${globals.customer.custId}/${_selectedItem?.goodCode}/${globals.goodsQuantity}');  /// Add custId  2021-04-26
     Map values = json.decode(response.body);
 
-    _goodQty = 1;
+    // _goodQty = 1;
     _goodPrice = double.parse(values['price'].toString());
     _total = double.parse(values['total'].toString());
 

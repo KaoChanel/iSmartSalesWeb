@@ -162,7 +162,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
     txtDocuDate.text = DateFormat('dd/MM/yyyy').format(_docuDate);
     txtShiptoDate.text =
         _shiptoDate != null ? DateFormat('dd/MM/yyyy').format(_shiptoDate) : '';
-    txtShiptoRemark.text = '';
+    txtShiptoRemark.text = SOHD.remark;
     txtOrderDate.text =
         _orderDate != null ? DateFormat('dd/MM/yyyy').format(_orderDate) : '';
     txtEmpCode.text = '${globals.employee?.empCode}';
@@ -176,7 +176,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
     creditState = globals.allCustomer.firstWhere((element) => element.custId == SOHD.custId).creditState ?? '';
     txtStatus.text = creditState == 'H' ? 'Holding' : creditState == 'I' ? 'Inactive' : 'ปกติ' ;
     // txtRemark.text = SOHD.remark ?? '';
-    txtRemark.text = headerRemark.remark;
+    txtRemark.text = headerRemark?.remark ?? '';
     // double DiscountTotal = 0;
     // SODT.where((element) => element.soid == SOHD.soid).forEach((element) {DiscountTotal += element.goodDiscAmnt;});
     // txtDiscountTotal.text = currency.format(DiscountTotal);
@@ -435,7 +435,10 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
         // Navigator.pop(context);
         //setState(() {});
         globals.clearDraftOrder();
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
+        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
         return showDialog<void>(
             context: context,
             builder: (BuildContext context) {
@@ -781,6 +784,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
     return FutureBuilder<Object>(
         future: _apiService.getSODT(SOHD.soid),
         builder: (context, snapshot) {
+          print('SOHD >>>>>>>>>>>>>>>>>>>>>>>>  ${SOHD.soid ?? 'No SOID'}');
           if (snapshot.hasData) {
             SODT = snapshot.data;
 
@@ -805,8 +809,8 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
                   ..discountBase = x.goodDiscAmnt
                   ..mainGoodUnitId = x.goodUnitId2
                   ..vatRate = x.vatrate
-                  ..vatType = x.vatType
-                  ..remark = detailRemark.firstWhere((element) => element.soId == x.soid && element.refListNo == x.listNo).remark;
+                  ..vatType = x.vatType;
+                  // ..remark = detailRemark.firstWhere((element) => element.soId == x.soid && element.refListNo == x.listNo).remark;
 
                 globals.productCartDraft.add(cart);
               });
@@ -845,6 +849,12 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
                     });
                     onSortColumn(columnIndex, ascending);
                   }
+                ),
+                DataColumn(
+                  label: Text(
+                    'ประเภทสินค้า',
+                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+                  ),
                 ),
                 DataColumn(
                   label: Text(
@@ -897,7 +907,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
               rows: globals.productCartDraft
                   .map((e) => DataRow(cells: [
                         DataCell(Text('${e.rowIndex}')),
-                        // DataCell(Text('${e.goodTypeFlag}')),
+                        DataCell(Text('${e.isFree ?? false ? 'แถม' : 'ขาย'}')),
                         DataCell(Text('${e.goodCode}')),
                         DataCell(Text('${e.goodName1}')),
                         DataCell(Text('${currency.format(e.goodQty ?? 0)}')),
@@ -990,8 +1000,10 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
               TextButton(
                 onPressed: () {
                   globals.isDraftInitial = false;
-                  // Navigator.of(context).pop(true);
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Launcher(pageIndex: 0,)));
+                  Navigator.of(context).pop(true);
+                  Navigator.of(context).pop(true);
+                  Navigator.of(context).pop(true);
+                  // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Launcher(pageIndex: 0,)));
                   },
                 child: Text('ไม่ต้องการ'),
               ),
@@ -999,7 +1011,10 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
                 onPressed: () async {
                   globals.isDraftInitial = false;
                   await putSaleOrder('D');
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Launcher(pageIndex: 0,)));
+                  Navigator.of(context).pop(true);
+                  Navigator.of(context).pop(true);
+                  Navigator.of(context).pop(true);
+                  // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Launcher(pageIndex: 0,)));
                 },
                 /*Navigator.of(context).pop(true)*/
                 child: Text('บันทึก'),
@@ -1547,27 +1562,29 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
                         )),
                   ]),
 
+                  Row(
+                    children: [
+                      SizedBox(height: 80),
+                      Container(
+                        margin: EdgeInsets.only(top: 11),
+                        padding: EdgeInsets.all(10),
+                        width: 350,
+                        child: Text(
+                          'รายการสินค้าขาย',
+                          style: GoogleFonts.sarabun(
+                              color: Colors.white, fontSize: 20),
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(20),
+                              bottomRight: Radius.circular(0)),
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        SizedBox(height: 80),
-                        Container(
-                          margin: EdgeInsets.only(top: 11),
-                          padding: EdgeInsets.all(10),
-                          width: 350,
-                          child: Text(
-                            'รายการสินค้าขาย',
-                            style: GoogleFonts.sarabun(
-                                color: Colors.white, fontSize: 20),
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(20),
-                                bottomRight: Radius.circular(0)),
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
                         SizedBox(height: 10),
                         Container(
                             margin: EdgeInsets.only(top: 13, left: 30),
@@ -1644,10 +1661,12 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
                       ],
                     ),
                   ),
+                    ],
+                  ),
                   SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(children: [
-                        saleOrderDetails(),
+                        saleOrderDetails() ?? [],
                       ])),
                   Row(
                     children: [

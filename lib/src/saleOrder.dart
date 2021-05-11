@@ -639,12 +639,12 @@ class _SaleOrderState extends State<SaleOrder> {
               style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
             ),
           ),
-          // DataColumn(
-          //   label: Text(
-          //     'ประเภท',
-          //     style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-          //   ),
-          // ),
+          DataColumn(
+            label: Text(
+              'ประเภทสินค้า',
+              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+            ),
+          ),
           DataColumn(
             label: Text(
               'รหัสสินค้า',
@@ -701,8 +701,8 @@ class _SaleOrderState extends State<SaleOrder> {
         ],
         rows: globals.productCart
                 ?.map((e) => DataRow(cells: [
-                      DataCell(Text('${e.rowIndex}')),
-                      // DataCell(Text('${e.goodTypeFlag}')),
+                      DataCell(Center(child: Text('${e.rowIndex}'))),
+                      DataCell(Center(child: Text('${e.isFree ? 'แถม' : 'ขาย'}'))),
                       DataCell(Text('${e.goodCode}')),
                       DataCell(Text('${e.goodName1}')),
                       DataCell(Text('${currency.format(e.goodQty)}')),

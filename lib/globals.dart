@@ -47,6 +47,7 @@ List<MasterRemark> allRemark = List<MasterRemark>();
 ProductCart editingProductCart;
 List<GoodsUnit> allGoodsUnit = new List<GoodsUnit>();
 double newPrice;
+double goodsQuantity;
 List<SaleOrderHeader> tempSOHD = new List<SaleOrderHeader>();
 StreamSubscription<DataConnectionStatus> listener;
 DiscountType discountType = DiscountType.THB;

@@ -58,19 +58,22 @@ class DashboardPageState extends State<DashboardPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    loadData();
+  }
 
-    //_apiService.getCompany();
-    _apiService.getOption();
-    _apiService.getAllCustomer();
-    _apiService.getProduct();
-    _apiService.getUnit();
-    _apiService.getShipto();
-    _apiService.getStock();
-    _apiService.getStockReserve();
+  Future<void> loadData() async {
+    await _apiService.getOption();
+    await _apiService.getAllCustomer();
+    await _apiService.getProduct();
+    await _apiService.getUnit();
+    await _apiService.getShipto();
+    await _apiService.getStock();
+    await _apiService.getStockReserve();
   }
 
   @override
   Widget build(BuildContext context) {
+
       txtCustomer.text = globals.customer?.custName;
       // globals.selectedShipto = globals.allShipto?.firstWhere((element) => element.custId == globals.customer?.custId);
       // print(globals.customer?.custId.toString());
@@ -261,13 +264,7 @@ class DashboardPageState extends State<DashboardPage> {
         onPressed: () async {
           try {
             globals.showLoaderDialog(context, false);
-            await _apiService.getOption();
-            await _apiService.getAllCustomer();
-            await _apiService.getProduct();
-            await _apiService.getUnit();
-            await _apiService.getShipto();
-            await _apiService.getStock();
-            await _apiService.getStockReserve();
+            await loadData();
             Navigator.pop(context);
           }
           catch (error){

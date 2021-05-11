@@ -39,13 +39,17 @@ class _EmployeeProfileState extends State<EmployeeProfile> with TickerProviderSt
     _controller = TabController(length: 3, vsync: this);
     if(globals.allCustomer == null || globals.allProduct == null || globals.allGoodsUnit == null || globals.allShipto == null || globals.allStock == null || globals.allRemark == null){
       //_apiService.getCompany();
-      _apiService.getAllCustomer();
-      _apiService.getProduct();
-      _apiService.getUnit();
-      _apiService.getShipto();
-      _apiService.getStock();
-      _apiService.getRemark();
+      loadData();
     }
+  }
+
+  Future<void> loadData() async {
+    await _apiService.getAllCustomer();
+    await _apiService.getProduct();
+    await _apiService.getUnit();
+    await _apiService.getShipto();
+    await _apiService.getStock();
+    await _apiService.getRemark();
   }
 
   Widget lineChartBox(bool isShowingMainData){

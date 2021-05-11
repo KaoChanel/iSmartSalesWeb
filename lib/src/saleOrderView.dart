@@ -228,6 +228,12 @@ class _SaleOrderViewState extends State<SaleOrderView> {
               // ),
               DataColumn(
                 label: Text(
+                  'ประเภทสินค้า',
+                  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+                ),
+              ),
+              DataColumn(
+                label: Text(
                   'รหัสสินค้า',
                   style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
                 ),
@@ -286,6 +292,7 @@ class _SaleOrderViewState extends State<SaleOrderView> {
                         i,
                         DataRow(cells: [
                           DataCell(Center(child: Text('${i + 1}'))),
+                          DataCell(Center(child: Text('${e.goodPrice2 == 0 ? 'แถม' : 'ขาย'}'))),
                           // DataCell(Text(
                           //     '${globals.allProduct.firstWhere((element) => element.goodId == e.goodId).goodTypeFlag}')),
                           DataCell(Text(

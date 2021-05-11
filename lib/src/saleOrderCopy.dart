@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ismart_crm/models/product.dart';
 import 'package:ismart_crm/models/product_cart.dart';
+import 'package:ismart_crm/models/saleOrder_detail_remark.dart';
+import 'package:ismart_crm/models/saleOrder_header_remark.dart';
 import 'package:ismart_crm/models/shipto.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ismart_crm/src/dashboardPage.dart';
@@ -60,6 +62,8 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
   DateTime _orderDate = DateTime.now();
   SaleOrderHeader SOHD = SaleOrderHeader();
   List<SaleOrderDetail> SODT = List<SaleOrderDetail>();
+  SoHeaderRemark headerRemark = SoHeaderRemark();
+  List<SoDetailRemark> detailRemark = List<SoDetailRemark>();
   List<ProductCart> productCart = List<ProductCart>();
 
   FocusNode focusDiscount = FocusNode();
@@ -122,6 +126,8 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
 
   void setHeader() async {
     SOHD = widget.header;
+    headerRemark = await _apiService.getHeaderRemark(SOHD.soid);
+    detailRemark = await _apiService.getDetailRemark(SOHD.soid);
     // SODT = await _apiService.getSODT(SOHD.soid);
     //
     // /// Mapping
@@ -152,7 +158,6 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
     // custPONo = '${globals.employee?.empCode}-${runningNo ?? ''}';
     // txtCustPONo.text = custPONo ?? '';
     // txtRunningNo.text = await runningNo ?? '';
-    txtRemark.text = SOHD.remark;
 
     docuNo = await _apiService.getDocNo();
     txtDocuNo.text = docuNo ?? '';
@@ -160,14 +165,13 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
     txtRefNo.text = refNo;
     txtEmpCode.text = globals.employee.empCode;
 
-    txtRemark.text = SOHD.remark;
     discountBill = SOHD.billDiscAmnt;
     vatTotal = SOHD.vatamnt;
 
     txtDocuDate.text = DateFormat('dd/MM/yyyy').format(_docuDate);
     txtShiptoDate.text =
         _shiptoDate != null ? DateFormat('dd/MM/yyyy').format(_shiptoDate) : '';
-    txtShiptoRemark.text = '';
+    txtShiptoRemark.text = SOHD.remark;
     txtOrderDate.text =
         _orderDate != null ? DateFormat('dd/MM/yyyy').format(_orderDate) : '';
     txtEmpCode.text = '${globals.employee?.empCode}';
@@ -180,7 +184,7 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
     txtCredit.text = globals.allCustomer.firstWhere((element) => element.custId == SOHD.custId).creditDays.toString() ?? '0';
     creditState = globals.allCustomer.firstWhere((element) => element.custId == SOHD.custId).creditState ?? '-';
     txtStatus.text = creditState == 'H' ? 'Holding' : creditState == 'I' ? 'Inactive' : 'ปกติ' ;
-    txtRemark.text = SOHD.remark ?? '';
+    txtRemark.text = headerRemark?.remark ?? '';
     // double DiscountTotal = 0;
     // SODT.where((element) => element.soid == SOHD.soid).forEach((element) {DiscountTotal += element.goodDiscAmnt;});
     // txtDiscountTotal.text = currency.format(DiscountTotal);
@@ -789,6 +793,12 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
           ),
           DataColumn(
             label: Text(
+              'ประเภทสินค้า',
+              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+            ),
+          ),
+          DataColumn(
+            label: Text(
               'รหัสสินค้า',
               style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
             ),
@@ -837,8 +847,8 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
         ],
         rows: globals.productCartCopy
             .map((e) => DataRow(cells: [
-          DataCell(Text('${e.rowIndex}')),
-          // DataCell(Text('${e.goodTypeFlag}')),
+          DataCell(Center(child: Text('${e.rowIndex}'))),
+          DataCell(Center(child: Text('${e.isFree ?? false ? 'แถม' : 'ขาย'}'))),
           DataCell(Text('${e.goodCode}')),
           DataCell(Container(width: 300, child: Text('${e.goodName1}'))),
           DataCell(Text('${currency.format(e.goodQty ?? 0)}')),
@@ -1487,102 +1497,99 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
                         )),
                   ]),
 
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        SizedBox(height: 80),
-                        Container(
-                          margin: EdgeInsets.only(top: 11),
-                          padding: EdgeInsets.all(10),
-                          width: 350,
-                          child: Text(
-                            'รายการสินค้าขาย',
-                            style: GoogleFonts.sarabun(
-                                color: Colors.white, fontSize: 20),
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(20),
-                                bottomRight: Radius.circular(0)),
-                            color: Theme.of(context).primaryColor,
-                          ),
+                  Row(
+                    children: [
+                      SizedBox(height: 80),
+                      Container(
+                        margin: EdgeInsets.only(top: 11),
+                        padding: EdgeInsets.all(10),
+                        width: 350,
+                        child: Text(
+                          'รายการสินค้าขาย',
+                          style: GoogleFonts.sarabun(
+                              color: Colors.white, fontSize: 20),
                         ),
-                        SizedBox(height: 10),
-                        Container(
-                            margin: EdgeInsets.only(top: 13, left: 30),
-                            child: RaisedButton.icon(
-                              onPressed: () {
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(20),
+                              bottomRight: Radius.circular(0)),
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                          margin: EdgeInsets.only(top: 13, left: 30),
+                          child: RaisedButton.icon(
+                            onPressed: () {
+                              globals.editingProductCart = null;
+                              Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                      builder: (context) => ContainerProduct(
+                                          'สั่งรายการสินค้า ลำดับที่ ',
+                                          null,
+                                          'COPY'))).then((value) {
                                 globals.editingProductCart = null;
-                                Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                        builder: (context) => ContainerProduct(
-                                            'สั่งรายการสินค้า ลำดับที่ ',
-                                            null,
-                                            'COPY'))).then((value) {
-                                  globals.editingProductCart = null;
-                                  setState(() {});
-                                });
-                              },
-                              icon: Icon(Icons.add_circle_outline_outlined,
-                                  color: Colors.white),
-                              color: Colors.green,
-                              splashColor: Colors.green,
-                              padding: EdgeInsets.all(10),
-                              label: Text(
-                                'เพิ่มรายการสินค้า',
-                                style: GoogleFonts.sarabun(
-                                    fontSize: 14, color: Colors.white),
-                              ),
-                            )),
-                        Container(
-                            margin: EdgeInsets.only(top: 13, left: 20),
-                            child: RaisedButton.icon(
-                              onPressed: () {
-                                globals.editingProductCart = null;
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ContainerProduct(
-                                            'สั่งรายการสินค้า ลำดับที่ ',
-                                            null,
-                                            'COPY')));
-                              },
-                              icon: Icon(Icons.local_fire_department,
-                                  color: Colors.white),
-                              color: Colors.deepOrange[400],
-                              padding: EdgeInsets.all(10),
-                              label: Text(
-                                'เพิ่มรายการด่วน',
-                                style: GoogleFonts.sarabun(
-                                    fontSize: 14, color: Colors.white),
-                              ),
-                            )),
-                        Container(
-                            margin: EdgeInsets.only(top: 13, left: 20),
-                            child: RaisedButton.icon(
-                              onPressed: () {
-                                globals.editingProductCart = null;
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ContainerProduct(
-                                            'สั่งรายการสินค้า ลำดับที่ ',
-                                            null,
-                                            'COPY')));
-                              },
-                              icon: Icon(Icons.list, color: Colors.white),
-                              color: Colors.blueAccent,
-                              padding: EdgeInsets.all(10),
-                              label: Text(
-                                'เพิ่มรายการโปรโมชั่น',
-                                style: GoogleFonts.sarabun(
-                                    fontSize: 14, color: Colors.white),
-                              ),
-                            )),
-                      ],
-                    ),
+                                setState(() {});
+                              });
+                            },
+                            icon: Icon(Icons.add_circle_outline_outlined,
+                                color: Colors.white),
+                            color: Colors.green,
+                            splashColor: Colors.green,
+                            padding: EdgeInsets.all(10),
+                            label: Text(
+                              'เพิ่มรายการสินค้า',
+                              style: GoogleFonts.sarabun(
+                                  fontSize: 14, color: Colors.white),
+                            ),
+                          )),
+                      Container(
+                          margin: EdgeInsets.only(top: 13, left: 20),
+                          child: RaisedButton.icon(
+                            onPressed: () {
+                              globals.editingProductCart = null;
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ContainerProduct(
+                                          'สั่งรายการสินค้า ลำดับที่ ',
+                                          null,
+                                          'COPY')));
+                            },
+                            icon: Icon(Icons.local_fire_department,
+                                color: Colors.white),
+                            color: Colors.deepOrange[400],
+                            padding: EdgeInsets.all(10),
+                            label: Text(
+                              'เพิ่มรายการด่วน',
+                              style: GoogleFonts.sarabun(
+                                  fontSize: 14, color: Colors.white),
+                            ),
+                          )),
+                      Container(
+                          margin: EdgeInsets.only(top: 13, left: 20),
+                          child: RaisedButton.icon(
+                            onPressed: () {
+                              globals.editingProductCart = null;
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ContainerProduct(
+                                          'สั่งรายการสินค้า ลำดับที่ ',
+                                          null,
+                                          'COPY')));
+                            },
+                            icon: Icon(Icons.list, color: Colors.white),
+                            color: Colors.blueAccent,
+                            padding: EdgeInsets.all(10),
+                            label: Text(
+                              'เพิ่มรายการโปรโมชั่น',
+                              style: GoogleFonts.sarabun(
+                                  fontSize: 14, color: Colors.white),
+                            ),
+                          )),
+                    ],
                   ),
                   SingleChildScrollView(
                       scrollDirection: Axis.horizontal,

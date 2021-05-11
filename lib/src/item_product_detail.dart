@@ -48,6 +48,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
   double _goodQty;
   double _totalAmount;
   double _discount = 0;
+  double _discountBase = 0;
   String _discountType = 'THB';
   double _totalNet = 0;
   String _unitName;
@@ -95,6 +96,18 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
     txtTotal.dispose();
     txtTotalNet.dispose();
     txtRemark.dispose();
+  }
+
+  Future<void> getPrice() async {
+    print(widget.quantity);
+    var response = await http.get(
+        '${globals.publicAddress}/api/product/${globals.company}/${globals.customer.custId}/${widget.product?.goodCode}/${widget.quantity}');  /// Add custId  2021-04-26
+    Map values = json.decode(response.body);
+
+    widget.price = double.parse(values['price'].toString());
+    _totalAmount = double.parse(values['total'].toString());
+
+    print('**** Price / Unit: ' + widget.price.toString() + ' Total: ' + _totalAmount.toString());
   }
 
   void setSelectedItem() {
@@ -182,10 +195,13 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
       if (_isFreeProduct == true) {
         _totalAmount = 0;
         _totalNet = 0;
-        _discount = 0;
+        // _discount = 0;
         txtPrice.text = '0.00';
         widget.price = 0;
-      } else {
+        widget.newPrice = 0;
+        widget.productCart.goodPrice = 0;
+      }
+      else {
         if (_price != null) {
           print('<<<<<<<<<<< Quantity >>>>>>>>>>: ' + _quantity.toString());
           print('<<<<<<<<<<< Price >>>>>>>>>>: ' + _price.toString());
@@ -203,23 +219,39 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
               globals.newPrice.toString() +
               ' Total: ' +
               _totalAmount.toString());
-        } else {
+        }
+        else {
           widget.editedPrice = 0;
           globals.newPrice = 0;
-          _totalAmount = widget.price * _goodQty;
-          txtPrice.text = currency.format(widget.price ?? 0) ?? 'รอราคา...';
-        }
 
-        if (_discountType == 'PER') {
-          //_discount = _total - (_total * _discount / 100);
-        } else {
-          //_discount = _total - _discount;
+          globals.goodsQuantity = _goodQty;
+          print('QTY Text ***************' + _goodQty.toString());
+          print('Total Amount ***************' + _totalAmount.toString());
+          _totalAmount = widget.price * _goodQty;
+          print('After Total Amount ***************' + _totalAmount.toString());
+          txtPrice.text = currency.format(widget.price ?? 0) ?? 'รอราคา...';
+          // getPrice().then((value) {
+          //   _totalAmount = widget.price * _goodQty;
+          //   txtPrice.text = currency.format(widget.price ?? 0) ?? 'รอราคา...';
+          // });
         }
       }
 
-      _totalNet = _discountType == 'PER'
-          ? _totalAmount - (_totalAmount * _discount / 100)
-          : _totalAmount - _discount;
+      if (_discountType == 'PER') {
+        //_discount = _total - (_total * _discount / 100);
+        _discountBase = _totalAmount * _discount / 100;
+      } else {
+        //_discount = _total - _discount;
+        _discountBase = _discount;
+      }
+
+      print('discountBase ***************' + _discountBase.toString());
+      _totalNet = _totalAmount - _discountBase;
+
+      // _totalNet = _discountType == 'PER'
+      //     ? _totalAmount - (_totalAmount * _discount ?? 0 / 100)
+      //     : _totalAmount - _discount ?? 0;
+
       txtQty.text = currency.format(_goodQty) ?? '0';
       // txtPrice.text = currency.format(widget.price) ?? 'รอราคา...';
       txtTotal.text = currency.format(_totalAmount) ?? '0';
@@ -262,8 +294,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
 
         globals.productCart[startIndex].discount = _discount;
         globals.productCart[startIndex].discountType = _discountType;
-        globals.productCart[startIndex].discountBase =
-            _discountType == 'PER' ? _totalNet * _discount / 100 : _discount;
+        globals.productCart[startIndex].discountBase = _discountBase;
+            // _discountType == 'PER' ? _totalNet * _discount / 100 : _discount;
         globals.productCart[startIndex].goodAmount = _totalNet;
         globals.productCart[startIndex].isFree = _isFreeProduct;
         globals.productCart[startIndex].vatGroupId = widget.product.vatGroupId;
@@ -289,8 +321,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
           ..goodPrice = widget.price
           ..discount = _discount
           ..discountType = _discountType
-          ..discountBase =
-              _discountType == 'PER' ? _totalNet * _discount / 100 : _discount
+          ..discountBase = _discountBase
+              // _discountType == 'PER' ? _totalNet * _discount / 100 : _discount
           ..goodAmount = _totalNet
           ..isFree = _isFreeProduct
           ..vatGroupId = widget.product.vatGroupId
@@ -335,8 +367,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
 
         globals.productCartCopy[startIndex].discount = _discount;
         globals.productCartCopy[startIndex].discountType = _discountType;
-        globals.productCartCopy[startIndex].discountBase =
-            _discountType == 'PER' ? _totalNet * _discount / 100 : _discount;
+        globals.productCartCopy[startIndex].discountBase = _discountBase;
+            // _discountType == 'PER' ? _totalNet * _discount / 100 : _discount;
         globals.productCartCopy[startIndex].goodAmount = _totalNet;
         globals.productCartCopy[startIndex].isFree = _isFreeProduct;
         globals.productCartCopy[startIndex].vatGroupId =
@@ -363,8 +395,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
           ..goodPrice = widget.price
           ..discount = _discount
           ..discountType = _discountType
-          ..discountBase =
-              _discountType == 'PER' ? _totalNet * _discount / 100 : _discount
+          ..discountBase = _discountBase
+              // _discountType == 'PER' ? _totalNet * _discount / 100 : _discount
           ..goodAmount = _totalNet
           ..isFree = _isFreeProduct
           ..vatGroupId = widget.product.vatGroupId
@@ -408,8 +440,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
 
         globals.productCartDraft[startIndex].discount = _discount;
         globals.productCartDraft[startIndex].discountType = _discountType;
-        globals.productCartDraft[startIndex].discountBase =
-        _discountType == 'PER' ? _totalNet * _discount / 100 : _discount;
+        globals.productCartDraft[startIndex].discountBase = _discountBase;
+        // _discountType == 'PER' ? _totalNet * _discount / 100 : _discount;
         globals.productCartDraft[startIndex].goodAmount = _totalNet;
         globals.productCartDraft[startIndex].isFree = _isFreeProduct;
         globals.productCartDraft[startIndex].vatGroupId =
@@ -436,8 +468,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
           ..goodPrice = widget.price
           ..discount = _discount
           ..discountType = _discountType
-          ..discountBase =
-          _discountType == 'PER' ? _totalNet * _discount / 100 : _discount
+          ..discountBase = _discountBase
+          // _discountType == 'PER' ? _totalNet * _discount / 100 : _discount
           ..goodAmount = _totalNet
           ..isFree = _isFreeProduct
           ..vatGroupId = widget.product.vatGroupId
@@ -699,12 +731,12 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
                   flex: 2,
                   child: CheckboxListTile(
                     value: _isFreeProduct,
+                    controlAffinity: ListTileControlAffinity.leading,
                     onChanged: (bool value) {
                       setState(() {
                         _isFreeProduct = value;
                       });
                     },
-                    controlAffinity: ListTileControlAffinity.leading,
                     title: Text('สินค้าแถม ?'),
                   ))
             ],

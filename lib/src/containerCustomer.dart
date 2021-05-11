@@ -7,6 +7,7 @@ import 'item_customer.dart';
 import 'item_customer_detail.dart';
 import 'package:ismart_crm/globals.dart' as globals;
 import 'package:http/http.dart' as http;
+import 'package:ismart_crm/api_service.dart';
 
 // Widget _buildMobileLayout() {
 //   return ItemListing(
@@ -49,6 +50,7 @@ class ContainerCustomer extends StatefulWidget {
 
 class _ContainerCustomerState extends State<ContainerCustomer> {
   static const int kTabletBreakpoint = 400;
+  ApiService _apiService = ApiService();
   Customer _selectedItem = globals.customer;
   List<Customer> allCustomer = globals.allCustomer;
   TextEditingController txtKeyword = new TextEditingController();
