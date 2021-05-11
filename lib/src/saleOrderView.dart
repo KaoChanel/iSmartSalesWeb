@@ -110,7 +110,7 @@ class _SaleOrderViewState extends State<SaleOrderView> {
     headerRemark = await _apiService.getHeaderRemark(SOHD.soid);
     detailRemark = await _apiService.getDetailRemark(SOHD.soid);
     SODT.forEach((x) {
-      print('' + detailRemark.firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo).remark);
+      // print('' + detailRemark.firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo).remark);
       // x.goodsRemark = detailRemark.firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo).remark;
     });
     runningNo = SOHD.docuNo ?? '';
