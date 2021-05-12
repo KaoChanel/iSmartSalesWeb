@@ -477,16 +477,18 @@ class _SaleOrderState extends State<SaleOrder> {
           SoHeaderRemark headerRemark = SoHeaderRemark()
             ..soId = header.soid
             ..listNo = 1
-            ..remark = txtRemark.text;
+            ..remark = txtRemark.text
+            ..isTransfer = status;
 
           if (await _apiService.addSOHeaderRemark(headerRemark)) {
             var dtRemarkAll = List<SoDetailRemark>();
             detail.forEach((e) {
-              var dtRemark = SoDetailRemark();
-              dtRemark.soId = e.soid;
-              dtRemark.refListNo = e.listNo;
-              dtRemark.listNo = e.listNo;
-              dtRemark.remark = e.goodsRemark;
+              var dtRemark = SoDetailRemark()
+              ..soId = e.soid
+              ..refListNo = e.listNo
+              ..listNo = e.listNo
+              ..remark = e.goodsRemark
+              ..isTransfer = status;
               dtRemarkAll.add(dtRemark);
             });
 
@@ -528,7 +530,8 @@ class _SaleOrderState extends State<SaleOrder> {
                 );
               });
         }
-      } else {
+      }
+      else {
         Navigator.pop(context);
         showDialog(
             context: context,
@@ -641,7 +644,7 @@ class _SaleOrderState extends State<SaleOrder> {
           ),
           DataColumn(
             label: Text(
-              'ประเภทสินค้า',
+              'ประเภท',
               style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
             ),
           ),
@@ -702,7 +705,7 @@ class _SaleOrderState extends State<SaleOrder> {
         rows: globals.productCart
                 ?.map((e) => DataRow(cells: [
                       DataCell(Center(child: Text('${e.rowIndex}'))),
-                      DataCell(Center(child: Text('${e.isFree ? 'แถม' : 'ขาย'}'))),
+                      DataCell(Center(child: Text('${e.isFree ? 'แถมฟรี' : 'เพื่อขาย'}'))),
                       DataCell(Text('${e.goodCode}')),
                       DataCell(Text('${e.goodName1}')),
                       DataCell(Text('${currency.format(e.goodQty)}')),

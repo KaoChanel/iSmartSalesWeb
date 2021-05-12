@@ -360,8 +360,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
 
       /// document header.
       header.soid = SOHD.soid;
-      header.saleAreaId = 1004;
-      header.vatgroupId = 1000;
+      header.saleAreaId = globals.customer.saleAreaId;
       header.docuNo = docuNo;
       header.refNo = refNo;
       header.docuType = 104;
@@ -374,7 +373,6 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
       header.goodType = '1';
       header.docuStatus = 'Y';
       header.isTransfer = status;
-      header.remark = txtRemark.text ?? '';
       header.postdocutype = 1702;
 
       /// employee information.
@@ -398,11 +396,12 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
       header.amphur = globals.selectedShipto.amphur;
       header.province = globals.selectedShipto.province;
       header.postCode = globals.selectedShipto.postcode;
+      header.remark = globals.selectedShipto.remark;
 
       /// VAT Info
-      header.vatgroupId = 1000;
-      header.vatRate = 7;
-      header.vatType = '2';
+      header.vatgroupId = globals.vatGroup.vatgroupId;
+      header.vatRate = globals.vatGroup.vatRate;
+      header.vatType = globals.vatGroup.vatType;
       header.vatamnt = vatTotal;
 
       /// Cost Summary.
@@ -2004,7 +2003,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
                                   desc: 'Are you sure to save draft ?',
                                   btnCancelOnPress: () {},
                                   btnOkOnPress: () async {
-                                    setState(() {});
+                                    // setState(() {});
                                     await putSaleOrder('D');
                                     // postSaleOrder().then((value) => setState((){}));
                                   },

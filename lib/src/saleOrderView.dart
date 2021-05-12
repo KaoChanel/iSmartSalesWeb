@@ -228,7 +228,7 @@ class _SaleOrderViewState extends State<SaleOrderView> {
               // ),
               DataColumn(
                 label: Text(
-                  'ประเภทสินค้า',
+                  'ประเภท',
                   style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
                 ),
               ),
@@ -292,7 +292,7 @@ class _SaleOrderViewState extends State<SaleOrderView> {
                         i,
                         DataRow(cells: [
                           DataCell(Center(child: Text('${i + 1}'))),
-                          DataCell(Center(child: Text('${e.goodPrice2 == 0 ? 'แถม' : 'ขาย'}'))),
+                          DataCell(Center(child: Text('${e.goodPrice2 == 0 ? 'แถมฟรี' : 'เพื่อขาย'}'))),
                           // DataCell(Text(
                           //     '${globals.allProduct.firstWhere((element) => element.goodId == e.goodId).goodTypeFlag}')),
                           DataCell(Text(
@@ -1089,7 +1089,10 @@ class _SaleOrderViewState extends State<SaleOrderView> {
                                 desc: 'Are you sure to duplicate sales order ?',
                                 btnCancelOnPress: () {},
                                 btnOkOnPress: () {
+                                  globals.isCopyInitial = false;
                                   globals.discountBillCopy = Discount(number: 0, amount: 0, type: 'THB');
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(

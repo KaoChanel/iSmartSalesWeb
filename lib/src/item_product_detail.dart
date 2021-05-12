@@ -126,6 +126,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
           if (_goodQty == null) {
             _goodQty = widget.quantity;
             _discount = globals.editingProductCart?.discount;
+            _discountBase = globals.editingProductCart?.discountBase;
             _discountType = globals.editingProductCart?.discountType;
           }
           //_isFreeProduct = globals.editingProductCart.isFree;
@@ -141,6 +142,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
           if (_goodQty == null) {
             _goodQty = widget.productCart?.goodQty;
             _discount = widget.productCart?.discount;
+            _discountBase = widget.productCart?.discountBase;
             _discountType = widget.productCart?.discountType;
           } else {
             widget.productCart.goodQty = _goodQty;
@@ -182,13 +184,20 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
     // }
     _goodQty = _quantity;
     _discount = _discountValue;
+    globals.goodsQuantity = _goodQty;
 
     // if (widget.docType == 'ORDER' && widget.productCart != null) {
     //   widget.productCart.discountBase = _discountValue ?? 0;
     // }
 
     if (widget.productCart != null) {
-      widget.productCart.discountBase = _discountValue ?? 0;
+      if (_discountType == 'PER') {
+        widget.productCart.discount = _discountValue ?? 0;
+      }
+      else{
+        widget.productCart.discount = _discountValue ?? 0;
+        widget.productCart.discountBase = _discountValue ?? 0;
+      }
     }
 
     setState(() {
@@ -199,7 +208,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
         txtPrice.text = '0.00';
         widget.price = 0;
         widget.newPrice = 0;
-        widget.productCart.goodPrice = 0;
+        // widget.productCart.goodPrice = 0; /// Effect on SaleOrder Activity!!!
       }
       else {
         if (_price != null) {
@@ -240,11 +249,14 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
       if (_discountType == 'PER') {
         //_discount = _total - (_total * _discount / 100);
         _discountBase = _totalAmount * _discount / 100;
+        txtDiscount.text = currency.format(_discount) ?? '0';
       } else {
         //_discount = _total - _discount;
         _discountBase = _discount;
+        txtDiscount.text = currency.format(_discountBase) ?? '0';
       }
 
+      print('discount ***************' + _discount.toString());
       print('discountBase ***************' + _discountBase.toString());
       _totalNet = _totalAmount - _discountBase;
 
@@ -255,7 +267,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
       txtQty.text = currency.format(_goodQty) ?? '0';
       // txtPrice.text = currency.format(widget.price) ?? 'รอราคา...';
       txtTotal.text = currency.format(_totalAmount) ?? '0';
-      txtDiscount.text = currency.format(_discount) ?? '0';
+      // txtDiscount.text = currency.format(_discount) ?? '0';
       txtTotalNet.text = currency.format(_totalNet) ?? '0';
 
       print('Quantity: ' + _goodQty.toString());
@@ -309,7 +321,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
         // print('Index: $startIndex');
         // globals.productCart.replaceRange(startIndex, startIndex, temp);
         // print('Updated: ' + globals.editingProductCart.goodName1);
-      } else {
+      }
+      else {
         ProductCart order = new ProductCart()
           ..productCartId = UniqueKey().toString()
           ..rowIndex = row
@@ -383,7 +396,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
         // print('Index: $startIndex');
         // globals.productCart.replaceRange(startIndex, startIndex, temp);
         // print('Updated: ' + globals.editingProductCart.goodName1);
-      } else {
+      }
+      else {
         ProductCart order = new ProductCart()
           ..productCartId = UniqueKey().toString()
           ..rowIndex = row
@@ -450,7 +464,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
             widget.product.vatGroupCode;
         globals.productCartDraft[startIndex].vatType = widget.product.vatType;
         globals.productCartDraft[startIndex].vatRate = widget.product.vatRate;
-        globals.productCartCopy[startIndex].remark = txtRemark.text;
+        globals.productCartDraft[startIndex].remark = txtRemark.text;
         globals.editingProductCart = null;
         // List<ProductCart> temp = globals.productCart.where((element) => element.rowIndex == globals.editingProductCart.rowIndex).toList();
         // print('Index: $startIndex');

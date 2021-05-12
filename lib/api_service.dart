@@ -454,6 +454,44 @@ class ApiService {
     }
   }
 
+  Future<bool> updateSOHDRemark(SoHeaderRemark data) async {
+    final response = await client.post(
+      "$baseUrl/SaleOrderDetail/${globals.company}",
+      headers: {
+        "content-type": "application/json",
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
+        "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+        "Access-Control-Allow-Methods": "POST, OPTIONS"
+      },
+      body: soHeaderRemarkToJson(data),
+    );
+    if (response.statusCode == 204) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> updateSODTRemark(List<SoDetailRemark> data) async {
+    final response = await client.post(
+      "$baseUrl/SaleOrderDetail/${globals.company}",
+      headers: {
+        "content-type": "application/json",
+        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+        "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
+        "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+        "Access-Control-Allow-Methods": "POST, OPTIONS"
+      },
+      body: soDetailRemarkToJson(data),
+    );
+    if (response.statusCode == 204) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<bool> saveDraft(SaleOrderHeader header, List<SaleOrderDetail> data) async {
     try {
       var response = await client.put(

@@ -224,28 +224,45 @@ class _ContainerCustomerState extends State<ContainerCustomer> {
                       ],
                     ), context: context);
               }
-              var _allShipto = globals.allShipto?.firstWhere(
-                  (element) => element.custId == _selectedItem?.custId, orElse: () => null);
 
-              if(_allShipto == null)
-                {
-                  return showDialog(
-                      builder: (context) => AlertDialog(
-                        title: Text('แจ้งเตือน'),
-                        content: Text('ลูกค้ารายนี้ยังไม่มีข้อมูลการจัดส่งในระบบ WinSpeed ERP'),
-                        actions: [
-                          FlatButton(onPressed: (){Navigator.pop(context);}, child: Text('ตกลง'))
-                        ],
-                      ), context: context);
-                }
-              else{
-                globals.customer = _selectedItem;
-                globals.selectedShipto = _allShipto;
-                final SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setInt('customer', _selectedItem.custId);
-                Navigator.pop(context);
+              if(_selectedItem.inactive == 'I' || _selectedItem.inactive == 'H'){
+                return showDialog(
+                    builder: (context) => AlertDialog(
+                      title: _selectedItem.inactive == 'I' ? Text('ลูกค้ารายนี้อยู่ในสถานะ In-Active') : Text('ลูกค้ารายนี้อยู่ในสถานะ On-Hold'),
+                      content: Text('โปรดแจ้งฝ่ายธุรการเพื่อดำเนินการต่อไป'),
+                      actions: [
+                        ElevatedButton(onPressed: (){Navigator.pop(context);}, child: Text('ตกลง'))
+                      ],
+                    ), context: context);
               }
+              else {
+                var _allShipto = globals.allShipto?.firstWhere(
+                        (element) => element.custId == _selectedItem?.custId,
+                    orElse: () => null);
 
+                if (_allShipto == null) {
+                  return showDialog(
+                      builder: (context) =>
+                          AlertDialog(
+                            title: Text('แจ้งเตือน'),
+                            content: Text(
+                                'ลูกค้ารายนี้ยังไม่มีข้อมูลการจัดส่งในระบบ WinSpeed ERP'),
+                            actions: [
+                              FlatButton(onPressed: () {
+                                Navigator.pop(context);
+                              }, child: Text('ตกลง'))
+                            ],
+                          ), context: context);
+                }
+                else {
+                  globals.customer = _selectedItem;
+                  globals.selectedShipto = _allShipto;
+                  final SharedPreferences prefs = await SharedPreferences
+                      .getInstance();
+                  prefs.setInt('customer', _selectedItem.custId);
+                  Navigator.pop(context);
+                }
+              }
               // print(globals.selectedShipto?.shiptoAddr1 ?? '');
             },
             icon: Icon(Icons.check_circle_sharp),
