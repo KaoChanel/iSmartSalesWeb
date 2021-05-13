@@ -93,8 +93,10 @@ class _SaleOrderViewState extends State<SaleOrderView> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    setHeader();
-    setSelectedShipto();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await setHeader();
+      setSelectedShipto();
+    });
   }
 
   @override
@@ -104,15 +106,20 @@ class _SaleOrderViewState extends State<SaleOrderView> {
     focusDiscount.dispose();
   }
 
-  void setHeader() async {
+  setHeader() async {
     SOHD = widget.saleOrderHD;
     SODT = await _apiService.getSODT(SOHD.soid);
     headerRemark = await _apiService.getHeaderRemark(SOHD.soid);
     detailRemark = await _apiService.getDetailRemark(SOHD.soid);
+
+    print('Length: ${detailRemark.length}');
+    detailRemark?.forEach((e) => print('DTRemark SOID: ${e.soId} ListNo: ${e.refListNo} Remark: ${e.remark}'));
     SODT.forEach((x) {
-      // print('' + detailRemark.firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo).remark);
-      // x.goodsRemark = detailRemark.firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo).remark;
+      print('SODT SOID: ${x.soid} ListNo:${x.listNo} RefListNo:${x.listNo}');
+      print('---------' + detailRemark.firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo, orElse: () => null)?.remark ?? '');
+      x.goodsRemark = detailRemark.firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo, orElse: () => null)?.remark ?? '';
     });
+
     runningNo = SOHD.docuNo ?? '';
     refNo = SOHD.refNo ?? '';
     // _docuDate = editedDocuDate == false ? SOHD.docuDate : _docuDate;

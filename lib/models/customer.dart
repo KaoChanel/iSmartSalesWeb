@@ -66,13 +66,13 @@ class Customer {
   dynamic contFax;
   String contTel;
   String custAddr1;
-  dynamic custAddr2;
+  String custAddr2;
   String district;
   String amphur;
   String province;
   String postCode;
   dynamic lineId;
-  dynamic cardNo;
+  String cardNo;
   int saleAreaId;
   String inactive;
   dynamic brchName;

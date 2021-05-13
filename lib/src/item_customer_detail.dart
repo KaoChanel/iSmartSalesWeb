@@ -55,10 +55,10 @@ class _ItemCustomerDetailState extends State<ItemCustomerDetail> {
       txtCustTaxId.text = widget.customer?.taxId;
       //txtCreditType.text = widget.customer?.typ;
       txtCreditType.text = widget.customer?.creditType;
-      txtCreditDays.text = widget.customer?.creditDays.toString();
+      txtCreditDays.text = widget.customer?.creditDays == null ? '' : widget.customer?.creditDays.toString();
       txtCreditAmnt.text = currency.format(widget.customer?.creditAmnt ?? 0);
       txtCreditState.text = widget.customer?.creditState == '2' ? 'ปกติ' : 'ทั่วไป';
-      txtInactive.text = widget.customer?.inactive == 'A' ? 'ปกติ' : widget.customer?.inactive == 'I' ? 'Inactive' : 'On Hold';
+      txtInactive.text = widget.customer?.inactive == 'A' ? 'ปกติ' : widget.customer?.inactive == 'I' ? 'Inactive' : widget.customer?.inactive == 'H' ? 'On Hold' : '';
     });
 
     final TextTheme textTheme = Theme.of(context).textTheme;
@@ -338,8 +338,7 @@ class _ItemCustomerDetailState extends State<ItemCustomerDetail> {
                   child: ListTile(
                     title: TextFormField(
                       readOnly: true,
-                      initialValue: '',
-                      textAlign: TextAlign.right,
+                      controller: txtCreditAmnt,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         contentPadding:
@@ -384,7 +383,7 @@ class _ItemCustomerDetailState extends State<ItemCustomerDetail> {
                   child: ListTile(
                     title: TextFormField(
                       readOnly: true,
-                      controller: txtCreditAmnt,
+                      // controller: txtCreditAmnt,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         contentPadding:

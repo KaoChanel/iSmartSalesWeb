@@ -331,7 +331,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
         onTap: () {
           globals.selectedRemarkDraft = allRemark[i];
           setState(() {
-            txtRemark.text = globals.selectedRemarkDraft?.remark;
+            txtRemark.text = globals.selectedRemarkDraft?.remark ?? '';
             Navigator.pop(context);
           });
         },

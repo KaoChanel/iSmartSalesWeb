@@ -40,9 +40,6 @@ Stock selectedStock;
 List<Stock> groupStock;
 List<Stock> allStock;
 List<StockReserve> allStockReserve;
-MasterRemark selectedRemark = MasterRemark();
-MasterRemark selectedRemarkDraft = MasterRemark();
-MasterRemark selectedRemarkDuplicate = MasterRemark();
 List<MasterRemark> allRemark = List<MasterRemark>();
 ProductCart editingProductCart;
 List<GoodsUnit> allGoodsUnit = new List<GoodsUnit>();
@@ -51,6 +48,7 @@ double goodsQuantity;
 List<SaleOrderHeader> tempSOHD = new List<SaleOrderHeader>();
 StreamSubscription<DataConnectionStatus> listener;
 DiscountType discountType = DiscountType.THB;
+
 /// Sale Order
 bool isDraftInitial = false;
 bool isCopyInitial = false;
@@ -63,6 +61,9 @@ Shipto selectedShiptoCopy;
 Discount discountBill = Discount(number: 0, amount: 0, type: 'THB');
 Discount discountBillCopy = Discount(number: 0, amount: 0, type: 'THB');
 Discount discountBillDraft = Discount(number: 0, amount: 0, type: 'THB');
+MasterRemark selectedRemark = MasterRemark();
+MasterRemark selectedRemarkDraft = MasterRemark();
+MasterRemark selectedRemarkCopy = MasterRemark();
 bool isMainData = false;
 annualCycle selectedCycle = annualCycle.monthly;
 String docKeyword = '';
@@ -74,6 +75,8 @@ void clearOrder(){
   productCart = new List<ProductCart>();
   editingProductCart = null;
   selectedProduct = null;
+  selectedShipto = null;
+  selectedRemark = null;
   discountBill = Discount(number: 0, amount: 0, type: 'THB');
 }
 
@@ -81,6 +84,8 @@ void clearDraftOrder(){
   productCartDraft = new List<ProductCart>();
   editingProductCart = null;
   selectedProduct = null;
+  selectedShiptoDraft = null;
+  selectedRemarkDraft = null;
   discountBillDraft = Discount(number: 0, amount: 0, type: 'THB');
 }
 
@@ -88,6 +93,8 @@ void clearCopyOrder(){
   productCartCopy = new List<ProductCart>();
   editingProductCart = null;
   selectedProduct = null;
+  selectedShiptoCopy = null;
+  selectedRemarkCopy = null;
   discountBillCopy = Discount(number: 0, amount: 0, type: 'THB');
 }
 

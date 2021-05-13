@@ -25,7 +25,7 @@ class SoDetailRemark {
 
   factory SoDetailRemark.fromJson(Map<String, dynamic> json) => SoDetailRemark(
     listNo: json["listNo"] == null ? null : json["listNo"],
-    soId: json["soId"] == null ? null : json["soId"],
+    soId: json["soid"] == null ? null : json["soid"],
     refListNo: json["refListNo"] == null ? null : json["refListNo"],
     remark: json["remark"] == null ? null : json["remark"],
     isTransfer: json["isTransfer"] == null ? null : json["isTransfer"],
@@ -33,7 +33,7 @@ class SoDetailRemark {
 
   Map<String, dynamic> toJson() => {
     "listNo": listNo == null ? null : listNo,
-    "soId": soId == null ? null : soId,
+    "soid": soId == null ? null : soId,
     "refListNo": refListNo == null ? null : refListNo,
     "remark": remark == null ? null : remark,
     "isTransfer": isTransfer == null ? null : isTransfer,

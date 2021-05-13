@@ -360,9 +360,9 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
         title: Text(allRemark[i]?.remark ?? ''),
         //subtitle: Text(item?.custCode),
         onTap: () {
-          globals.selectedRemarkDraft = allRemark[i];
+          globals.selectedRemarkCopy = allRemark[i];
           setState(() {
-            txtRemark.text = globals.selectedRemarkDraft?.remark;
+            txtRemark.text = globals.selectedRemarkCopy?.remark ?? '';
             Navigator.pop(context);
           });
         },
@@ -836,7 +836,8 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
           ..mainGoodUnitId = x.goodUnitId2
           ..vatRate = x.vatrate
           ..vatType = x.vatType
-          ..isFree = x.goodPrice2 == 0 ? true : false;
+          ..isFree = x.goodPrice2 == 0 ? true : false
+          ..remark = x.goodsRemark;
 
         globals.productCartCopy.add(cart);
       });
@@ -1791,7 +1792,7 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
                                 //border: OutlineInputBorder()
                               ),
                               onChanged: (value) {
-                                globals.selectedRemarkDraft.remark = value;
+                                globals.selectedRemarkCopy.remark = value;
                               },
                             ),
                           )),

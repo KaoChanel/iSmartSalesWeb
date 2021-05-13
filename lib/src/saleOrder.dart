@@ -189,7 +189,7 @@ class _SaleOrderState extends State<SaleOrder> {
     custPONo = '${globals.employee?.empCode}-${runningNo ?? ''}';
     txtCustPONo.text = custPONo ?? '';
     txtRunningNo.text = runningNo ?? '';
-    txtRemark.text = globals.selectedRemark.remark;
+    txtRemark.text = globals.selectedRemark.remark ?? '';
 
     docuNo = await _apiService.getDocNo();
     txtDocuNo.text = docuNo ?? '';
@@ -360,7 +360,7 @@ class _SaleOrderState extends State<SaleOrder> {
         onTap: () {
           globals.selectedRemark = allRemark[i];
           setState(() {
-            txtRemark.text = globals.selectedRemark?.remark;
+            txtRemark.text = globals.selectedRemark?.remark ?? '';
             Navigator.pop(context);
           });
         },
@@ -872,8 +872,8 @@ class _SaleOrderState extends State<SaleOrder> {
                           );
 
                           setState(() {
-                            txtDocuDate.text = DateFormat('dd/MM/yyyy')
-                                .format(_docuDate ?? DateTime.now());
+                            if(_docuDate == null) _docuDate = DateTime.now();
+                            txtDocuDate.text = DateFormat('dd/MM/yyyy').format(_docuDate);
                           });
                         },
                         decoration: InputDecoration(
@@ -922,14 +922,12 @@ class _SaleOrderState extends State<SaleOrder> {
                                 : DateTime.now(),
                             firstDate: DateTime.now(),
                             lastDate:
-                                DateTime.now().add(new Duration(days: 365)),
+                                DateTime.now().add(new Duration(days: 180)),
                           );
 
                           setState(() {
-                            txtShiptoDate.text = DateFormat('dd/MM/yyyy')
-                                .format(_shiptoDate ??
-                                    DateTime.now()
-                                        .add(new Duration(hours: 24)));
+                            if(_shiptoDate == null)  _shiptoDate = DateTime.now().add(new Duration(hours: 24));
+                            txtShiptoDate.text = DateFormat('dd/MM/yyyy').format(_shiptoDate);
                           });
                         },
                         decoration: InputDecoration(

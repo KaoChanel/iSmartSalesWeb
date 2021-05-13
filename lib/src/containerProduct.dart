@@ -211,7 +211,7 @@ class _ContainerProductState extends State<ContainerProduct> {
       appBar: AppBar(
         title: Center(
             child: Text(
-          '${widget.title} ${widget.editing_product?.rowIndex ?? widget.docType == 'ORDER' ? globals.productCart.length + 1 : widget.docType == 'COPY' ? globals.productCartCopy.length + 1 : globals.productCartDraft.length + 1} ',
+          '${widget.title} ${widget.editing_product?.rowIndex == null ? widget.docType == 'ORDER' ? globals.productCart.length + 1 : widget.docType == 'COPY' ? globals.productCartCopy.length + 1 : globals.productCartDraft.length + 1 : widget.editing_product?.rowIndex} ',
           style: GoogleFonts.sarabun(fontSize: 20),
         )),
       ),
