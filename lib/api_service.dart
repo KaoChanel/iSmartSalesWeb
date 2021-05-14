@@ -227,6 +227,7 @@ class ApiService {
     //'${globals.publicAddress}/api/SaleOrderDetail/GetTempSodtByEmp/${globals.company}/$id'
     String strUrl = '${globals.publicAddress}/api/SaleOrderDetail/${globals.company}/$soId';
     final response = await client.get(strUrl);
+
       if (response.statusCode == 200) {
         var data = saleOrderDetailFromJson(response.body);
         return data;
@@ -428,6 +429,11 @@ class ApiService {
       },
       body: json.encode(data.toJson()),
     );
+
+    print('Status Code: ${response.statusCode}');
+    print(response.headers);
+    print(response.body);
+
     if (response.statusCode == 204) {
       return true;
     } else {
@@ -455,17 +461,22 @@ class ApiService {
   }
 
   Future<bool> updateSOHDRemark(SoHeaderRemark data) async {
-    final response = await client.post(
-      "$baseUrl/SaleOrderDetail/${globals.company}",
+    final response = await client.put(
+      "$baseUrl/SoHeaderRemark/${globals.company}",
       headers: {
         "content-type": "application/json",
         "Access-Control-Allow-Origin": "*", // Required for CORS support to work
         "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
         "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-        "Access-Control-Allow-Methods": "POST, OPTIONS"
+        "Access-Control-Allow-Methods": "PUT, OPTIONS"
       },
       body: soHeaderRemarkToJson(data),
     );
+
+    print('Status Code: ${response.statusCode}');
+    print(response.headers);
+    print(soHeaderRemarkToJson(data));
+
     if (response.statusCode == 204) {
       return true;
     } else {
@@ -474,14 +485,14 @@ class ApiService {
   }
 
   Future<bool> updateSODTRemark(List<SoDetailRemark> data) async {
-    final response = await client.post(
-      "$baseUrl/SaleOrderDetail/${globals.company}",
+    final response = await client.put(
+      "$baseUrl/SoDetailRemarks/${globals.company}/",
       headers: {
         "content-type": "application/json",
         "Access-Control-Allow-Origin": "*", // Required for CORS support to work
         "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
         "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-        "Access-Control-Allow-Methods": "POST, OPTIONS"
+        "Access-Control-Allow-Methods": "PUT, OPTIONS"
       },
       body: soDetailRemarkToJson(data),
     );
@@ -505,6 +516,10 @@ class ApiService {
         },
         body: json.encode(header.toJson()),
       );
+
+      print('Status Code: ${response.statusCode}');
+      print(response.headers);
+      print(response.body);
 
       if (response.statusCode == 204) {
         response = await client.delete(

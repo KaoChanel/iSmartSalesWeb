@@ -75,7 +75,7 @@ void clearOrder(){
   productCart = new List<ProductCart>();
   editingProductCart = null;
   selectedProduct = null;
-  selectedShipto = null;
+  // selectedShipto = null;
   selectedRemark = null;
   discountBill = Discount(number: 0, amount: 0, type: 'THB');
 }
@@ -84,7 +84,7 @@ void clearDraftOrder(){
   productCartDraft = new List<ProductCart>();
   editingProductCart = null;
   selectedProduct = null;
-  selectedShiptoDraft = null;
+  // selectedShiptoDraft = null;
   selectedRemarkDraft = null;
   discountBillDraft = Discount(number: 0, amount: 0, type: 'THB');
 }
@@ -93,7 +93,7 @@ void clearCopyOrder(){
   productCartCopy = new List<ProductCart>();
   editingProductCart = null;
   selectedProduct = null;
-  selectedShiptoCopy = null;
+  // selectedShiptoCopy = null;
   selectedRemarkCopy = null;
   discountBillCopy = Discount(number: 0, amount: 0, type: 'THB');
 }

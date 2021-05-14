@@ -192,11 +192,17 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
 
     if (widget.productCart != null) {
       if (_discountType == 'PER') {
+        print('<<<<<<<<<<<<<<< PERCENT >>>>>>>>>>>> ${widget.productCart.discountType} Edit Page type $_discountType');
+        print('<<<<<<<<<<<<<<< PERCENT >>>>>>>>>>>> ${widget.productCart.discount} Edit Page number $_discount');
+        print('<<<<<<<<<<<<<<< PERCENT >>>>>>>>>>>> ${widget.productCart.discountBase} Edit Page base $_discountBase');
         widget.productCart.discount = _discountValue ?? 0;
+        widget.productCart.discountBase = _discountBase;
+        widget.productCart.discountType = _discountType;
       }
       else{
         widget.productCart.discount = _discountValue ?? 0;
         widget.productCart.discountBase = _discountValue ?? 0;
+        widget.productCart.discountType = _discountType;
       }
     }
 
@@ -253,7 +259,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
       } else {
         //_discount = _total - _discount;
         _discountBase = _discount;
-        txtDiscount.text = currency.format(_discountBase) ?? '0';
+        txtDiscount.text = currency.format(_discountBase ?? 0) ?? '0';
       }
 
       print('discount ***************' + _discount.toString());
@@ -642,8 +648,16 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
       if (widget.docType != 'ORDER' && widget.productCart != null) {
         print(
             'widget.isDraft == true | Price = ${widget.productCart?.goodPrice ?? 0} | QTY = ${widget.productCart?.goodQty ?? 0}');
+
+
+        // calculatedPrice(widget.productCart?.goodQty ?? 0,
+        //     widget.productCart?.discountBase ?? 0, widget.price);
+
         calculatedPrice(widget.productCart?.goodQty ?? 0,
-            widget.productCart?.discountBase ?? 0, widget.price);
+            _discount, widget.price);
+
+
+
       } else if (widget.productCart == null) {
         calculatedPrice(_goodQty, _discount, widget.price);
       } else {

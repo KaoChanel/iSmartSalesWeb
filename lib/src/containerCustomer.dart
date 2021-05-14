@@ -30,9 +30,7 @@ Widget SearchAreaWidgetOld() {
           child: new Text('SELECT ORANGES'),
           onPressed: () {},
         ),
-        new FlatButton(
-          textColor: Colors.blueGrey,
-          color: Colors.white,
+        new TextButton(
           child: new Text('SELECT TOMATOES'),
           onPressed: () {},
         ),
@@ -107,24 +105,24 @@ class _ContainerCustomerState extends State<ContainerCustomer> {
                 controller: txtKeyword,
                 decoration: InputDecoration(
                   hintStyle: TextStyle(fontStyle: FontStyle.italic),
-                  hintText: 'ชื่อลูกค้า, รหัสลูกค้า, ที่อยู่',
+                  hintText: 'ชื่อลูกค้า, รหัสลูกค้า',
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value){
                   setState(() {
                     allCustomer = globals.allCustomer
                         .where((x) =>
-                    x.inactive == 'A' &&
+                    // x.inactive == 'A' &&
                     x.custName
                         .toLowerCase()
                         .contains(value) ||
                         x.custCode
                             .toLowerCase()
-                            .contains(value) ||
-                        x.custAddr1
-                            .toLowerCase()
-                            .contains(value))
-                        .toList();
+                            .contains(value)
+                    //     x.custAddr1 != null
+                    //     ? x.custAddr1.toLowerCase().contains(value)
+                    // : false
+                    ).toList();
                   });
                 },
               ),

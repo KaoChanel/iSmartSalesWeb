@@ -181,7 +181,7 @@ class _ContainerProductState extends State<ContainerProduct> {
             // The item details just blindly accepts whichever
             // item we throw in its way, just like before.
             product: _selectedItem,
-            quantity: widget.docType != 'ORDER' ? widget.editing_product != null ? widget.editing_product.goodQty : _goodQty : _goodQty,
+            quantity: widget.docType != 'ORDER' ? widget.editing_product != null ? widget.editing_product?.goodQty : _goodQty : _goodQty,
             price: widget.docType != 'ORDER' ? widget.editing_product != null ? widget.editing_product?.goodPrice : _goodPrice : _goodPrice,
             editedPrice: 0,
             total: _total,

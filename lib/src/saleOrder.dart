@@ -189,7 +189,7 @@ class _SaleOrderState extends State<SaleOrder> {
     custPONo = '${globals.employee?.empCode}-${runningNo ?? ''}';
     txtCustPONo.text = custPONo ?? '';
     txtRunningNo.text = runningNo ?? '';
-    txtRemark.text = globals.selectedRemark.remark ?? '';
+    txtRemark.text = globals.selectedRemark?.remark ?? '';
 
     docuNo = await _apiService.getDocNo();
     txtDocuNo.text = docuNo ?? '';
@@ -422,11 +422,12 @@ class _SaleOrderState extends State<SaleOrder> {
 
       /// Cost Summary.
       header.sumGoodAmnt = priceTotal;
-      header.billAftrDiscAmnt = priceAfterDiscount;
       header.netAmnt = netTotal;
-      header.billDiscAmnt = globals.discountBill.amount;
 
       /// Discount
+      header.billDiscFormula = globals.discountBill.type == 'PER' ? '${globals.discountBill.number}%' : globals.discountBill.amount;
+      header.billDiscAmnt = globals.discountBill.amount;
+      header.billAftrDiscAmnt = priceAfterDiscount;
 
       /// shipment to customer.
       header.shipToCode = globals.selectedShipto.shiptoCode;
@@ -1372,53 +1373,59 @@ class _SaleOrderState extends State<SaleOrder> {
                                       fontSize: 14, color: Colors.white),
                                 ),
                               )),
-                          Container(
-                              margin: EdgeInsets.only(top: 13, left: 20),
-                              child: RaisedButton.icon(
-                                onPressed: () {
-                                  globals.editingProductCart = null;
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              ContainerProduct(
-                                                  'สั่งรายการสินค้า ลำดับที่ ',
-                                                  null,
-                                                  'ORDER')));
-                                },
-                                icon: Icon(Icons.local_fire_department,
-                                    color: Colors.white),
-                                color: Colors.deepOrange[400],
-                                padding: EdgeInsets.all(10),
-                                label: Text(
-                                  'เพิ่มรายการด่วน',
-                                  style: GoogleFonts.sarabun(
-                                      fontSize: 14, color: Colors.white),
-                                ),
-                              )),
-                          Container(
-                              margin: EdgeInsets.only(top: 13, left: 20),
-                              child: RaisedButton.icon(
-                                onPressed: () {
-                                  globals.editingProductCart = null;
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              ContainerProduct(
-                                                  'สั่งรายการสินค้า ลำดับที่ ',
-                                                  null,
-                                                  'ORDER')));
-                                },
-                                icon: Icon(Icons.list, color: Colors.white),
-                                color: Colors.blueAccent,
-                                padding: EdgeInsets.all(10),
-                                label: Text(
-                                  'เพิ่มรายการโปรโมชั่น',
-                                  style: GoogleFonts.sarabun(
-                                      fontSize: 14, color: Colors.white),
-                                ),
-                              )),
+                          Visibility(
+                            visible: false,
+                            child: Container(
+                                margin: EdgeInsets.only(top: 13, left: 20),
+                                child: RaisedButton.icon(
+                                  onPressed: () {
+                                    globals.editingProductCart = null;
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ContainerProduct(
+                                                    'สั่งรายการสินค้า ลำดับที่ ',
+                                                    null,
+                                                    'ORDER')));
+                                  },
+                                  icon: Icon(Icons.local_fire_department,
+                                      color: Colors.white),
+                                  color: Colors.deepOrange[400],
+                                  padding: EdgeInsets.all(10),
+                                  label: Text(
+                                    'เพิ่มรายการด่วน',
+                                    style: GoogleFonts.sarabun(
+                                        fontSize: 14, color: Colors.white),
+                                  ),
+                                )),
+                          ),
+                          Visibility(
+                            visible: false,
+                            child: Container(
+                                margin: EdgeInsets.only(top: 13, left: 20),
+                                child: RaisedButton.icon(
+                                  onPressed: () {
+                                    globals.editingProductCart = null;
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ContainerProduct(
+                                                    'สั่งรายการสินค้า ลำดับที่ ',
+                                                    null,
+                                                    'ORDER')));
+                                  },
+                                  icon: Icon(Icons.list, color: Colors.white),
+                                  color: Colors.blueAccent,
+                                  padding: EdgeInsets.all(10),
+                                  label: Text(
+                                    'เพิ่มรายการโปรโมชั่น',
+                                    style: GoogleFonts.sarabun(
+                                        fontSize: 14, color: Colors.white),
+                                  ),
+                                )),
+                          ),
                         ],
                       ),
                     )

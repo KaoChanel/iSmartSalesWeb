@@ -45,7 +45,7 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
   StreamController<double> ctrl_priceAfterDiscount = StreamController<double>();
   StreamController<double> ctrl_vatTotal = StreamController<double>();
   StreamController<double> ctrl_netTotal = StreamController<double>();
-  bool isInitialDraft = false;
+  bool isInitialCopy = false;
   Customer localCustomer;
   String runningNo;
   String docuNo;
@@ -844,7 +844,7 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
       globals.isCopyInitial = true;
     }
 
-    globals.productCartDraft
+    globals.productCartCopy
         .where((element) => element.soid == SOHD.soid)
         .forEach((element) {
       discountTotal += element.discountBase ?? 0;
@@ -1629,51 +1629,57 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
                                   fontSize: 14, color: Colors.white),
                             ),
                           )),
-                      Container(
-                          margin: EdgeInsets.only(top: 13, left: 20),
-                          child: RaisedButton.icon(
-                            onPressed: () {
-                              globals.editingProductCart = null;
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ContainerProduct(
-                                          'สั่งรายการสินค้า ลำดับที่ ',
-                                          null,
-                                          'COPY')));
-                            },
-                            icon: Icon(Icons.local_fire_department,
-                                color: Colors.white),
-                            color: Colors.deepOrange[400],
-                            padding: EdgeInsets.all(10),
-                            label: Text(
-                              'เพิ่มรายการด่วน',
-                              style: GoogleFonts.sarabun(
-                                  fontSize: 14, color: Colors.white),
-                            ),
-                          )),
-                      Container(
-                          margin: EdgeInsets.only(top: 13, left: 20),
-                          child: RaisedButton.icon(
-                            onPressed: () {
-                              globals.editingProductCart = null;
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ContainerProduct(
-                                          'สั่งรายการสินค้า ลำดับที่ ',
-                                          null,
-                                          'COPY')));
-                            },
-                            icon: Icon(Icons.list, color: Colors.white),
-                            color: Colors.blueAccent,
-                            padding: EdgeInsets.all(10),
-                            label: Text(
-                              'เพิ่มรายการโปรโมชั่น',
-                              style: GoogleFonts.sarabun(
-                                  fontSize: 14, color: Colors.white),
-                            ),
-                          )),
+                      Visibility(
+                        visible: false,
+                        child: Container(
+                            margin: EdgeInsets.only(top: 13, left: 20),
+                            child: RaisedButton.icon(
+                              onPressed: () {
+                                globals.editingProductCart = null;
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ContainerProduct(
+                                            'สั่งรายการสินค้า ลำดับที่ ',
+                                            null,
+                                            'COPY')));
+                              },
+                              icon: Icon(Icons.local_fire_department,
+                                  color: Colors.white),
+                              color: Colors.deepOrange[400],
+                              padding: EdgeInsets.all(10),
+                              label: Text(
+                                'เพิ่มรายการด่วน',
+                                style: GoogleFonts.sarabun(
+                                    fontSize: 14, color: Colors.white),
+                              ),
+                            )),
+                      ),
+                      Visibility(
+                        visible: false,
+                        child: Container(
+                            margin: EdgeInsets.only(top: 13, left: 20),
+                            child: RaisedButton.icon(
+                              onPressed: () {
+                                globals.editingProductCart = null;
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ContainerProduct(
+                                            'สั่งรายการสินค้า ลำดับที่ ',
+                                            null,
+                                            'COPY')));
+                              },
+                              icon: Icon(Icons.list, color: Colors.white),
+                              color: Colors.blueAccent,
+                              padding: EdgeInsets.all(10),
+                              label: Text(
+                                'เพิ่มรายการโปรโมชั่น',
+                                style: GoogleFonts.sarabun(
+                                    fontSize: 14, color: Colors.white),
+                              ),
+                            )),
+                      ),
                     ],
                   ),
                   SingleChildScrollView(

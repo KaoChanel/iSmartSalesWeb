@@ -7,6 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ismart_crm/models/customer.dart';
 import 'package:ismart_crm/models/product.dart';
 import 'package:ismart_crm/models/product_cart.dart';
 import 'package:ismart_crm/models/shipto.dart';
@@ -44,6 +45,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
   StreamController<double> ctrl_vatTotal = StreamController<double>();
   StreamController<double> ctrl_netTotal = StreamController<double>();
   bool isInitialDraft = false;
+  Customer localCustomer;
   String runningNo;
   String docuNo;
   String refNo;
@@ -124,10 +126,16 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
     ctrl_netTotal.close();
   }
 
-  void setHeader() async {
+  setHeader() async {
     SOHD = widget.saleOrderHeader;
     headerRemark = await _apiService.getHeaderRemark(SOHD.soid);
     detailRemark = await _apiService.getDetailRemark(SOHD.soid);
+
+    localCustomer = globals.allCustomer.firstWhere((e) => e.custId == widget.saleOrderHeader.custId, orElse: null);
+    globals.customer = localCustomer;
+    globals.selectedShipto = globals.allShipto?.firstWhere(
+            (element) => element.custId == localCustomer?.custId, orElse: () => null);
+
     // SODT = await _apiService.getSODT(SOHD.soid);
     //
     // /// Mapping
@@ -224,27 +232,55 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
         priceAfterDiscount = priceTotal - globals.discountBillDraft.number;
       }
 
-      double sumPriceIncludeVat = 0;
+      // double sumPriceIncludeVat = 0;
+      // if (globals.productCartDraft != null) {
+      //   globals.productCartDraft
+      //       .where((element) => element?.vatRate != null)
+      //       .toList()
+      //       .forEach((element) {
+      //     sumPriceIncludeVat += element.goodAmount;
+      //   });
+      // }
+
+      double sumGoodsHasVat = 0;
+      double sumGoodsHasNoVat = 0;
+
       if (globals.productCartDraft != null) {
         globals.productCartDraft
-            .where((element) => element?.vatRate != null)
+            .where((x) => x.vatRate > 0)
             .toList()
-            .forEach((element) {
-          sumPriceIncludeVat += element.goodAmount;
-        });
+            .forEach((element) => sumGoodsHasVat += element.goodAmount);
+        globals.productCartDraft
+            .where((x) => x.vatRate == 0)
+            .toList()
+            .forEach((element) => sumGoodsHasNoVat += element.goodAmount);
+      }
+
+      sumGoodsHasVat = sumGoodsHasVat - globals.discountBill.amount;
+      double vatBase = 0;
+      if (globals.vatGroup.vatgroupCode == 'IN7') {
+        vatBase = sumGoodsHasVat / 1.07;
+        vatTotal = (sumGoodsHasVat / 1.07) * 0.07;
+        netTotal = vatBase + vatTotal + sumGoodsHasNoVat;
+      } else if (globals.vatGroup.vatgroupCode == 'EX7') {
+        vatBase = sumGoodsHasVat;
+        vatTotal = (sumGoodsHasVat * 0.07);
+        netTotal = vatBase + vatTotal + sumGoodsHasNoVat;
+      } else {
+        netTotal = priceAfterDiscount;
       }
 
       // vatTotal = (priceAfterDiscount * vat) / 100;
       // vatTotal = (sumPriceIncludeVat * vat) / 100;
       // sumPriceIncludeVat = sumPriceIncludeVat - (globals.discountBillDraft);
       //sumPriceIncludeVat = priceAfterDiscount;
-      print('sumPriceIncludeVat:  ' + sumPriceIncludeVat.toString());
-      print('globals.discountBillDraft:  ' +
-          globals.discountBillDraft.toString());
-      //print('sumPriceIncludeVat * 0.07:  ' + (sumPriceIncludeVat + (sumPriceIncludeVat * vat)).toString());
-      print((sumPriceIncludeVat * vat).toString());
-      vatTotal = (priceAfterDiscount * 0.07);
-      netTotal = priceAfterDiscount + vatTotal;
+      // print('sumPriceIncludeVat:  ' + sumPriceIncludeVat.toString());
+      // print('globals.discountBillDraft:  ' +
+      //     globals.discountBillDraft.toString());
+      // //print('sumPriceIncludeVat * 0.07:  ' + (sumPriceIncludeVat + (sumPriceIncludeVat * vat)).toString());
+      // print((sumPriceIncludeVat * vat).toString());
+      // vatTotal = (priceAfterDiscount * 0.07);
+      // netTotal = priceAfterDiscount + vatTotal;
 
       // txtDiscountTotal.text = currency.format(discountTotal);
       // txtPriceTotal.text = currency.format(priceTotal);
@@ -434,9 +470,6 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
         // Navigator.pop(context);
         //setState(() {});
         globals.clearDraftOrder();
-        Navigator.pop(context);
-        Navigator.pop(context);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
         // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));
         return showDialog<void>(
             context: context,
@@ -450,7 +483,11 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
 
                 ],
               );
-            }).then((value) => Navigator.pop(context));
+            }).then((value) {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => StatusTransferDoc()));});
       } else {
         Navigator.pop(context);
         return showDialog<void>(
@@ -805,28 +842,29 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
                   ..goodAmount = x.goodAmnt
                   ..goodQty = x.goodQty2
                   ..goodPrice = x.goodPrice2
+                  ..discount = x.goodDiscAmnt
+                  ..discountType = x.goodDiscFormula != null && x.goodDiscAmnt < 100 ? 'PER' : 'THB'
                   ..discountBase = x.goodDiscAmnt
                   ..mainGoodUnitId = x.goodUnitId2
                   ..vatRate = x.vatrate
-                  ..vatType = x.vatType;
+                  ..vatType = x.vatType
+                ..isFree = x.goodPrice2 == 0 ? true : false;
                   // ..remark = detailRemark.firstWhere((element) => element.soId == x.soid && element.refListNo == x.listNo).remark;
-
+                print('Cart >>>>>>>>>>>>>>> ${cart.discountType}');
                 globals.productCartDraft.add(cart);
               });
 
+              globals.productCartDraft
+                  .where((element) => element.soid == SOHD.soid)
+                  .forEach((element) {
+                discountTotal += element.discountBase ?? 0;
+              });
               // globals.productCartDraft.forEach((element) {
               //   priceTotal += element.goodAmount;
               // });
               //
               // ctrl_priceTotal.add(priceTotal);
             } else {print('snapshot has not data');}
-
-            double discountTotal = 0;
-            globals.productCartDraft
-                .where((element) => element.soid == SOHD.soid)
-                .forEach((element) {
-              discountTotal += element.discountBase ?? 0;
-            });
 
             //txtDiscountTotal.text = currency.format(discountTotal ?? 0);
             calculateSummary();
@@ -851,7 +889,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
                 ),
                 DataColumn(
                   label: Text(
-                    'ประเภทสินค้า',
+                    'ประเภท',
                     style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
                   ),
                 ),
@@ -906,7 +944,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
               rows: globals.productCartDraft
                   .map((e) => DataRow(cells: [
                         DataCell(Text('${e.rowIndex}')),
-                        DataCell(Text('${e.isFree ?? false ? 'แถม' : 'ขาย'}')),
+                        DataCell(Text('${e.isFree ?? false ? 'แถมฟรี' : 'เพื่อขาย'}')),
                         DataCell(Text('${e.goodCode}')),
                         DataCell(Text('${e.goodName1}')),
                         DataCell(Text('${currency.format(e.goodQty ?? 0)}')),

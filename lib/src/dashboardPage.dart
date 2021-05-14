@@ -75,8 +75,10 @@ class DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
 
       txtCustomer.text = globals.customer?.custName;
-      if(globals.customer != null && txtCustomer.text == ''){
-        setState(() {});
+      if(globals.customer != null){
+        setState(() {
+          txtCustomer.text = globals.customer?.custName;
+        });
       }
       // globals.selectedShipto = globals.allShipto?.firstWhere((element) => element.custId == globals.customer?.custId);
       // print(globals.customer?.custId.toString());

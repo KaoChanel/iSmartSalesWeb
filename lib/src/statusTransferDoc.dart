@@ -112,7 +112,7 @@ class _StatusTransferDocState extends State<StatusTransferDoc> {
                 title: Text('Exception Get Sale Order'),
                 content: Text(e.toString()),
                 actions: [
-                  FlatButton(
+                  TextButton(
                       onPressed: () => Navigator.pop(context),
                       child: Text('ตกลง'))
                 ],
@@ -596,7 +596,7 @@ class _StatusTransferDocState extends State<StatusTransferDoc> {
                                       : x.custName.contains(txtKeyword.text))
                               .toList()));
                     } else {
-                      //return Expanded(child: Center(child: CircularProgressIndicator()));
+                      // return Expanded(child: Center(child: CircularProgressIndicator()));
                       return Expanded(
                         //child: dataBody(List<SaleOrderHeader>()),
                         child: Container(
