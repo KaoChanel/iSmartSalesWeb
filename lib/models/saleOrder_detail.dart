@@ -143,7 +143,7 @@ class SaleOrderDetail {
   dynamic postFlag;
   int goodStockQty;
   double goodCost;
-  int vatType;
+  String vatType;
   int vatrate;
   int stockFlag;
   String goodFlag;

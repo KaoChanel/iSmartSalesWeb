@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:ismart_crm/api_service.dart';
 import 'package:ismart_crm/models/dropdown.dart';
 import 'package:ismart_crm/src/saleOrderDraft.dart';
+import 'OrderDraft.dart';
 import 'saleOrderView.dart';
 import 'package:ismart_crm/models/customer.dart';
 
@@ -247,13 +248,13 @@ class _StatusTransferDocState extends State<StatusTransferDoc> {
                                         ))).then((value) => setState(() {}));
                           } else {
                             globals.isDraftInitial = false;
-                            globals.productCartDraft = List<ProductCart>();
+                            globals.productCartDraft = <ProductCart>[];
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SaleOrderDraft(
-                                          saleOrderHeader: element,
-                                        ))).then((value) => setState(() {}));
+                                    builder: (context) => OrderDraft(
+                                          header: element,
+                                        )));
                           }
 
                           // if (element.isTransfer == 'N') {

@@ -48,7 +48,7 @@ class Product {
   int vatGroupId;
   int vatRate;
   String vatGroupCode;
-  int vatType;
+  String vatType;
   GoodTypeFlag goodTypeFlag;
   int goodCateId;
   Inactive inactive;
@@ -71,7 +71,7 @@ class Product {
     vatGroupId: json["vatgroupId"] == null ? null : json["vatgroupId"],
     vatRate: json["vatRate"] == null ? null : json["vatRate"],
     vatGroupCode: json["vatgroupCode"] == null ? null : json["vatgroupCode"],
-    vatType: json["vatType"] == null ? null : json["vatType"],
+    vatType: json["vatType"] == null ? null : json["vatType"].toString(),
     goodTypeFlag: json["goodTypeFlag"] == null ? null : goodTypeFlagValues.map[json["goodTypeFlag"]],
     goodCateId: json["goodCateId"] == null ? null : json["goodCateId"],
     inactive: json["inactive"] == null ? null : inactiveValues.map[json["inactive"]],
@@ -95,7 +95,7 @@ class Product {
     "vatgroupId": vatGroupId == null ? null : vatGroupId,
     "vatRate": vatRate == null ? null : vatRate,
     "vatgroupCode": vatGroupCode == null ? null : vatGroupCode,
-    "vatType": vatType == null ? null : vatType,
+    "vatType": vatType == null ? null : vatType.toString(),
     "goodTypeFlag": goodTypeFlag == null ? null : goodTypeFlagValues.reverse[goodTypeFlag],
     "goodCateId": goodCateId == null ? null : goodCateId,
     "inactive": inactive == null ? null : inactiveValues.reverse[inactive],

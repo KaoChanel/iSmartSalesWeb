@@ -247,11 +247,13 @@ class _SaleOrderState extends State<SaleOrder> {
       }
 
       //priceTotal = priceTotal - discountTotal;
+      discountBill = globals.discountBill.number;
       if (globals.discountBill.type == 'PER') {
         double percentDiscount = globals.discountBill.number / 100;
         globals.discountBill.amount = (percentDiscount * priceTotal);
         priceAfterDiscount = priceTotal - globals.discountBill.amount;
       } else {
+        globals.discountBill.amount = discountBill;
         priceAfterDiscount = priceTotal - globals.discountBill.number;
       }
 
@@ -425,7 +427,7 @@ class _SaleOrderState extends State<SaleOrder> {
       header.netAmnt = netTotal;
 
       /// Discount
-      header.billDiscFormula = globals.discountBill.type == 'PER' ? '${globals.discountBill.number}%' : globals.discountBill.amount;
+      header.billDiscFormula = globals.discountBill.type == 'PER' ? '${globals.discountBill.number.toString()}%' : globals.discountBill.amount.toString();
       header.billDiscAmnt = globals.discountBill.amount;
       header.billAftrDiscAmnt = priceAfterDiscount;
 
@@ -464,6 +466,11 @@ class _SaleOrderState extends State<SaleOrder> {
           obj.goodDiscAmnt = e.discountBase;
           obj.goodsRemark = e.remark;
           obj.isTransfer = status;
+
+          /// Vat Goods
+          obj.vatgroupId = e.vatGroupId;
+          obj.vatType = e.vatType;
+          obj.vatrate = e.vatRate;
 
           /// Empty Field
           obj.goodQty1 = 0.00;
@@ -553,7 +560,7 @@ class _SaleOrderState extends State<SaleOrder> {
           applicationName: 'Post Sale Order Exception',
           applicationIcon: Icon(Icons.error_outline),
           children: [
-            Text(e),
+            Text(e.toString()),
           ]);
     }
   }

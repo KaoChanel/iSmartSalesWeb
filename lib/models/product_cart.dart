@@ -48,13 +48,13 @@ class ProductCart {
   String goodNameEng2;
   String goodBillName;
   int mainGoodUnitId;
-  dynamic saleGoodUnitId;
-  dynamic subGoodUnitId;
+  int saleGoodUnitId;
+  int subGoodUnitId;
   int buyGoodUnitId;
   int vatGroupId;
   int vatRate;
   String vatGroupCode;
-  int vatType;
+  String vatType;
   String goodTypeFlag;
   int goodCateId;
   String inactive;

@@ -831,6 +831,7 @@ class _SaleOrderCopyState extends State<SaleOrderCopy> {
           ..goodAmount = x.goodAmnt
           ..goodQty = x.goodQty2
           ..goodPrice = x.goodPrice2
+          ..discount = x.goodDiscAmnt
           ..discountBase = x.goodDiscAmnt
           ..discountType = x.goodDiscType
           ..mainGoodUnitId = x.goodUnitId2

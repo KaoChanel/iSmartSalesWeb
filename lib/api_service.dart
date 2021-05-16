@@ -485,22 +485,59 @@ class ApiService {
   }
 
   Future<bool> updateSODTRemark(List<SoDetailRemark> data) async {
-    final response = await client.put(
-      "$baseUrl/SoDetailRemarks/${globals.company}/",
-      headers: {
-        "content-type": "application/json",
-        "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-        "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
-        "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-        "Access-Control-Allow-Methods": "PUT, OPTIONS"
-      },
-      body: soDetailRemarkToJson(data),
-    );
-    if (response.statusCode == 204) {
-      return true;
-    } else {
+    // final response = await client.put(
+    //   "$baseUrl/SoDetailRemarks/${globals.company}/",
+    //   headers: {
+    //     "content-type": "application/json",
+    //     "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+    //     "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
+    //     "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+    //     "Access-Control-Allow-Methods": "PUT, OPTIONS"
+    //   },
+    //   body: soDetailRemarkToJson(data),
+    // );
+    // if (response.statusCode == 204) {
+    //   return true;
+    // } else {
+    //   return false;
+    // }
+
+      final response = await client.delete(
+        "$baseUrl/SoDetailRemarks/${globals.company}/${data.first.soId}",
+        headers: {
+          "content-type": "application/json",
+          "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+          "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
+          "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+          "Access-Control-Allow-Methods": "DELETE, OPTIONS"
+        },
+      );
+
+      print('SODT Remark Delete: Status Code: ${response.statusCode} | $baseUrl/SoDetailRemarks/${globals.company}/${data.first.soId}');
+      print(response.headers);
+
+      if (response.statusCode == 204 || response.statusCode == 404) {
+       final response = await client.post(
+          "$baseUrl/SoDetailRemarks/${globals.company}",
+          headers: {
+            "content-type": "application/json",
+            "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+            "Access-Control-Allow-Credentials": "true", // Required for cookies, authorization headers with HTTPS
+            "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+            "Access-Control-Allow-Methods": "POST, OPTIONS"
+          },
+          body: soDetailRemarkToJson(data),
+        );
+
+       print('Status Code: ${response.statusCode}');
+       print(response.headers);
+       print(soDetailRemarkToJson(data));
+
+        if (response.statusCode == 201) {
+          return true;
+        }
+      }
       return false;
-    }
   }
 
   Future<bool> saveDraft(SaleOrderHeader header, List<SaleOrderDetail> data) async {

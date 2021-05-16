@@ -13,6 +13,7 @@ import 'package:ismart_crm/models/shipto.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ismart_crm/src/saleOrderCopy.dart';
 import 'package:ismart_crm/src/saleOrderDraft.dart';
+import 'OrderCopy.dart';
 import 'containerProduct.dart';
 import 'package:http/http.dart' as http;
 import 'package:ismart_crm/globals.dart' as globals;
@@ -1103,7 +1104,7 @@ class _SaleOrderViewState extends State<SaleOrderView> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => SaleOrderCopy(header:widget.saleOrderHD, detail:SODT)));
+                                          builder: (context) => OrderCopy(header:widget.saleOrderHD, detail:SODT)));
                                 },
                               )..show();
                               //print(jsonEncode(globals.productCart));

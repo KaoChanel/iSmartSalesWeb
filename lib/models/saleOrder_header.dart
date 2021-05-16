@@ -156,7 +156,7 @@ class SaleOrderHeader {
   dynamic sumExcludeAmnt;
   double sumGoodAmnt;
   dynamic baseDiscAmnt;
-  dynamic billDiscFormula;
+  String billDiscFormula;
   double billDiscAmnt;
   double billAftrDiscAmnt;
   dynamic totaExcludeAmnt;
