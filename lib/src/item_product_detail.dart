@@ -286,6 +286,15 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
 
   void addProductToCart() {
     int row = 1;
+    var stockInfo = globals.allStock?.where((e) => e.goodid == widget.product.goodId);
+    String lotFlag = 'N', expireFlag = 'N', serialFlag = 'N';
+    if(stockInfo != null){
+      if(stockInfo.any((x) => x.lotNo.isNotEmpty)) {lotFlag = 'Y';}
+      if(stockInfo.any((x) => x.expiredate.toString().isNotEmpty)) {lotFlag = 'Y';}
+      if(stockInfo.any((x) => x.serialNo.isNotEmpty)) {lotFlag = 'Y';}
+    }
+
+
     if (widget.docType == 'ORDER') {
       print('editedPrice : ' + widget.editedPrice.toString());
       if (globals.productCart.length > 0) {
@@ -314,6 +323,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
         globals.productCart[startIndex].discountType = _discountType;
         globals.productCart[startIndex].discountBase = _discountBase;
             // _discountType == 'PER' ? _totalNet * _discount / 100 : _discount;
+        globals.productCart[startIndex].beforeDiscountAmount = _totalAmount;
         globals.productCart[startIndex].goodAmount = _totalNet;
         globals.productCart[startIndex].isFree = _isFreeProduct;
         globals.productCart[startIndex].vatGroupId = widget.product.vatGroupId;
@@ -322,6 +332,9 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
         globals.productCart[startIndex].vatType = widget.product.vatType;
         globals.productCart[startIndex].vatRate = widget.product.vatRate;
         globals.productCart[startIndex].remark = txtRemark.text;
+        globals.productCart[startIndex].lotFlag = lotFlag;
+        globals.productCart[startIndex].expireFlag = expireFlag;
+        globals.productCart[startIndex].serialFlag = serialFlag;
         globals.editingProductCart = null;
         // List<ProductCart> temp = globals.productCart.where((element) => element.rowIndex == globals.editingProductCart.rowIndex).toList();
         // print('Index: $startIndex');
@@ -342,13 +355,17 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
           ..discountType = _discountType
           ..discountBase = _discountBase
               // _discountType == 'PER' ? _totalNet * _discount / 100 : _discount
+          ..beforeDiscountAmount = _totalAmount
           ..goodAmount = _totalNet
           ..isFree = _isFreeProduct
           ..vatGroupId = widget.product.vatGroupId
           ..vatGroupCode = widget.product.vatGroupCode
           ..vatType = widget.product.vatType
           ..vatRate = widget.product.vatRate
-          ..remark = txtRemark.text;
+          ..remark = txtRemark.text
+          ..lotFlag = lotFlag
+          ..expireFlag = expireFlag
+          ..serialFlag = serialFlag;
 
         if (widget.editedPrice > 0) {
           order.goodPrice = globals.newPrice;
@@ -388,6 +405,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
         globals.productCartCopy[startIndex].discountType = _discountType;
         globals.productCartCopy[startIndex].discountBase = _discountBase;
             // _discountType == 'PER' ? _totalNet * _discount / 100 : _discount;
+        globals.productCartCopy[startIndex].beforeDiscountAmount = _totalAmount;
         globals.productCartCopy[startIndex].goodAmount = _totalNet;
         globals.productCartCopy[startIndex].isFree = _isFreeProduct;
         globals.productCartCopy[startIndex].vatGroupId =
@@ -397,6 +415,9 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
         globals.productCartCopy[startIndex].vatType = widget.product.vatType;
         globals.productCartCopy[startIndex].vatRate = widget.product.vatRate;
         globals.productCartCopy[startIndex].remark = txtRemark.text;
+        globals.productCartCopy[startIndex].lotFlag = lotFlag;
+        globals.productCartCopy[startIndex].expireFlag = expireFlag;
+        globals.productCartCopy[startIndex].serialFlag = serialFlag;
         globals.editingProductCart = null;
         // List<ProductCart> temp = globals.productCart.where((element) => element.rowIndex == globals.editingProductCart.rowIndex).toList();
         // print('Index: $startIndex');
@@ -417,13 +438,17 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
           ..discountType = _discountType
           ..discountBase = _discountBase
               // _discountType == 'PER' ? _totalNet * _discount / 100 : _discount
+          ..beforeDiscountAmount = _totalAmount
           ..goodAmount = _totalNet
           ..isFree = _isFreeProduct
           ..vatGroupId = widget.product.vatGroupId
           ..vatGroupCode = widget.product.vatGroupCode
           ..vatType = widget.product.vatType
           ..vatRate = widget.product.vatRate
-          ..remark = txtRemark.text;
+          ..remark = txtRemark.text
+          ..lotFlag = lotFlag
+          ..expireFlag = expireFlag
+          ..serialFlag = serialFlag;
 
         if (widget.editedPrice > 0) {
           order.goodPrice = globals.newPrice;
@@ -462,6 +487,7 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
         globals.productCartDraft[startIndex].discountType = _discountType;
         globals.productCartDraft[startIndex].discountBase = _discountBase;
         // _discountType == 'PER' ? _totalNet * _discount / 100 : _discount;
+        globals.productCartDraft[startIndex].beforeDiscountAmount = _totalAmount;
         globals.productCartDraft[startIndex].goodAmount = _totalNet;
         globals.productCartDraft[startIndex].isFree = _isFreeProduct;
         globals.productCartDraft[startIndex].vatGroupId =
@@ -471,6 +497,9 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
         globals.productCartDraft[startIndex].vatType = widget.product.vatType;
         globals.productCartDraft[startIndex].vatRate = widget.product.vatRate;
         globals.productCartDraft[startIndex].remark = txtRemark.text;
+        globals.productCartDraft[startIndex].lotFlag = lotFlag;
+        globals.productCartDraft[startIndex].expireFlag = expireFlag;
+        globals.productCartDraft[startIndex].serialFlag = serialFlag;
         globals.editingProductCart = null;
         // List<ProductCart> temp = globals.productCart.where((element) => element.rowIndex == globals.editingProductCart.rowIndex).toList();
         // print('Index: $startIndex');
@@ -490,13 +519,17 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
           ..discountType = _discountType
           ..discountBase = _discountBase
           // _discountType == 'PER' ? _totalNet * _discount / 100 : _discount
+          ..beforeDiscountAmount = _totalAmount
           ..goodAmount = _totalNet
           ..isFree = _isFreeProduct
           ..vatGroupId = widget.product.vatGroupId
           ..vatGroupCode = widget.product.vatGroupCode
           ..vatType = widget.product.vatType
           ..vatRate = widget.product.vatRate
-          ..remark = txtRemark.text;
+          ..remark = txtRemark.text
+          ..lotFlag = lotFlag
+          ..expireFlag = expireFlag
+          ..serialFlag = serialFlag;
 
         if (widget.editedPrice > 0) {
           order.goodPrice = globals.newPrice;
@@ -532,48 +565,66 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
               ' (' +
               widget.product.goodCode +
               ')'),
-          content: Column(
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        // height: 350.0,
-                        width: 400,
-                        alignment: Alignment.center,
-                        child: ListView(
-                          children: StockByProd.map((e) => ListTile(
-                                    title: Text('Lot No. ' +
-                                        e.lotNo +
-                                        '               คงเหลือ:  ' +
-                                        currency.format(e.remaqty)),
-                                    subtitle: Text('Expire: ' +
-                                        dateFormat.format(e.expiredate) +
-                                        '                        ' +
-                                        e.goodUnitCode),
-                                    onTap: () {},
-                                  )).toList() ??
-                              [],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
+          content: Container(
+            height: 300,
+            width: 500,
+            child: Column(
+              children: [
+                Expanded(
                   child: Row(
                     children: [
                       Expanded(
                         child: Container(
-                            alignment: Alignment.topCenter,
-                            child: goodRemainQty > 0 ? Text('จองไปแล้ว                    ${numberFormat.format(goodRemainQty)}               $unitName') : Text('ยังไม่มียอดจองสินค้า')
+                          // height: 350.0,
+                          // width: 400,
+                          alignment: Alignment.center,
+                          child: ListView(
+                            children: StockByProd.map((e) => ListTile(
+                                      title: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 3,
+                                            child: Text('Lot No. ' +
+                                                e.lotNo
+                                            ),
+                                          ),
+                                          Expanded(child: Text('คงเหลือ:  ' +
+                                          currency.format(e.remaqty)))
+                                        ],
+                                      ),
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 2,
+                                            child: Text('วันหมดอายุ:  ' +
+                                                dateFormat.format(e.expiredate)),
+                                          ),
+                                          Expanded(child: Text('หน่วยนับ: ' + e.goodUnitCode, textAlign: TextAlign.right,))
+                                        ],
+                                      ),
+                                      onTap: () => Navigator.pop(context),
+                                    )).toList() ??
+                                [],
+                          ),
                         ),
                       ),
                     ],
-                  )
-              )
-            ],
+                  ),
+                ),
+                Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                              alignment: Alignment.topCenter,
+                              child: goodRemainQty > 0 ? Text('จองไปแล้ว                    ${numberFormat.format(goodRemainQty)}               $unitName') : Text('ยังไม่มียอดจองสินค้า')
+                          ),
+                        ),
+                      ],
+                    )
+                )
+              ],
+            ),
           ),
         );
       },

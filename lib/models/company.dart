@@ -13,7 +13,7 @@ class Company{
 final companys = <Company>[
   Company(
     compCode: 'BIO',
-    compName: 'Bioscience Animal Health',
+    compName: 'BioScience Animal Health',
   ),
   Company(
     compCode: 'NIC',

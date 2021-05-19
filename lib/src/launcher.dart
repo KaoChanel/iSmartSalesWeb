@@ -66,7 +66,7 @@ class _LauncherState extends State<Launcher> {
     return Scaffold(
       drawer: NavDrawer(),
       appBar: AppBar(
-        title: Center(child: Text('BIS Group (${globals.allCompany?.first?.compNameEng ?? ''})')),
+        title: Container(padding: EdgeInsets.only(right: 75),child: Center(child: Text('${globals.allCompany?.first?.compName ?? ''}'))),
       ),
       body: SizedBox(
         child: PageView(

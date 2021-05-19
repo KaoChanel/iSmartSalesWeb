@@ -211,7 +211,7 @@ class DashboardPageState extends State<DashboardPage> {
                                     Navigator.push(
                                         context,
                                         CupertinoPageRoute(
-                                            builder: (context) => SaleOrder()));
+                                            builder: (context) => SaleOrder())).then((value) => setState((){}));
                                   },
                                 )))
                       ])),
@@ -244,7 +244,7 @@ class DashboardPageState extends State<DashboardPage> {
                                       context,
                                       CupertinoPageRoute(
                                           builder: (context) =>
-                                              StatusTransferDoc()));
+                                              StatusTransferDoc())).then((value) => setState((){}));
                                 },
                               )))
                     ])),

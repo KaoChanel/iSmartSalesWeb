@@ -100,19 +100,19 @@ class _OrderDraftState extends State<OrderDraft> {
                           // initialValue: DateFormat('dd/MM/yyyy').format(DateTime.now()),
                           readOnly: true,
                           onTap: () async {
-                            _docuDate = await showDatePicker(
-                              context: context,
-                              initialDate: _docuDate != null
-                                  ? _docuDate
-                                  : DateTime.now(),
-                              firstDate: DateTime(1995),
-                              lastDate: DateTime(2030),
-                            );
-
-                            setState(() {
-                              txtDocuDate.text = DateFormat('dd/MM/yyyy')
-                                  .format(_docuDate ?? DateTime.now());
-                            });
+                            // _docuDate = await showDatePicker(
+                            //   context: context,
+                            //   initialDate: _docuDate != null
+                            //       ? _docuDate
+                            //       : DateTime.now(),
+                            //   firstDate: DateTime.now().add(Duration(days: -90)),
+                            //   lastDate: DateTime.now().add(Duration(days: 365)),
+                            // );
+                            //
+                            // setState(() {
+                            //   if (_docuDate == null) _docuDate = DateTime.now();
+                            //   txtDocuDate.text = DateFormat('dd/MM/yyyy').format(_docuDate);
+                            // });
                           },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -164,10 +164,12 @@ class _OrderDraftState extends State<OrderDraft> {
                             );
 
                             setState(() {
-                              txtShiptoDate.text = DateFormat('dd/MM/yyyy')
-                                  .format(_shiptoDate ??
-                                      DateTime.now()
-                                          .add(new Duration(hours: 24)));
+                              if (_shiptoDate == null)
+                                _shiptoDate =
+                                    DateTime.now().add(new Duration(hours: 24));
+
+                              txtShiptoDate.text =
+                                  DateFormat('dd/MM/yyyy').format(_shiptoDate);
                             });
                           },
                           decoration: InputDecoration(
@@ -216,8 +218,8 @@ class _OrderDraftState extends State<OrderDraft> {
                             );
 
                             setState(() {
-                              txtOrderDate.text = DateFormat('dd/MM/yyyy')
-                                  .format(_orderDate ?? DateTime.now());
+                              if (_orderDate == null) _orderDate = DateTime.now();
+                              txtOrderDate.text = DateFormat('dd/MM/yyyy').format(_orderDate);
                             });
                           },
                           decoration: InputDecoration(
@@ -545,7 +547,7 @@ class _OrderDraftState extends State<OrderDraft> {
                                                     null,
                                                     'DRAFT'))).then((value) {
                                       globals.editingProductCart = null;
-                                      setState(() {});
+                                      setState(() {calculateSummary();});
                                     });
                                   },
                                   icon: Icon(Icons.add_circle_outline_outlined,
@@ -848,6 +850,8 @@ class _OrderDraftState extends State<OrderDraft> {
                                           FocusScope.of(context).unfocus();
                                           calculateSummary();
                                         }
+
+                                        calculateSummary();
                                       });
                                     },
                                     decoration: InputDecoration(
@@ -1014,7 +1018,7 @@ class _OrderDraftState extends State<OrderDraft> {
                                   desc: 'Are you sure to create sales order ?',
                                   btnCancelOnPress: () {},
                                   btnOkOnPress: () async {
-                                    setState(() {});
+                                    // setState(() {});
                                     await saveOrder('N');
                                     Navigator.pop(context);
                                     Navigator.pop(context);
@@ -1107,13 +1111,17 @@ class _OrderDraftState extends State<OrderDraft> {
     super.initState();
 
     globals.discountBillDraft = Discount(number: 0, amount: 0, type: 'THB');
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      globals.showLoaderDialog(context, false);
       setCustomer();
-      setShipto();
+      initShipto();
       setHeader();
       await setDetails();
       await setRemark();
+      Navigator.pop(context);
     });
+    
     calculateSummary();
   }
 
@@ -1121,11 +1129,13 @@ class _OrderDraftState extends State<OrderDraft> {
     globals.customer = globals.allCustomer
         .firstWhere((e) => e.custId == widget.header.custId, orElse: null);
     globals.selectedShipto = globals.allShipto?.firstWhere(
-        (element) => element.custId == globals.customer?.custId,
+            (e) => e.custId == widget.header.custId && e.shiptoCode == widget.header.shipToCode,
         orElse: () => null);
+
+    globals.selectedShiptoDraft = globals.selectedShipto;
   }
 
-  setShipto() {
+  initShipto() {
     txtShiptoProvince.text = widget.header.province ?? '';
     txtShiptoAddress.text = '${widget.header.shipToAddr1 ?? ''} '
         '${widget.header.shipToAddr2 ?? ''} '
@@ -1133,6 +1143,18 @@ class _OrderDraftState extends State<OrderDraft> {
         '${widget.header.amphur ?? ''} '
         '${widget.header.province ?? ''} '
         '${widget.header.postCode ?? ''}';
+    txtShiptoRemark.text = widget.header.remark ?? '';
+  }
+
+  setShipto() {
+    txtShiptoProvince.text = globals.selectedShiptoDraft?.province ?? '';
+    txtShiptoAddress.text = '${globals.selectedShiptoDraft?.shiptoAddr1 ?? ''} '
+        '${globals.selectedShiptoDraft?.shiptoAddr2 ?? ''} '
+        '${globals.selectedShiptoDraft?.district ?? ''} '
+        '${globals.selectedShiptoDraft?.amphur ?? ''} '
+        '${globals.selectedShiptoDraft?.province ?? ''} '
+        '${globals.selectedShiptoDraft?.postcode ?? ''}';
+    txtShiptoRemark.text = globals.selectedShiptoDraft?.remark ?? '';
   }
 
   setHeader() {
@@ -1205,6 +1227,7 @@ class _OrderDraftState extends State<OrderDraft> {
                 .goodCode ??
             '-'
         ..goodName1 = x.goodName
+        ..beforeDiscountAmount = x.afterMarkupamnt
         ..goodAmount = x.goodAmnt
         ..goodQty = x.goodQty2
         ..goodPrice = x.goodPrice2
@@ -1215,6 +1238,9 @@ class _OrderDraftState extends State<OrderDraft> {
         ..mainGoodUnitId = x.goodUnitId2
         ..vatRate = x.vatrate
         ..vatType = x.vatType
+        ..lotFlag = x.lotFlag
+        ..expireFlag = x.expireflag
+        ..serialFlag = x.serialFlag
         ..isFree = x.goodPrice2 == 0 ? true : false;
       // ..remark = detailRemark.firstWhere((element) => element.soId == x.soid && element.refListNo == x.listNo).remark;
       print('Cart >>>>>>>>>>>>>>> ${cart.discountType}');
@@ -1299,17 +1325,20 @@ class _OrderDraftState extends State<OrderDraft> {
             '${shiptoList[i]?.shiptoAddr1 ?? ''} ${shiptoList[i]?.district ?? ''} ${shiptoList[i]?.amphur ?? ''} ${shiptoList[i]?.province ?? ''} ${shiptoList[i]?.postcode ?? ''}'),
         //subtitle: Text(item?.custCode),
         onTap: () {
-          //globals.selectedShipto = shiptoList[i];
-          widget.header.shipToAddr1 = shiptoList[i].shiptoAddr1;
-          widget.header.shipToAddr2 = shiptoList[i].shiptoAddr2;
-          widget.header.district = shiptoList[i].district;
-          widget.header.amphur = shiptoList[i].amphur;
-          widget.header.province = shiptoList[i].province;
-          widget.header.postCode = shiptoList[i].postcode;
+          // widget.header.shipToAddr1 = shiptoList[i].shiptoAddr1;
+          // widget.header.shipToAddr2 = shiptoList[i].shiptoAddr2;
+          // widget.header.district = shiptoList[i].district;
+          // widget.header.amphur = shiptoList[i].amphur;
+          // widget.header.province = shiptoList[i].province;
+          // widget.header.postCode = shiptoList[i].postcode;
+          globals.selectedShiptoDraft = shiptoList[i];
           Navigator.pop(context);
-          setState(() {});
+          setState(() {
+            setShipto();
+            calculateSummary();
+          });
         },
-        selected: widget.header.shipToAddr1 == shiptoList[i]?.shiptoAddr1 ?? '',
+        selected: globals.selectedShiptoDraft.shiptoAddr1 == shiptoList[i]?.shiptoAddr1 ?? '',
         selectedTileColor: Colors.grey[200],
         hoverColor: Colors.grey,
       ));
@@ -1424,12 +1453,12 @@ class _OrderDraftState extends State<OrderDraft> {
     );
   }
 
-  getOrderDetails() {
+  Widget getOrderDetails() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: DataTable(
           showBottomBorder: true,
-          columnSpacing: 26,
+          columnSpacing: 25,
           sortColumnIndex: 0,
           columns: <DataColumn>[
             DataColumn(
@@ -1455,10 +1484,12 @@ class _OrderDraftState extends State<OrderDraft> {
               ),
             ),
             DataColumn(
-              label: Text(
-                'ชื่อสินค้า',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+              label: Center(
+                child: Text(
+                  'ชื่อสินค้า',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+                ),
               ),
             ),
             DataColumn(
@@ -1554,7 +1585,7 @@ class _OrderDraftState extends State<OrderDraft> {
                             //
                             // ctrl_priceTotal.add(priceTotal);
 
-                            setState(() {});
+                            setState(() {calculateSummary();});
                           },
                           child: Icon(Icons.delete_forever),
                           style: ButtonStyle(
@@ -1670,24 +1701,43 @@ class _OrderDraftState extends State<OrderDraft> {
       docuNo = SOHD.docuNo;
 
       /// Company Info
-      header.brchId = 1;
+      header.brchId = globals.options.brchId;
+
+      /// Default filled.
+      header.validDays = 0;
+      header.onHold = 'N';
+      header.goodType = '1';
+      header.docuType = 104;
+      header.docuStatus = 'N';
+      header.postdocutype = 1702;
+      header.exchRate = 1;
+      header.sumIncludeAmnt = 0;
+      header.sumExcludeAmnt = 0;
+      header.commissionAmnt = 0;
+      header.clearSo = 'N';
+      header.miscChargAmnt = 0;
+      header.multiCurrency = 'N';
+      header.resvAmnt1 = 0;
+      header.resvAmnt2 = 0;
+      header.resvAmnt3 = 0;
+      header.resvAmnt4 = 0;
+      header.quotStatus = 'รอผู้ใหญ่ตัดสินใจ';
+      header.appvFlag = 'W';
+      header.pkgStatus = 'N';
+      header.refeflag = 'N';
+      header.alertFlag = 'N';
+      header.clearflag = 'N';
 
       /// document header.
       header.soid = SOHD.soid;
       header.saleAreaId = globals.customer.saleAreaId;
       header.docuNo = docuNo;
       header.refNo = refNo;
-      header.docuType = 104;
       header.docuDate = _docuDate;
       header.shipDate = _shiptoDate;
       header.custPodate = _orderDate;
       header.custPono = txtCustPONo.text;
-      header.validDays = 0;
-      header.onHold = 'N';
-      header.goodType = '1';
-      header.docuStatus = 'Y';
       header.isTransfer = status;
-      header.postdocutype = 1702;
 
       /// employee information.
       header.empId = globals.employee.empId;
@@ -1699,16 +1749,16 @@ class _OrderDraftState extends State<OrderDraft> {
       header.creditDays = globals.customer.creditDays;
 
       /// shipment to customer.
-      header.shipToCode = globals.selectedShipto.shiptoCode;
-      header.transpId = globals.selectedShipto.transpId;
-      header.transpAreaId = globals.selectedShipto.transpAreaId;
-      header.shipToAddr1 = globals.selectedShipto.shiptoAddr1;
-      header.shipToAddr2 = globals.selectedShipto.shiptoAddr2;
-      header.district = globals.selectedShipto.district;
-      header.amphur = globals.selectedShipto.amphur;
-      header.province = globals.selectedShipto.province;
-      header.postCode = globals.selectedShipto.postcode;
-      header.remark = globals.selectedShipto.remark;
+      header.shipToCode = globals.selectedShiptoDraft.shiptoCode;
+      header.transpId = globals.selectedShiptoDraft.transpId;
+      header.transpAreaId = globals.selectedShiptoDraft.transpAreaId;
+      header.shipToAddr1 = globals.selectedShiptoDraft.shiptoAddr1;
+      header.shipToAddr2 = globals.selectedShiptoDraft.shiptoAddr2;
+      header.district = globals.selectedShiptoDraft.district;
+      header.amphur = globals.selectedShiptoDraft.amphur;
+      header.province = globals.selectedShiptoDraft.province;
+      header.postCode = globals.selectedShiptoDraft.postcode;
+      header.remark = globals.selectedShiptoDraft.remark;
 
       /// VAT Info
       header.vatgroupId = globals.vatGroup.vatgroupId;
@@ -1717,6 +1767,7 @@ class _OrderDraftState extends State<OrderDraft> {
       header.vatamnt = vatTotal;
 
       /// Discount
+      header.billDiscFormula = globals.discountBillDraft.type == 'PER' ? '${globals.discountBillDraft.number.toInt().toString()}%' : currency.format(globals.discountBillDraft.amount);
       header.billDiscAmnt = globals.discountBillDraft.amount;
 
       /// Cost Summary.
@@ -1729,29 +1780,55 @@ class _OrderDraftState extends State<OrderDraft> {
         obj.soid = header.soid;
         obj.listNo = e.rowIndex;
         obj.docuType = 104;
-        obj.goodType = '1';
         obj.goodId = e.goodId;
         obj.goodName = e.goodName1;
-        //obj.goodName = e.goodName2;
+        obj.goodStockUnitId = e.mainGoodUnitId;
         obj.goodUnitId2 = e.mainGoodUnitId;
         obj.goodQty2 = e.goodQty;
+        obj.poqty = e.goodQty;
+        obj.remaQty = e.goodQty;
+        obj.remaQtyPkg = e.goodQty;
+        obj.goodStockQty = e.goodQty;
+        obj.goodRemaQty1 = e.goodQty;
+        obj.remaGoodStockQty = e.goodQty;
         obj.goodPrice2 = e.goodPrice;
         obj.goodAmnt = e.goodAmount;
-        obj.afterMarkupamnt = e.goodAmount;
+        obj.remaamnt = e.goodAmount;
+        obj.afterMarkupamnt = e.beforeDiscountAmount;
         obj.goodDiscAmnt = e.discountBase;
-        obj.isTransfer = status;
         obj.goodsRemark = e.remark;
+        obj.isTransfer = status;
+
+        /// Stock Information
+        obj.lotFlag = e.lotFlag;
+        obj.expireflag = e.expireFlag;
+        obj.serialFlag = e.serialFlag;
 
         /// Vat Goods
         obj.vatgroupId = e.vatGroupId;
         obj.vatType = e.vatType;
         obj.vatrate = e.vatRate;
 
-        /// Empty Field
+        /// Default Field
         obj.goodQty1 = 0.00;
         obj.goodPrice1 = 0.00;
         obj.goodCompareQty = 0;
         obj.goodCost = 0;
+        obj.goodStockRate1 = 0;
+        obj.goodStockRate2 = 0;
+        obj.miscChargAmnt = 0;
+        obj.remaBefoQty = 0;
+        obj.goodType = '1';
+        obj.stockFlag = -1;
+        obj.goodFlag = 'G';
+        obj.freeFlag = 'N';
+        obj.reserveQty = 0;
+        obj.resvAmnt1 = 0;
+        obj.resvAmnt2 = 0;
+        obj.goodRemaQty2 = 0;
+        obj.poststock = 'N';
+        obj.markUpAmnt = 0;
+        obj.commisAmnt = 0;
 
         detail.add(obj);
       });
@@ -1794,7 +1871,6 @@ class _OrderDraftState extends State<OrderDraft> {
           }
         }
       } else {
-        Navigator.pop(context);
         return showDialog<void>(
             context: context,
             builder: (BuildContext context) {
@@ -1809,7 +1885,6 @@ class _OrderDraftState extends State<OrderDraft> {
             });
       }
     } catch (e) {
-      Navigator.pop(context);
       return showAboutDialog(
           context: context,
           applicationName: 'Post Sale Order Exception',

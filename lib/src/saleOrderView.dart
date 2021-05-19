@@ -95,8 +95,10 @@ class _SaleOrderViewState extends State<SaleOrderView> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      globals.showLoaderDialog(context, false);
       await setHeader();
       setSelectedShipto();
+      Navigator.pop(context);
     });
   }
 
@@ -108,56 +110,71 @@ class _SaleOrderViewState extends State<SaleOrderView> {
   }
 
   setHeader() async {
-    SOHD = widget.saleOrderHD;
-    SODT = await _apiService.getSODT(SOHD.soid);
-    headerRemark = await _apiService.getHeaderRemark(SOHD.soid);
-    detailRemark = await _apiService.getDetailRemark(SOHD.soid);
+    try {
+      SOHD = widget.saleOrderHD;
+      SODT = await _apiService.getSODT(SOHD.soid);
+      headerRemark = await _apiService.getHeaderRemark(SOHD.soid);
+      detailRemark = await _apiService.getDetailRemark(SOHD.soid);
 
-    print('Length: ${detailRemark.length}');
-    detailRemark?.forEach((e) => print('DTRemark SOID: ${e.soId} ListNo: ${e.refListNo} Remark: ${e.remark}'));
-    SODT.forEach((x) {
-      print('SODT SOID: ${x.soid} ListNo:${x.listNo} RefListNo:${x.listNo}');
-      print('---------' + detailRemark.firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo, orElse: () => null)?.remark ?? '');
-      x.goodsRemark = detailRemark.firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo, orElse: () => null)?.remark ?? '';
-    });
+      print('Length: ${detailRemark.length}');
+      detailRemark?.forEach((e) =>
+          print('DTRemark SOID: ${e.soId} ListNo: ${e.refListNo} Remark: ${e
+              .remark}'));
+      SODT.forEach((x) {
+        print('SODT SOID: ${x.soid} ListNo:${x.listNo} RefListNo:${x.listNo}');
+        print('---------' + detailRemark
+            .firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo,
+            orElse: () => null)
+            ?.remark ?? '');
+        x.goodsRemark = detailRemark
+            .firstWhere((e) => e.soId == x.soid && e.refListNo == x.listNo,
+            orElse: () => null)
+            ?.remark ?? '';
+      });
 
-    runningNo = SOHD.docuNo ?? '';
-    refNo = SOHD.refNo ?? '';
-    // _docuDate = editedDocuDate == false ? SOHD.docuDate : _docuDate;
-    // _shiptoDate = editedShipDate == false ? SOHD.shipDate : _shiptoDate;
-    _docuDate = SOHD.docuDate;
-    _shiptoDate = SOHD.shipDate;
-    _orderDate = SOHD.custPodate;
-    discountBill = SOHD.billDiscAmnt;
+      runningNo = SOHD.docuNo ?? '';
+      refNo = SOHD.refNo ?? '';
+      // _docuDate = editedDocuDate == false ? SOHD.docuDate : _docuDate;
+      // _shiptoDate = editedShipDate == false ? SOHD.shipDate : _shiptoDate;
+      _docuDate = SOHD.docuDate;
+      _shiptoDate = SOHD.shipDate;
+      _orderDate = SOHD.custPodate;
+      discountBill = SOHD.billDiscAmnt;
 
-    txtRunningNo.text = runningNo;
-    txtRefNo.text = refNo;
-    txtDocuNo.text = SOHD.docuNo;
-    txtDocuDate.text = DateFormat('dd/MM/yyyy').format(_docuDate);
-    txtShiptoDate.text = _shiptoDate != null ? DateFormat('dd/MM/yyyy').format(_shiptoDate) : '';
-    txtShiptoRemark.text = '';
-    txtOrderDate.text = _orderDate != null ? DateFormat('dd/MM/yyyy').format(_orderDate) : '';
-    txtEmpCode.text = '${globals.employee?.empCode}';
-    txtCustCode.text = globals.allCustomer
-            ?.firstWhere(
-                (element) => element.custId == SOHD.custId)
-            ?.custCode ??
-        '';
-    txtCustName.text = SOHD.custName ?? '';
-    txtCredit.text = SOHD.creditDays.toString() ?? '0';
-    // txtRemark.text = SOHD.remark ?? '';
-    txtRemark.text = headerRemark?.remark ?? '';
-    double DiscountTotal = 0;
-    SODT.where((element) => element.soid == SOHD.soid)
-        .forEach((x) {
-          DiscountTotal += x.goodDiscAmnt;
-        });
-    txtDiscountTotal.text = currency.format(DiscountTotal);
-    txtPriceTotal.text = currency.format(SOHD.sumGoodAmnt);
-    txtDiscountBill.text = currency.format(SOHD.billDiscAmnt);
-    txtPriceAfterDiscount.text = currency.format(SOHD.billAftrDiscAmnt);
-    txtVatTotal.text = currency.format(SOHD.vatamnt ?? 0);
-    txtNetTotal.text = currency.format(SOHD.netAmnt);
+      txtRunningNo.text = runningNo;
+      txtRefNo.text = refNo;
+      txtDocuNo.text = SOHD.docuNo;
+      txtDocuDate.text = DateFormat('dd/MM/yyyy').format(_docuDate);
+      txtShiptoDate.text =
+      _shiptoDate != null ? DateFormat('dd/MM/yyyy').format(_shiptoDate) : '';
+      txtShiptoRemark.text = '';
+      txtOrderDate.text =
+      _orderDate != null ? DateFormat('dd/MM/yyyy').format(_orderDate) : '';
+      txtEmpCode.text = '${globals.employee?.empCode}';
+      txtCustCode.text = globals.allCustomer
+          ?.firstWhere(
+              (element) => element.custId == SOHD.custId)
+          ?.custCode ??
+          '';
+      txtCustName.text = SOHD.custName ?? '';
+      txtCredit.text = SOHD.creditDays.toString() ?? '0';
+      // txtRemark.text = SOHD.remark ?? '';
+      txtRemark.text = headerRemark?.remark ?? '';
+      double DiscountTotal = 0;
+      SODT.where((element) => element.soid == SOHD.soid)
+          .forEach((x) {
+        DiscountTotal += x.goodDiscAmnt;
+      });
+      txtDiscountTotal.text = currency.format(DiscountTotal);
+      txtPriceTotal.text = currency.format(SOHD.sumGoodAmnt);
+      txtDiscountBill.text = SOHD.billDiscFormula ?? '0.00';
+      txtPriceAfterDiscount.text = currency.format(SOHD.billAftrDiscAmnt);
+      txtVatTotal.text = currency.format(SOHD.vatamnt ?? 0);
+      txtNetTotal.text = currency.format(SOHD.netAmnt);
+    }
+    catch(e){
+      globals.showAlertDialog('Set Header Exception', e.toString(), context);
+    }
   }
 
   void setSelectedShipto() {
@@ -1097,6 +1114,7 @@ class _SaleOrderViewState extends State<SaleOrderView> {
                                 desc: 'Are you sure to duplicate sales order ?',
                                 btnCancelOnPress: () {},
                                 btnOkOnPress: () {
+                                  isInitial = false;
                                   globals.isCopyInitial = false;
                                   globals.discountBillCopy = Discount(number: 0, amount: 0, type: 'THB');
                                   Navigator.pop(context);

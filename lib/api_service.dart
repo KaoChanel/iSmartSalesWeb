@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 // Import the client from the Http Packages
+import 'package:intl/intl.dart';
+import 'package:ismart_crm/models/discount.dart';
 import 'package:ismart_crm/models/employee.dart';
 import 'package:ismart_crm/models/saleOrder_detail_remark.dart';
 import 'package:ismart_crm/models/saleOrder_header_remark.dart';
@@ -11,6 +13,7 @@ import 'models/customer.dart';
 import 'models/option.dart';
 import 'models/product.dart';
 import 'models/goods_unit.dart';
+import 'models/product_cart.dart';
 import 'models/shipto.dart';
 import 'models/saleOrder_header.dart';
 import 'models/saleOrder_detail.dart';
@@ -21,6 +24,7 @@ import 'globals.dart' as globals;
 import 'package:http/http.dart' show Client;
 
 import 'models/vat.dart';
+import 'models/task_event.dart';
 
 class ApiService {
   // Replace this with your computer's IP Address
@@ -275,7 +279,7 @@ class ApiService {
     }
   }
 
-  Future<Option> getOption() async {
+  getOption() async {
     String strUrl =
         '${globals.publicAddress}/api/Option/${globals.company}';
     var response = await client.get(strUrl);
@@ -287,7 +291,7 @@ class ApiService {
     }
   }
 
-  Future<List<Vat>> getVat() async {
+  getVat() async {
     String strUrl =
         '${globals.publicAddress}/api/Option/GetVat/${globals.company}';
     var response = await client.get(strUrl);
@@ -540,6 +544,276 @@ class ApiService {
       return false;
   }
 
+  Future<TaskEvent> postSaleOrder(
+      String fromPage,
+      String status,
+      DateTime docDate,
+      DateTime shipDate,
+      DateTime orderDate,
+      String custPO,
+      String remark,
+      double totalAmount,
+      double afterDiscountAmount,
+      double vatAmount,
+      double netAmount) async {
+
+    try {
+      final currency = NumberFormat("#,##0.00", "en_US");
+      TaskEvent event = TaskEvent();
+      SaleOrderHeader header = SaleOrderHeader();
+      List<SaleOrderDetail> detail = <SaleOrderDetail>[];
+      List<ProductCart> detailCart = fromPage == 'ORDER' ? globals.productCart : fromPage == 'COPY' ? globals.productCartCopy : globals.productCartDraft;
+      Shipto shipment = fromPage == 'ORDER' ? globals.selectedShipto : fromPage == 'COPY' ? globals.selectedShiptoCopy : globals.selectedShiptoDraft;
+      Discount discount = fromPage == 'ORDER' ? globals.discountBill : fromPage == 'COPY' ? globals.discountBillCopy : globals.discountBillDraft;
+
+      String docuNo = await getDocNo();
+      String runningNo = await getRefNo();
+      String refNo =
+      '${globals.company}${globals.employee?.empCode}-${runningNo ?? ''}';
+
+      /// Company Info
+      header.brchId = globals.options.brchId;
+
+      /// Default filled.
+      header.validDays = 0;
+      header.onHold = 'N';
+      header.goodType = '1';
+      header.docuType = 104;
+      header.docuStatus = 'N';
+      header.postdocutype = 1702;
+      header.exchRate = 1;
+      header.sumIncludeAmnt = 0;
+      header.sumExcludeAmnt = 0;
+      header.commissionAmnt = 0;
+      header.clearSo = 'N';
+      header.miscChargAmnt = 0;
+      header.multiCurrency = 'N';
+      header.resvAmnt1 = 0;
+      header.resvAmnt2 = 0;
+      header.resvAmnt3 = 0;
+      header.resvAmnt4 = 0;
+      header.quotStatus = 'รอผู้ใหญ่ตัดสินใจ';
+      header.appvFlag = 'W';
+      header.pkgStatus = 'N';
+      header.refeflag = 'N';
+      header.alertFlag = 'N';
+      header.clearflag = 'N';
+
+      /// document header.
+      header.soid = 0;
+      header.saleAreaId = globals.customer.saleAreaId;
+      header.docuNo = docuNo;
+      header.refNo = refNo;
+      header.docuDate = docDate;
+      header.shipDate = shipDate;
+
+      /// VAT Info
+      header.vatgroupId = globals.vatGroup.vatgroupId;
+      header.vatRate = globals.vatGroup.vatRate;
+      header.vatType = globals.vatGroup.vatType;
+      header.vatamnt = vatAmount;
+
+      /// employee information.
+      header.empId = globals.employee.empId;
+      header.deptId = globals.employee.deptId;
+
+      /// customer information.
+      header.custId = globals.customer.custId;
+      header.custName = globals.customer.custName ?? '';
+      header.creditDays = globals.customer.creditDays ?? 0;
+      header.custPodate = orderDate;
+      header.custPono = custPO;
+
+      /// Cost Summary.
+      header.sumGoodAmnt = totalAmount;
+      header.netAmnt = netAmount;
+
+      /// Discount
+      header.billDiscFormula = discount.type == 'PER' ? '${discount.number.toInt().toString()}%' : currency.format(discount.amount);
+      header.billDiscAmnt = discount.amount;
+      header.billAftrDiscAmnt = afterDiscountAmount;
+
+      /// shipment to customer.
+      header.shipToCode = shipment.shiptoCode ?? '';
+      header.transpId = shipment.transpId;
+      header.transpAreaId = shipment.transpAreaId;
+      header.shipToAddr1 = shipment.shiptoAddr1 ?? '';
+      header.shipToAddr2 = shipment.shiptoAddr2 ?? '';
+      header.district = shipment.district ?? '';
+      header.amphur = shipment.amphur ?? '';
+      header.province = shipment.province ?? '';
+      header.postCode = shipment.postcode ?? '';
+      header.contactName = shipment.contName ?? '';
+      header.tel = shipment.tel ?? '';
+      header.condition = shipment.condition ?? '';
+      header.remark = shipment.remark ?? '';
+      header.isTransfer = status;
+
+      header = await addSaleOrderHeader(header);
+      print('Add result: ${header.soid}');
+      if (header != null) {
+
+        detailCart.forEach((e) {
+          SaleOrderDetail obj = SaleOrderDetail();
+          obj.soid = header.soid;
+          obj.listNo = e.rowIndex;
+          obj.docuType = 104;
+          obj.goodId = e.goodId;
+          obj.goodName = e.goodName1;
+          obj.goodStockUnitId = e.mainGoodUnitId;
+          obj.goodUnitId2 = e.mainGoodUnitId;
+          obj.goodQty2 = e.goodQty;
+          obj.poqty = e.goodQty;
+          obj.remaQty = e.goodQty;
+          obj.remaQtyPkg = e.goodQty;
+          obj.goodStockQty = e.goodQty;
+          obj.goodRemaQty1 = e.goodQty;
+          obj.remaGoodStockQty = e.goodQty;
+          obj.goodPrice2 = e.goodPrice;
+          obj.goodAmnt = e.goodAmount;
+          obj.remaamnt = e.goodAmount;
+          obj.afterMarkupamnt = e.beforeDiscountAmount;
+          obj.goodDiscAmnt = e.discountBase;
+          obj.goodsRemark = e.remark;
+          obj.isTransfer = status;
+
+          /// Stock Information
+          obj.lotFlag = e.lotFlag;
+          obj.expireflag = e.expireFlag;
+          obj.serialFlag = e.serialFlag;
+
+          /// Vat Goods
+          obj.vatgroupId = e.vatGroupId;
+          obj.vatType = e.vatType;
+          obj.vatrate = e.vatRate;
+
+          /// Default Field
+          obj.goodQty1 = 0.00;
+          obj.goodPrice1 = 0.00;
+          obj.goodCompareQty = 0;
+          obj.goodCost = 0;
+          obj.goodStockRate1 = 0;
+          obj.goodStockRate2 = 0;
+          obj.miscChargAmnt = 0;
+          obj.remaBefoQty = 0;
+          obj.goodType = '1';
+          obj.stockFlag = -1;
+          obj.goodFlag = 'G';
+          obj.freeFlag = 'N';
+          obj.reserveQty = 0;
+          obj.resvAmnt1 = 0;
+          obj.resvAmnt2 = 0;
+          obj.goodRemaQty2 = 0;
+          obj.poststock = 'N';
+          obj.markUpAmnt = 0;
+          obj.commisAmnt = 0;
+
+          detail.add(obj);
+        });
+
+        if (await addSaleOrderDetail(detail) == true) {
+          // var hdRemark = SoHeaderRemark()..soId = header.soid..listNo = 1..remark = txtRemark.text;
+          SoHeaderRemark headerRemark = SoHeaderRemark()
+            ..soId = header.soid
+            ..listNo = 1
+            ..remark = remark
+            ..isTransfer = status;
+
+          if (await addSOHeaderRemark(headerRemark)) {
+            var dtRemarkAll = List<SoDetailRemark>();
+            detail.forEach((e) {
+              var dtRemark = SoDetailRemark()
+                ..soId = e.soid
+                ..refListNo = e.listNo
+                ..listNo = e.listNo
+                ..remark = e.goodsRemark
+                ..isTransfer = status;
+              dtRemarkAll.add(dtRemark);
+            });
+
+            if (await addSODetailRemark(dtRemarkAll)) {
+              if(fromPage == 'ORDER'){
+                globals.clearOrder();
+              }
+              else{
+                globals.clearCopyOrder();
+              }
+
+              event.isComplete = true;
+              event.eventCode = 1;
+              event.title = status == 'N' ? 'Transaction Successfully.' : 'Your draft has saved.';
+              event.message = 'Your order has created.';
+
+              print('Task Event: ' + event.title);
+              return event;
+            }
+            else {
+              event.isComplete = false;
+              event.title = 'Remark details has failed.';
+              event.message = 'Something was wrong while creating remark detail.';
+              event.eventCode = 0;
+            }
+          }
+          else {
+            event.isComplete = false;
+            event.title = 'Remark header has failed.';
+            event.message = 'Something was wrong while creating remark header.';
+            event.eventCode = 0;
+          }
+
+          // globals.clearOrder();
+          // print('Order Successful.');
+        } else {
+          event.isComplete = false;
+          event.title = 'Sales Order details has failed.';
+          event.message = 'Something was wrong while creating Sale order details.';
+          event.eventCode = 0;
+
+          // Navigator.pop(context);
+          // return showDialog<void>(
+          //     context: context,
+          //     builder: (BuildContext context) {
+          //       return RichAlertDialog(
+          //         //uses the custom alert dialog
+          //         alertTitle: richTitle("Details of Sales Order was failed."),
+          //         alertSubtitle: richSubtitle(
+          //             "Something was wrong while creating SO Details."),
+          //         alertType: RichAlertType.ERROR,
+          //       );
+          //     });
+        }
+      }
+      else {
+        event.isComplete = false;
+        event.eventCode = 0;
+        event.title = 'Sale order header has failed.';
+        event.message = 'Something was wrong while creating sale order header.';
+        // Navigator.pop(context);
+        // showDialog(
+        //     context: context,
+        //     builder: (BuildContext context) {
+        //       return RichAlertDialog(
+        //         //uses the custom alert dialog
+        //         alertTitle: richTitle("Header of Sales Order was failed."),
+        //         alertSubtitle: richSubtitle(
+        //             "Something was wrong while creating SO Header."),
+        //         alertType: RichAlertType.ERROR,
+        //       );
+        //     });
+      }
+    } catch (e) {
+      return TaskEvent()..isComplete = false..eventCode = 0..title = 'Post order Exception'..message = e.toString();
+      // Navigator.pop(context);
+      // return showAboutDialog(
+      //     context: context,
+      //     applicationName: 'Post Sale Order Exception',
+      //     applicationIcon: Icon(Icons.error_outline),
+      //     children: [
+      //       Text(e.toString()),
+      //     ]);
+    }
+  }
+
   Future<bool> saveDraft(SaleOrderHeader header, List<SaleOrderDetail> data) async {
     try {
       var response = await client.put(
@@ -592,6 +866,7 @@ class ApiService {
     }
     catch(e){
       print('Exception: ' + e);
+      return false;
     }
   }
 

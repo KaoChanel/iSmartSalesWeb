@@ -27,7 +27,7 @@ class NavDrawer extends StatelessWidget {
         children: <Widget>[
           DrawerHeader(
             child: Text(
-              'Smart Sales BIS',
+              'Smart Sales BIS \n 21.05.19 (Stable)',
               style: TextStyle(color: Colors.white, fontSize: 25),
             ),
             decoration: BoxDecoration(
@@ -72,21 +72,35 @@ class NavDrawer extends StatelessWidget {
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
-            onTap: () {
-              globals.customer = null;
-              globals.allCustomer = null;
-              globals.selectedShipto = null;
-              globals.allShipto = null;
-              globals.selectedProduct = null;
-              globals.productCart = new List<ProductCart>();
-              globals.allProduct = null;
-              globals.editingProductCart = null;
-              logout();
+            leading: Icon(Icons.info_outline),
+            title: Text('About'),
+            onTap: () => {Navigator.of(context).pop()},
+          ),
+          Align(
+            alignment: FractionalOffset.bottomCenter,
+            child: ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Logout'),
+              onTap: () {
+                globals.customer = null;
+                globals.allCustomer = null;
+                globals.allShipto = null;
+                globals.allProduct = null;
+                globals.editingProductCart = null;
 
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
-            },
+                globals.selectedShipto = null;
+                globals.selectedShiptoCopy = null;
+                globals.selectedShiptoDraft = null;
+
+                globals.clearOrder();
+                globals.clearCopyOrder();
+                globals.clearDraftOrder();
+
+                logout();
+
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+              },
+            ),
           ),
         ],
       ),

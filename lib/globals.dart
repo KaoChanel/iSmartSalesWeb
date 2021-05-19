@@ -1,6 +1,7 @@
 library app.globals;
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'models/companies.dart';
@@ -72,7 +73,7 @@ String docTransferKeyword;
 bool isLockPrice;
 
 void clearOrder(){
-  productCart = new List<ProductCart>();
+  productCart = <ProductCart>[];
   editingProductCart = null;
   selectedProduct = null;
   // selectedShipto = null;
@@ -133,14 +134,14 @@ void showAlertDialog(String title, String content, BuildContext context) {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-            title: new Text(title),
-            content: new Text(content),
+            title: Text(title),
+            content: Text(content),
             actions: <Widget>[
-              new FlatButton(
+              TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: new Text("Close"))
+                  child: Text("Close"))
             ]
         );
       }
@@ -149,14 +150,23 @@ void showAlertDialog(String title, String content, BuildContext context) {
 
 showLoaderDialog(BuildContext context, bool dismiss){
   var alert = AlertDialog(
-    content: new Row(
-      children: [
-        CircularProgressIndicator(),
-        Container(
-            margin: EdgeInsets.only(left: 7),
-            child:Text("  Loading ..." )
-        ),
-      ],),
+    content: Container(
+      height: 120,
+      child: Column(
+        children: [
+          SizedBox(
+              width: 60,
+              height: 60,
+              child: CircularProgressIndicator(
+                strokeWidth: 7.0,
+              )),
+          Container(
+              // margin: EdgeInsets.only(left: 7),
+            padding: EdgeInsets.only(top: 25.0),
+              child:Text("กำลังโหลด ...", style: TextStyle(fontSize: 18.0),)
+          ),
+        ],),
+    ),
   );
 
   showDialog(

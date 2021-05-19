@@ -242,15 +242,18 @@ Widget build(BuildContext context) {
     }
     catch(error) {
       Navigator.pop(context);
-      showAlertDialog(context, '<Get User> ' + error.toString());
+      showAlertDialog(context, 'Get User: ' + error.toString());
     }
   }
 
   showLoaderDialog(BuildContext context){
     AlertDialog alert = AlertDialog(
-      content: new Row(
+      content: Column(
         children: [
-          CircularProgressIndicator(),
+          SizedBox(
+            height: 250,
+              width: 250,
+              child: CircularProgressIndicator()),
           Container(margin: EdgeInsets.only(left: 7), child:Text("Loading..." )),
         ],),
     );

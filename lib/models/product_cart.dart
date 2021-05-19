@@ -63,10 +63,14 @@ class ProductCart {
   double goodPrice;
   double goodPriceEdited;
   double goodQty;
+  double beforeDiscountAmount;
   double goodAmount;
   double discount;
   double discountBase;
   String discountType;
+  String lotFlag;
+  String expireFlag;
+  String serialFlag;
   bool isFree;
   String remark;
 

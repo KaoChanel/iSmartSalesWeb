@@ -108,14 +108,9 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      setHeader();
-      setSelectedShipto();
-      calculateSummary();
-    });
-    // setHeader();
-    // setSelectedShipto();
-    // calculateSummary();
+    setHeader();
+    setSelectedShipto();
+    calculateSummary();
   }
 
   @override
@@ -131,7 +126,7 @@ class _SaleOrderDraftState extends State<SaleOrderDraft> {
     ctrl_netTotal.close();
   }
 
-setHeader() async {
+  setHeader() async {
     SOHD = widget.saleOrderHeader;
     headerRemark = await _apiService.getHeaderRemark(SOHD.soid);
     detailRemark = await _apiService.getDetailRemark(SOHD.soid);
@@ -212,7 +207,6 @@ setHeader() async {
       if (globals.productCartDraft.length > 0) {
         discountTotal = 0;
         priceTotal = 0;
-
         globals.productCartDraft.forEach((element) {
           discountTotal += element.discountBase;
         });
@@ -822,165 +816,215 @@ setHeader() async {
     }
   }
 
-  Widget saleOrderDetails(List<ProductCart> data) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: DataTable(
-          showBottomBorder: true,
-          columnSpacing: 26,
-          sortColumnIndex: 0,
-          columns: <DataColumn>[
-            DataColumn(
-                label: Text(
-                  'ลำดับ',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-                ),
-                onSort: (columnIndex, ascending){
-                  setState(() {
+  Widget saleOrderDetails() {
+    return FutureBuilder<Object>(
+        future: _apiService.getSODT(SOHD.soid),
+        builder: (context, snapshot) {
+          print('SOHD >>>>>>>>>>>>>>>>>>>>>>>>  ${SOHD.soid ?? 'No SOID'}');
+          if (snapshot.hasData) {
+            SODT = snapshot.data;
 
-                  });
-                  onSortColumn(columnIndex, ascending);
-                }
-            ),
-            DataColumn(
-              label: Text(
-                'ประเภท',
-                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                'รหัสสินค้า',
-                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                'ชื่อสินค้า',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-              ),
-            ),
-            DataColumn(
-              numeric: true,
-              label: Text(
-                'จำนวน',
-                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-              ),
-            ),
-            DataColumn(
-              numeric: true,
-              label: Text(
-                'ราคา / หน่วย',
-                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-              ),
-            ),
-            DataColumn(
-              numeric: true,
-              label: Text(
-                'ส่วนลด',
-                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-              ),
-            ),
-            DataColumn(
-              numeric: true,
-              label: Text(
-                'ยอดสุทธิ',
-                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-              ),
-            ),
-            DataColumn(
-              label: Text(
-                '',
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-          ],
-          rows: data.toList()
-              .map((e) => DataRow(cells: [
-            DataCell(Text('${e.rowIndex}')),
-            DataCell(Text('${e.isFree ?? false ? 'แถมฟรี' : 'เพื่อขาย'}')),
-            DataCell(Text('${e.goodCode}')),
-            DataCell(Text('${e.goodName1}')),
-            DataCell(Text('${currency.format(e.goodQty ?? 0)}')),
-            DataCell(Text('${currency.format(e.goodPrice ?? 0)}')),
-            DataCell(
-                Text('${currency.format(e.discountBase ?? 0)}')),
-            DataCell(Text('${currency.format(e.goodAmount ?? 0)}')),
-            DataCell(Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    SchedulerBinding.instance
-                        .addPostFrameCallback((timeStamp) {
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) =>
-                                  ContainerProduct(
-                                      'แก้ไขรายการสินค้า ลำดับที่ ',
-                                      e,
-                                      'DRAFT'))).then((value) {
-                        setState(() {});
-                      });
+            if (globals.isDraftInitial == false) {
+              globals.isDraftInitial = true;
+              globals.productCartDraft = List<ProductCart>();
+
+              SODT.forEach((x) {
+                ProductCart cart = ProductCart()
+                  ..rowIndex = x.listNo
+                  ..soid = x.soid
+                  ..goodId = x.goodId
+                  ..goodCode = globals.allProduct
+                          .firstWhere((element) => element.goodId == x.goodId,
+                              orElse: null)
+                          .goodCode ??
+                      '-'
+                  ..goodName1 = x.goodName
+                  ..goodAmount = x.goodAmnt
+                  ..goodQty = x.goodQty2
+                  ..goodPrice = x.goodPrice2
+                  ..discount = x.goodDiscAmnt
+                  ..discountType = x.goodDiscFormula != null && x.goodDiscAmnt < 100 ? 'PER' : 'THB'
+                  ..discountBase = x.goodDiscAmnt
+                  ..mainGoodUnitId = x.goodUnitId2
+                  ..vatRate = x.vatrate
+                  ..vatType = x.vatType
+                ..isFree = x.goodPrice2 == 0 ? true : false;
+                  // ..remark = detailRemark.firstWhere((element) => element.soId == x.soid && element.refListNo == x.listNo).remark;
+                print('Cart >>>>>>>>>>>>>>> ${cart.discountType}');
+                globals.productCartDraft.add(cart);
+              });
+
+              globals.productCartDraft
+                  .where((element) => element.soid == SOHD.soid)
+                  .forEach((element) {
+                discountTotal += element.discountBase ?? 0;
+              });
+              // globals.productCartDraft.forEach((element) {
+              //   priceTotal += element.goodAmount;
+              // });
+              //
+              // ctrl_priceTotal.add(priceTotal);
+            } else {print('snapshot has not data');}
+
+            //txtDiscountTotal.text = currency.format(discountTotal ?? 0);
+            calculateSummary();
+          }
+          return DataTable(
+              showBottomBorder: true,
+              columnSpacing: 26,
+              sortColumnIndex: 0,
+              columns: <DataColumn>[
+                DataColumn(
+                  label: Text(
+                    'ลำดับ',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+                  ),
+                  onSort: (columnIndex, ascending){
+                    setState(() {
+
                     });
-                  },
-                  child: Icon(Icons.edit),
-                  style: ButtonStyle(
-                    backgroundColor:
-                    MaterialStateProperty.all<Color>(
-                        Colors.blueAccent),
+                    onSortColumn(columnIndex, ascending);
+                  }
+                ),
+                DataColumn(
+                  label: Text(
+                    'ประเภท',
+                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
                   ),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    //int removeIndex = globals.productCart.indexWhere((element) => element.rowIndex == e.rowIndex);
-                    int index = 1;
-                    globals.productCartDraft.removeWhere(
-                            (element) =>
-                        element.rowIndex == e.rowIndex);
-                    globals.productCartDraft.forEach((element) {
-                      element.rowIndex = index++;
-                    });
-                    //globals.editingProductCart = null;
-                    //globals.productCartDraft = List<ProductCart>();
-                    print(
-                        globals.productCartDraft.length.toString());
-
-                    // priceTotal = 0;
-                    // globals.productCartDraft.forEach((element) {
-                    //   priceTotal += element.goodAmount;
-                    // });
-                    //
-                    // ctrl_priceTotal.add(priceTotal);
-
-                    calculateSummary();
-
-                    setState(() {});
-                  },
-                  child: Icon(Icons.delete_forever),
-                  style: ButtonStyle(
-                    backgroundColor:
-                    MaterialStateProperty.all<Color>(
-                        Colors.redAccent),
+                DataColumn(
+                  label: Text(
+                    'รหัสสินค้า',
+                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
                   ),
-                )
+                ),
+                DataColumn(
+                  label: Text(
+                    'ชื่อสินค้า',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+                  ),
+                ),
+                DataColumn(
+                  numeric: true,
+                  label: Text(
+                    'จำนวน',
+                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+                  ),
+                ),
+                DataColumn(
+                  numeric: true,
+                  label: Text(
+                    'ราคา / หน่วย',
+                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+                  ),
+                ),
+                DataColumn(
+                  numeric: true,
+                  label: Text(
+                    'ส่วนลด',
+                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+                  ),
+                ),
+                DataColumn(
+                  numeric: true,
+                  label: Text(
+                    'ยอดสุทธิ',
+                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    '',
+                    style: TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                ),
               ],
-            )),
-            // DataCell(ElevatedButton(
-            //     onPressed: () {},
-            //     child: Icon(Icons.delete_forever),
-            //   style: ButtonStyle(
-            //     backgroundColor: MaterialStateProperty.all<Color>(Colors.redAccent),
-            //   ),)),
-          ]))
-              ?.toList()),
-    );
+              rows: globals.productCartDraft
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text('${e.rowIndex}')),
+                        DataCell(Text('${e.isFree ?? false ? 'แถมฟรี' : 'เพื่อขาย'}')),
+                        DataCell(Text('${e.goodCode}')),
+                        DataCell(Text('${e.goodName1}')),
+                        DataCell(Text('${currency.format(e.goodQty ?? 0)}')),
+                        DataCell(Text('${currency.format(e.goodPrice ?? 0)}')),
+                        DataCell(
+                            Text('${currency.format(e.discountBase ?? 0)}')),
+                        DataCell(Text('${currency.format(e.goodAmount ?? 0)}')),
+                        DataCell(Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                SchedulerBinding.instance
+                                    .addPostFrameCallback((timeStamp) {
+                                  Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                          builder: (context) =>
+                                              ContainerProduct(
+                                                  'แก้ไขรายการสินค้า ลำดับที่ ',
+                                                  e,
+                                                  'DRAFT'))).then((value) {
+                                    setState(() {});
+                                  });
+                                });
+                              },
+                              child: Icon(Icons.edit),
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.blueAccent),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                //int removeIndex = globals.productCart.indexWhere((element) => element.rowIndex == e.rowIndex);
+                                int index = 1;
+                                globals.productCartDraft.removeWhere(
+                                    (element) =>
+                                        element.rowIndex == e.rowIndex);
+                                globals.productCartDraft.forEach((element) {
+                                  element.rowIndex = index++;
+                                });
+                                //globals.editingProductCart = null;
+                                //globals.productCartDraft = List<ProductCart>();
+                                print(
+                                    globals.productCartDraft.length.toString());
+
+                                // priceTotal = 0;
+                                // globals.productCartDraft.forEach((element) {
+                                //   priceTotal += element.goodAmount;
+                                // });
+                                //
+                                // ctrl_priceTotal.add(priceTotal);
+
+                                calculateSummary();
+
+                                setState(() {});
+                              },
+                              child: Icon(Icons.delete_forever),
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.redAccent),
+                              ),
+                            )
+                          ],
+                        )),
+                        // DataCell(ElevatedButton(
+                        //     onPressed: () {},
+                        //     child: Icon(Icons.delete_forever),
+                        //   style: ButtonStyle(
+                        //     backgroundColor: MaterialStateProperty.all<Color>(Colors.redAccent),
+                        //   ),)),
+                      ]))
+                  ?.toList());
+        });
   }
 
   Future<bool> _onWillPop() {
@@ -1019,8 +1063,8 @@ setHeader() async {
   }
 
   Widget build(BuildContext context) {
-    // setSelectedShipto();
-    // calculateSummary();
+    setSelectedShipto();
+    calculateSummary();
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -1656,75 +1700,11 @@ setHeader() async {
                   ),
                     ],
                   ),
-                  Row(
-                      children: [
-                        FutureBuilder(
-                            future: _apiService.getSODT(widget.saleOrderHeader.soid),
-                            builder: (context, snapshot) {
-                              print('SOHD >>>>>>>>>>>>>>>>>>>>>>>>  ${widget.saleOrderHeader.soid ?? 'No SOID'}');
-                              if (snapshot.hasData) {
-                                SODT = snapshot.data;
-
-                                if (globals.isDraftInitial == false) {
-                                  globals.isDraftInitial = true;
-                                  globals.productCartDraft = List<ProductCart>();
-
-                                  SODT.forEach((x) {
-                                    ProductCart cart = ProductCart()
-                                      ..rowIndex = x.listNo
-                                      ..soid = x.soid
-                                      ..goodId = x.goodId
-                                      ..goodCode = globals.allProduct
-                                          .firstWhere((element) => element.goodId == x.goodId,
-                                          orElse: null)
-                                          .goodCode ??
-                                          '-'
-                                      ..goodName1 = x.goodName
-                                      ..goodAmount = x.goodAmnt
-                                      ..goodQty = x.goodQty2
-                                      ..goodPrice = x.goodPrice2
-                                      ..discount = x.goodDiscAmnt
-                                      ..discountType = x.goodDiscFormula != null && x.goodDiscAmnt < 100 ? 'PER' : 'THB'
-                                      ..discountBase = x.goodDiscAmnt
-                                      ..mainGoodUnitId = x.goodUnitId2
-                                      ..vatRate = x.vatrate
-                                      ..vatType = x.vatType
-                                      ..isFree = x.goodPrice2 == 0 ? true : false;
-                                    // ..remark = detailRemark.firstWhere((element) => element.soId == x.soid && element.refListNo == x.listNo).remark;
-                                    print('Cart >>>>>>>>>>>>>>> ${cart.discountType}');
-                                    globals.productCartDraft.add(cart);
-                                  });
-
-                                  globals.productCartDraft
-                                      .where((element) => element.soid == SOHD.soid)
-                                      .forEach((element) {
-                                    discountTotal += element.discountBase ?? 0;
-                                  });
-
-                                  // globals.productCartDraft.forEach((element) {
-                                  //   priceTotal += element.goodAmount;
-                                  // });
-                                  //
-                                  // ctrl_priceTotal.add(priceTotal);
-
-                                  calculateSummary();
-                                } else {print('snapshot has not data');}
-
-                                //txtDiscountTotal.text = currency.format(discountTotal ?? 0);
-                                // calculateSummary();
-
-                                return Expanded(child: saleOrderDetails(globals.productCartDraft));
-                              }
-                              else{
-                                return Expanded(
-                                  child: Container(
-                                      padding: EdgeInsets.all(20.0),
-                                      child: Center(child: CircularProgressIndicator())),
-                                );
-                              }
-                            }
-                        ),
-                  ]),
+                  SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(children: [
+                        saleOrderDetails() ?? [],
+                      ])),
                   Row(
                     children: [
                       SizedBox(height: 80),

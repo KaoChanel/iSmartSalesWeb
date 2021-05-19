@@ -227,7 +227,7 @@ class _ContainerCustomerState extends State<ContainerCustomer> {
                 return showDialog(
                     builder: (context) => AlertDialog(
                       title: _selectedItem.inactive == 'I' ? Text('ลูกค้ารายนี้อยู่ในสถานะ In-Active') : Text('ลูกค้ารายนี้อยู่ในสถานะ On-Hold'),
-                      content: Text('โปรดแจ้งฝ่ายธุรการเพื่อดำเนินการต่อไป'),
+                      content: Text('โปรดแจ้งแผนกธุรการเพื่อดำเนินการต่อไป'),
                       actions: [
                         ElevatedButton(onPressed: (){Navigator.pop(context);}, child: Text('ตกลง'))
                       ],
@@ -253,6 +253,7 @@ class _ContainerCustomerState extends State<ContainerCustomer> {
                           ), context: context);
                 }
                 else {
+                  globals.clearOrder();
                   globals.customer = _selectedItem;
                   globals.selectedShipto = _allShipto;
                   final SharedPreferences prefs = await SharedPreferences
