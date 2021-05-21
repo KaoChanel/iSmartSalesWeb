@@ -1,3 +1,5 @@
+io/flutter/plugins/googlemaps/BuildConfig.java
+ io.flutter.plugins.googlemaps.BuildConfig
 io/flutter/plugins/googlemaps/CircleController.java
  io.flutter.plugins.googlemaps.CircleController
 io/flutter/plugins/googlemaps/PolylineBuilder.java
@@ -61,5 +63,3 @@ io/flutter/plugins/googlemaps/CirclesController.java
  io.flutter.plugins.googlemaps.CirclesController
 io/flutter/plugins/googlemaps/GoogleMapFactory.java
  io.flutter.plugins.googlemaps.GoogleMapFactory
-io/flutter/plugins/googlemaps/BuildConfig.java
- io.flutter.plugins.googlemaps.BuildConfig

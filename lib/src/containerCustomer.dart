@@ -223,16 +223,16 @@ class _ContainerCustomerState extends State<ContainerCustomer> {
                     ), context: context);
               }
 
-              if(_selectedItem.inactive == 'I' || _selectedItem.inactive == 'H'){
-                return showDialog(
-                    builder: (context) => AlertDialog(
-                      title: _selectedItem.inactive == 'I' ? Text('ลูกค้ารายนี้อยู่ในสถานะ In-Active') : Text('ลูกค้ารายนี้อยู่ในสถานะ On-Hold'),
-                      content: Text('โปรดแจ้งแผนกธุรการเพื่อดำเนินการต่อไป'),
-                      actions: [
-                        ElevatedButton(onPressed: (){Navigator.pop(context);}, child: Text('ตกลง'))
-                      ],
-                    ), context: context);
-              }
+              // if(_selectedItem.inactive == 'I' || _selectedItem.inactive == 'H'){
+              //   return showDialog(
+              //       builder: (context) => AlertDialog(
+              //         title: _selectedItem.inactive == 'I' ? Text('ลูกค้ารายนี้อยู่ในสถานะ In-Active') : Text('ลูกค้ารายนี้อยู่ในสถานะ On-Hold'),
+              //         content: Text('โปรดแจ้งแผนกธุรการเพื่อดำเนินการต่อไป'),
+              //         actions: [
+              //           ElevatedButton(onPressed: (){Navigator.pop(context);}, child: Text('ตกลง'))
+              //         ],
+              //       ), context: context);
+              // }
               else {
                 var _allShipto = globals.allShipto?.firstWhere(
                         (element) => element.custId == _selectedItem?.custId,
@@ -271,6 +271,17 @@ class _ContainerCustomerState extends State<ContainerCustomer> {
             ),
             style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.all(12), primary: Colors.green)),
+
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 83.0),
+          child: ElevatedButton.icon(
+              onPressed: (){},
+              icon: Icon(Icons.camera_alt),
+              label: Text('เพิ่มรูปภาพ'),
+              style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.all(12), primary: Colors.deepOrangeAccent)),
+        ),
+
       ]),
       // SizedBox(
       //   height: 83,

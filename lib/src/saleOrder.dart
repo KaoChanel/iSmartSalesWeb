@@ -178,7 +178,6 @@ class _SaleOrderState extends State<SaleOrder> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       globals.showLoaderDialog(context, false);
       await setHeader();
-      initShipto();
       setSelectedShipto();
       Navigator.pop(context);
     });
@@ -194,12 +193,12 @@ class _SaleOrderState extends State<SaleOrder> {
 
   setHeader() async {
     try {
-      // globals.showLoaderDialog(context, true);
       runningNo = await _apiService.getRefNo();
-      custPONo = '${globals.employee?.empCode}-${runningNo ?? ''}';
-      txtCustPONo.text = custPONo ?? '';
-      txtRunningNo.text = runningNo ?? '';
-      txtRemark.text = globals.selectedRemark?.remark ?? '';
+      refNo = '${globals.company}${globals.employee?.empCode}-${runningNo ?? ''}';
+      txtRefNo.text = refNo;
+      // custPONo = '${globals.employee?.empCode}-${runningNo ?? ''}';
+      // txtCustPONo.text = custPONo ?? '';
+      // txtRunningNo.text = runningNo ?? '';
 
       docuNo = await _apiService.getDocNo();
       txtDocuNo.text = docuNo ?? '';
@@ -213,6 +212,7 @@ class _SaleOrderState extends State<SaleOrder> {
           : creditState == 'I'
           ? 'Inactive'
           : 'ปกติ';
+      txtRemark.text = globals.selectedRemark?.remark ?? '';
 
       // setState(() {
       //   txtRunningNo.text = runningNo ?? '';
@@ -223,15 +223,11 @@ class _SaleOrderState extends State<SaleOrder> {
 
       print('Set Header.');
       print('Doc No: $docuNo');
-      print('Ref No: $custPONo');
+      print('Ref No: $refNo');
     }
     catch(e) {
       globals.showAlertDialog('Set Header', e.toString(), context);
     }
-  }
-
-  initShipto() {
-
   }
 
   setSelectedShipto() {
@@ -792,7 +788,7 @@ class _SaleOrderState extends State<SaleOrder> {
                     child: ListTile(
                       title: TextField(
                         readOnly: true,
-                        controller: txtCustPONo,
+                        controller: txtRefNo,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           contentPadding:
@@ -839,6 +835,7 @@ class _SaleOrderState extends State<SaleOrder> {
                     child: ListTile(
                       //leading: const Icon(Icons.person),
                       title: TextField(
+                        controller: txtCustPONo,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           contentPadding:
@@ -1458,6 +1455,7 @@ class _SaleOrderState extends State<SaleOrder> {
                                             txtDiscountBill.value.text.length);
                                   },
                                   onEditingComplete: () {
+                                    if(txtDiscountBill.text.isEmpty){return globals.showAlertDialog('แจ้งเตือน', 'กรุณากรอกตัวเลข', context);}
                                     setState(() {
                                       if (globals.discountBill.type == 'PER' &&
                                           double.tryParse(txtDiscountBill.text

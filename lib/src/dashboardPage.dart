@@ -61,12 +61,12 @@ class DashboardPageState extends State<DashboardPage> {
     loadData();
   }
 
-  Future<void> loadData() async {
+  loadData() async {
     await _apiService.getOption();
     await _apiService.getAllCustomer();
+    await _apiService.getShipto();
     await _apiService.getProduct();
     await _apiService.getUnit();
-    await _apiService.getShipto();
     await _apiService.getStock();
     await _apiService.getStockReserve();
   }

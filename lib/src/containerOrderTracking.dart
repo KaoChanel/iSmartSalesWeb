@@ -42,8 +42,8 @@ class _ContainerOrderTrackingState extends State<ContainerOrderTracking> {
   }
 
   Future<void> getOrderByCustomer() async {
-    var response = await http.get(
-        '${globals.publicAddress}/api/product/${globals.company}/${_selectedItem?.custCode}/1');
+    String strUrl = '${globals.publicAddress}/api/product/${globals.company}/${_selectedItem?.custCode}/1';
+    var response = await http.get(Uri.parse(strUrl));
     Map values = json.decode(response.body);
 
     setState(() {

@@ -101,7 +101,7 @@ class _StatusTransferDocState extends State<StatusTransferDoc> {
     try {
       String strUrl =
           '${globals.publicAddress}/api/SaleOrderHeader/GetTempSohdByEmp/${globals.company}/$id';
-      final response = await http.get(strUrl);
+      final response = await http.get(Uri.parse(strUrl));
       if (response.statusCode == 200) {
         return saleOrderHeaderFromJson(response.body);
       } else {

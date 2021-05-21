@@ -27,6 +27,29 @@ class OrderDraft extends StatefulWidget {
 
 class _OrderDraftState extends State<OrderDraft> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      globals.showLoaderDialog(context, false);
+      globals.discountBillDraft = Discount(number: 0, amount: 0, type: 'THB');
+      setCustomer();
+      initShipto();
+      setHeader();
+      setDetails();
+      setRemark();
+      calculateSummary();
+      Navigator.pop(context);
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -1105,26 +1128,6 @@ class _OrderDraftState extends State<OrderDraft> {
   TextEditingController txtOrderDate = TextEditingController(
       text: DateFormat('dd/MM/yyyy').format(DateTime.now()));
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    globals.discountBillDraft = Discount(number: 0, amount: 0, type: 'THB');
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      globals.showLoaderDialog(context, false);
-      setCustomer();
-      initShipto();
-      setHeader();
-      await setDetails();
-      await setRemark();
-      Navigator.pop(context);
-    });
-    
-    calculateSummary();
-  }
-
   setCustomer() {
     globals.customer = globals.allCustomer
         .firstWhere((e) => e.custId == widget.header.custId, orElse: null);
@@ -1232,8 +1235,7 @@ class _OrderDraftState extends State<OrderDraft> {
         ..goodQty = x.goodQty2
         ..goodPrice = x.goodPrice2
         ..discount = x.goodDiscAmnt
-        ..discountType =
-            x.goodDiscFormula != null && x.goodDiscAmnt < 100 ? 'PER' : 'THB'
+        ..discountType = 'THB'
         ..discountBase = x.goodDiscAmnt
         ..mainGoodUnitId = x.goodUnitId2
         ..vatRate = x.vatrate
@@ -1537,7 +1539,8 @@ class _OrderDraftState extends State<OrderDraft> {
                     DataCell(Text('${e.goodName1}')),
                     DataCell(Text('${currency.format(e.goodQty ?? 0)}')),
                     DataCell(Text('${currency.format(e.goodPrice ?? 0)}')),
-                    DataCell(Text('${currency.format(e.discountBase ?? 0)}')),
+                    DataCell(
+                        Text('${currency.format(e.discount ?? 0)}')),
                     DataCell(Text('${currency.format(e.goodAmount ?? 0)}')),
                     DataCell(Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1699,6 +1702,7 @@ class _OrderDraftState extends State<OrderDraft> {
       //     '${globals.company}${globals.employee?.empCode}-${runningNo ?? ''}';
       refNo = SOHD.refNo;
       docuNo = SOHD.docuNo;
+      // DateTime createTime = status == 'N' ? DateTime.now() : null;
 
       /// Company Info
       header.brchId = globals.options.brchId;
@@ -1709,7 +1713,7 @@ class _OrderDraftState extends State<OrderDraft> {
       header.goodType = '1';
       header.docuType = 104;
       header.docuStatus = 'N';
-      header.postdocutype = 1702;
+      // header.postdocutype = 1702;
       header.exchRate = 1;
       header.sumIncludeAmnt = 0;
       header.sumExcludeAmnt = 0;
@@ -1738,6 +1742,10 @@ class _OrderDraftState extends State<OrderDraft> {
       header.custPodate = _orderDate;
       header.custPono = txtCustPONo.text;
       header.isTransfer = status;
+      if(status == 'N'){
+        header.createTime = DateTime.now();
+      }
+      // header.createTime = createTime;
 
       /// employee information.
       header.empId = globals.employee.empId;
@@ -1746,18 +1754,22 @@ class _OrderDraftState extends State<OrderDraft> {
       /// customer information.
       header.custId = globals.customer.custId;
       header.custName = globals.customer.custName;
+      header.contactName = globals.customer.custName;
       header.creditDays = globals.customer.creditDays;
 
       /// shipment to customer.
+      header.contactnameShip = globals.selectedShiptoDraft.contName ?? '';
       header.shipToCode = globals.selectedShiptoDraft.shiptoCode;
       header.transpId = globals.selectedShiptoDraft.transpId;
       header.transpAreaId = globals.selectedShiptoDraft.transpAreaId;
       header.shipToAddr1 = globals.selectedShiptoDraft.shiptoAddr1;
-      header.shipToAddr2 = globals.selectedShiptoDraft.shiptoAddr2;
+      header.shipToAddr2 = globals.selectedShiptoDraft.shiptoAddr2 ?? '';
       header.district = globals.selectedShiptoDraft.district;
       header.amphur = globals.selectedShiptoDraft.amphur;
       header.province = globals.selectedShiptoDraft.province;
       header.postCode = globals.selectedShiptoDraft.postcode;
+      header.tel = globals.selectedShiptoDraft.tel;
+      header.condition = globals.selectedShiptoDraft.condition;
       header.remark = globals.selectedShiptoDraft.remark;
 
       /// VAT Info
@@ -1773,6 +1785,7 @@ class _OrderDraftState extends State<OrderDraft> {
       /// Cost Summary.
       header.sumGoodAmnt = priceTotal;
       header.billAftrDiscAmnt = priceAfterDiscount;
+      header.totaBaseAmnt = priceAfterDiscount;
       header.netAmnt = netTotal;
 
       globals.productCartDraft.forEach((e) {
@@ -1795,8 +1808,11 @@ class _OrderDraftState extends State<OrderDraft> {
         obj.goodAmnt = e.goodAmount;
         obj.remaamnt = e.goodAmount;
         obj.afterMarkupamnt = e.beforeDiscountAmount;
+        // obj.goodDiscType = e.discountType;
+        obj.goodDiscFormula = e.discountType == 'PER' ? '${e.discount.toInt().toString()}%' : currency.format(e.discountBase);
         obj.goodDiscAmnt = e.discountBase;
         obj.goodsRemark = e.remark;
+        obj.shipDate = _shiptoDate;
         obj.isTransfer = status;
 
         /// Stock Information

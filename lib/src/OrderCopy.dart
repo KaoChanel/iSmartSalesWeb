@@ -28,6 +28,27 @@ class OrderCopy extends StatefulWidget {
 }
 
 class _OrderCopyState extends State<OrderCopy> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    globals.discountBillCopy = Discount(number: 0, amount: 0, type: 'THB');
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      globals.showLoaderDialog(context, false);
+      setCustomer();
+      initShipto();
+      await setHeader();
+      await setDetails();
+      await setRemark();
+      Navigator.pop(context);
+    });
+
+    calculateSummary();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -1158,26 +1179,6 @@ class _OrderCopyState extends State<OrderCopy> {
   TextEditingController txtOrderDate = TextEditingController(
       text: DateFormat('dd/MM/yyyy').format(DateTime.now()));
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    globals.discountBillCopy = Discount(number: 0, amount: 0, type: 'THB');
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      globals.showLoaderDialog(context, false);
-      setCustomer();
-      initShipto();
-      await setHeader();
-      await setDetails();
-      await setRemark();
-      Navigator.pop(context);
-    });
-
-    calculateSummary();
-  }
-
   setCustomer() {
     globals.customer = globals.allCustomer
         .firstWhere((e) => e.custId == widget.header.custId, orElse: null);
@@ -1277,8 +1278,7 @@ class _OrderCopyState extends State<OrderCopy> {
         ..beforeDiscountAmount = x.afterMarkupamnt
         ..goodAmount = x.goodAmnt
         ..discount = x.goodDiscAmnt
-        ..discountType =
-        x.goodDiscFormula != null && x.goodDiscAmnt < 100 ? 'PER' : 'THB'
+        ..discountType = 'THB'
         ..discountBase = x.goodDiscAmnt
         ..mainGoodUnitId = x.goodUnitId2
         ..vatRate = x.vatrate

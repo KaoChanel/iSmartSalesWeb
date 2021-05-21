@@ -101,13 +101,14 @@ class _ItemStockDetailState extends State<ItemStockDetail> {
   @override
   Widget build(BuildContext context) {
     setSelectedItem();
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Column(
-        children: [
-          Expanded(child: createTable()),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SingleChildScrollView(
+        // scrollDirection: Axis.horizontal,
+        child: createTable(),
+          ),
+      ],
     );
   }
 }

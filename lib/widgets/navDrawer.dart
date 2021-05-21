@@ -27,14 +27,13 @@ class NavDrawer extends StatelessWidget {
         children: <Widget>[
           DrawerHeader(
             child: Text(
-              'Smart Sales BIS \n 21.05.19 (Stable)',
+              'Smart Sales BIS \n v05.21 (Stable)',
               style: TextStyle(color: Colors.white, fontSize: 25),
             ),
             decoration: BoxDecoration(
                 color: Colors.green,
                 image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage('assets/bg_02.jpg'))),
+                    fit: BoxFit.fill, image: AssetImage('assets/bg_02.jpg'))),
           ),
           // ListTile(
           //   leading: Icon(Icons.refresh),
@@ -46,7 +45,29 @@ class NavDrawer extends StatelessWidget {
             leading: Icon(Icons.shopping_basket),
             title: Text('Sale Order'),
             onTap: () => {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => SaleOrder()))
+              if (globals.customer == null)
+                {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: new Text("แจ้งเตือน"),
+                      content: new Text(
+                        "กรุณาเลือกลูกค้าของคุณ",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text("ปิดหน้าต่าง"))
+                      ],
+                    ),
+                  )
+                }
+              else
+                {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SaleOrder()))
+                }
             },
           ),
           // ListTile(
@@ -57,13 +78,17 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.people_alt),
             title: Text('Customers'),
-            onTap: () => {Navigator.push(context, MaterialPageRoute(builder: (context) => ContainerCustomer()))},
+            onTap: () => {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ContainerCustomer()))
+            },
           ),
           ListTile(
             leading: Icon(Icons.settings),
             title: Text('Settings'),
             onTap: () => {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => Setting()))
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => Setting()))
             },
           ),
           ListTile(
@@ -98,7 +123,8 @@ class NavDrawer extends StatelessWidget {
 
                 logout();
 
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
               },
             ),
           ),

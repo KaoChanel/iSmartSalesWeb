@@ -119,6 +119,7 @@ class _ContainerStockState extends State<ContainerStock> {
                 child: Center(child: Text('สินค้าคงเหลือ ${allStock.length.toString()} รายการ', style: TextStyle(fontSize: 18.0, color: Colors.white),)),
               ),
               Expanded(
+                flex: 2,
                 child: ItemStock(
                   // Instead of pushing a new route here, we update
                   // the currently selected item, which is a part of
@@ -139,7 +140,7 @@ class _ContainerStockState extends State<ContainerStock> {
             ]),
           ),
         ),
-        Flexible(
+        Expanded(
           flex: 4,
           child: ItemStockDetail(
             // The item details just blindly accepts whichever

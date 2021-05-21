@@ -151,7 +151,7 @@ Widget build(BuildContext context) {
     {
       globals.showLoaderDialog(context, false);
       String strUrl = '${globals.publicAddress}/api/login/LoginByEmpCode/$company/$username/$password';
-      http.Response response = await http.get(strUrl);
+      http.Response response = await http.get(Uri.parse(strUrl));
       if(response.body.isNotEmpty) {
         var decode = jsonDecode(response.body);
 

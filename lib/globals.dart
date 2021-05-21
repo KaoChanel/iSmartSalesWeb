@@ -25,9 +25,9 @@ enum DiscountType{ THB, PER }
 enum annualCycle{ monthly, quarterly, yearly }
 
 String publicAddress = 'https://smartsalesbis.com';
-Option options;
-Vat vatGroup;
-String company;
+Option options = Option();
+Vat vatGroup = Vat();
+String company = '';
 List<Company> allCompany;
 bool enableEditPrice = false;
 Employee employee;
@@ -40,22 +40,22 @@ List<Product> allProduct;
 Stock selectedStock;
 List<Stock> groupStock;
 List<Stock> allStock;
-List<StockReserve> allStockReserve;
-List<MasterRemark> allRemark = List<MasterRemark>();
+List<StockReserve> allStockReserve = <StockReserve>[];
+List<MasterRemark> allRemark = <MasterRemark>[];
 ProductCart editingProductCart;
-List<GoodsUnit> allGoodsUnit = new List<GoodsUnit>();
-double newPrice;
-double goodsQuantity;
-List<SaleOrderHeader> tempSOHD = new List<SaleOrderHeader>();
+List<GoodsUnit> allGoodsUnit = <GoodsUnit>[];
+double newPrice = 0;
+double goodsQuantity = 0;
+List<SaleOrderHeader> tempSOHD = <SaleOrderHeader>[];
 StreamSubscription<DataConnectionStatus> listener;
 DiscountType discountType = DiscountType.THB;
 
 /// Sale Order
 bool isDraftInitial = false;
 bool isCopyInitial = false;
-List<ProductCart> productCart = new List<ProductCart>();
-List<ProductCart> productCartDraft = new List<ProductCart>();
-List<ProductCart> productCartCopy = List<ProductCart>();
+List<ProductCart> productCart = <ProductCart>[];
+List<ProductCart> productCartDraft = <ProductCart>[];
+List<ProductCart> productCartCopy = <ProductCart>[];
 Shipto selectedShipto;
 Shipto selectedShiptoDraft;
 Shipto selectedShiptoCopy;
@@ -68,34 +68,34 @@ MasterRemark selectedRemarkCopy = MasterRemark();
 bool isMainData = false;
 annualCycle selectedCycle = annualCycle.monthly;
 String docKeyword = '';
-int docTypeKeyword;
-String docTransferKeyword;
-bool isLockPrice;
+int docTypeKeyword = 0;
+String docTransferKeyword = '';
+bool isLockPrice = false;
 
-void clearOrder(){
+void clearOrder() {
   productCart = <ProductCart>[];
   editingProductCart = null;
   selectedProduct = null;
   // selectedShipto = null;
-  selectedRemark = null;
+  selectedRemark = MasterRemark();
   discountBill = Discount(number: 0, amount: 0, type: 'THB');
 }
 
 void clearDraftOrder(){
-  productCartDraft = new List<ProductCart>();
+  productCartDraft = <ProductCart>[];
   editingProductCart = null;
   selectedProduct = null;
   // selectedShiptoDraft = null;
-  selectedRemarkDraft = null;
+  selectedRemarkDraft = MasterRemark();
   discountBillDraft = Discount(number: 0, amount: 0, type: 'THB');
 }
 
 void clearCopyOrder(){
-  productCartCopy = new List<ProductCart>();
+  productCartCopy = <ProductCart>[];
   editingProductCart = null;
   selectedProduct = null;
   // selectedShiptoCopy = null;
-  selectedRemarkCopy = null;
+  selectedRemarkCopy = MasterRemark();
   discountBillCopy = Discount(number: 0, amount: 0, type: 'THB');
 }
 

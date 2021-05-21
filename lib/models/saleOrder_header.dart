@@ -111,16 +111,17 @@ class SaleOrderHeader {
     this.alertFlag,
     this.clearflag,
     this.isTransfer,
+    this.createTime
   });
 
   int soid;
   int saleAreaId;
   int vatgroupId;
   int empId;
-  dynamic currTypeId;
-  dynamic creditId;
+  int currTypeId;
+  int creditId;
   int brchId;
-  dynamic currId;
+  int currId;
   int transpAreaId;
   int transpId;
   int custId;
@@ -135,14 +136,14 @@ class SaleOrderHeader {
   String vatType;
   String goodType;
   String shipToAddr1;
-  dynamic shipToAddr2;
-  dynamic district;
-  dynamic amphur;
+  String shipToAddr2;
+  String district;
+  String amphur;
   String province;
   dynamic tel;
   dynamic postCode;
   dynamic fax;
-  dynamic contactName;
+  String contactName;
   dynamic condition;
   dynamic shipDays;
   int creditDays;
@@ -214,6 +215,7 @@ class SaleOrderHeader {
   String alertFlag;
   String clearflag;
   String isTransfer;
+  dynamic createTime;
 
   factory SaleOrderHeader.fromJson(Map<String, dynamic> json) => SaleOrderHeader(
     soid: json["soid"] == null ? null : json["soid"],
@@ -317,6 +319,7 @@ class SaleOrderHeader {
     alertFlag: json["alertFlag"] == null ? null : json["alertFlag"],
     clearflag: json["clearflag"],
     isTransfer: json["isTransfer"] == null ? null : json["isTransfer"],
+    createTime: json["createTime"] == null ? null : json["createTime"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -421,5 +424,6 @@ class SaleOrderHeader {
     "alertFlag": alertFlag == null ? null : alertFlag,
     "clearflag": clearflag,
     "isTransfer": isTransfer == null ? null : isTransfer,
+    "createTime": createTime == null ? null : createTime.toIso8601String()
   };
 }

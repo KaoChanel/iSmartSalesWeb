@@ -327,7 +327,7 @@ class _SaleOrderViewState extends State<SaleOrderView> {
                           DataCell(Text('${currency.format(e.goodQty2)}')),
                           DataCell(Text('${currency.format(e.goodPrice2)}')),
                           DataCell(
-                              Text('${currency.format(e.goodDiscAmnt)}')),
+                              Text('${e.goodDiscFormula ?? currency.format(e.goodDiscAmnt)}')),
                           DataCell(Text('${currency.format(e.goodAmnt)}')),
                         ])))
                     .values
@@ -508,6 +508,7 @@ class _SaleOrderViewState extends State<SaleOrderView> {
                     child: ListTile(
                       //leading: const Icon(Icons.person),
                       title: TextField(
+                        readOnly: true,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           contentPadding:

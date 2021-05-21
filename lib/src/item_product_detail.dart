@@ -100,8 +100,8 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
 
   Future<void> getPrice() async {
     print(widget.quantity);
-    var response = await http.get(
-        '${globals.publicAddress}/api/product/${globals.company}/${globals.customer.custId}/${widget.product?.goodCode}/${widget.quantity}');  /// Add custId  2021-04-26
+    String strUrl = '${globals.publicAddress}/api/product/${globals.company}/${globals.customer.custId}/${widget.product?.goodCode}/${widget.quantity}';
+    var response = await http.get(Uri.parse(strUrl));  /// Add custId  2021-04-26
     Map values = json.decode(response.body);
 
     widget.price = double.parse(values['price'].toString());
@@ -286,8 +286,9 @@ class _ItemProductDetailState extends State<ItemProductDetail> {
 
   void addProductToCart() {
     int row = 1;
-    var stockInfo = globals.allStock?.where((e) => e.goodid == widget.product.goodId);
     String lotFlag = 'N', expireFlag = 'N', serialFlag = 'N';
+    var stockInfo = globals.allStock?.where((e) => e.goodid == widget.product.goodId);
+
     if(stockInfo != null){
       if(stockInfo.any((x) => x.lotNo.isNotEmpty)) {lotFlag = 'Y';}
       if(stockInfo.any((x) => x.expiredate.toString().isNotEmpty)) {lotFlag = 'Y';}

@@ -24,7 +24,7 @@ class _EmployeeProfileState extends State<EmployeeProfile> with TickerProviderSt
 
   Future<void> getEmployee(String empId) async {
     String strUrl = '${globals.publicAddress}/api/employees/$empId';
-    var response = await http.get(strUrl);
+    var response = await http.get(Uri.parse(strUrl));
 
     setState(() {
       _employees = employeeFromJson(response.body);
@@ -37,13 +37,15 @@ class _EmployeeProfileState extends State<EmployeeProfile> with TickerProviderSt
     super.initState();
     isShowingMainData = true;
     _controller = TabController(length: 3, vsync: this);
-    if(globals.allCustomer == null || globals.allProduct == null || globals.allGoodsUnit == null || globals.allShipto == null || globals.allStock == null || globals.allRemark == null){
-      //_apiService.getCompany();
-      loadData();
-    }
+    loadData();
+    // if(globals.allCustomer == null || globals.allProduct == null || globals.allGoodsUnit == null || globals.allShipto == null || globals.allStock == null || globals.allRemark == null){
+    //   //_apiService.getCompany();
+    //   loadData();
+    // }
   }
 
-  Future<void> loadData() async {
+  loadData() async {
+    await _apiService.getOption();
     await _apiService.getAllCustomer();
     await _apiService.getProduct();
     await _apiService.getUnit();
