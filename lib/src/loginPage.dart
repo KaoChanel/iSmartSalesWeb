@@ -165,6 +165,7 @@ Widget build(BuildContext context) {
           globals.employee = employeeFromJson(response.body);
           if(globals.employee.empHead == null) globals.employee.empHead = globals.employee.empId;
           globals.company = company;
+
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.setString('username', globals.employee.empCode);
           prefs.setString('password', password);

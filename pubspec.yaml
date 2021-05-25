@@ -39,6 +39,7 @@ dependencies:
 
   #Utility
   intl: ^0.15.7
+  new_version: ^0.2.0
 
   # Google Maps
   google_maps_flutter: ^2.0.5

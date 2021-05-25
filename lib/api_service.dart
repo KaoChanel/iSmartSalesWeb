@@ -6,6 +6,8 @@ import 'package:ismart_crm/models/discount.dart';
 import 'package:ismart_crm/models/employee.dart';
 import 'package:ismart_crm/models/saleOrder_detail_remark.dart';
 import 'package:ismart_crm/models/saleOrder_header_remark.dart';
+import 'package:ismart_crm/models/sales_daily.dart';
+import 'package:ismart_crm/models/sales_monthly.dart';
 import 'package:ismart_crm/models/stock_reserve.dart';
 
 import 'models/companies.dart';
@@ -14,6 +16,7 @@ import 'models/option.dart';
 import 'models/product.dart';
 import 'models/goods_unit.dart';
 import 'models/product_cart.dart';
+import 'models/sales.dart';
 import 'models/shipto.dart';
 import 'models/saleOrder_header.dart';
 import 'models/saleOrder_detail.dart';
@@ -326,6 +329,39 @@ class ApiService {
     var response = await client.get(Uri.parse(strUrl));
     if (response.statusCode == 200) {
       return soDetailRemarkFromJson(response.body);
+    } else {
+      return null;
+    }
+  }
+
+  getSales() async {
+    String strUrl =
+        '${globals.publicAddress}/api/getsales/${globals.company}/${globals.employee.empId}';
+    var response = await client.get(Uri.parse(strUrl));
+    if (response.statusCode == 200) {
+      return salesFromJson(response.body);
+    } else {
+      return null;
+    }
+  }
+
+  getSalesDaily() async {
+    String strUrl =
+        '${globals.publicAddress}/api/getsales/getsalesdaily/${globals.company}/${globals.employee.empId}';
+    var response = await client.get(Uri.parse(strUrl));
+    if (response.statusCode == 200) {
+      return salesDailyFromJson(response.body);
+    } else {
+      return null;
+    }
+  }
+
+  getSalesMonthly() async {
+    String strUrl =
+        '${globals.publicAddress}/api/getsales/getsalesmonthly/${globals.company}/${globals.employee.empId}';
+    var response = await client.get(Uri.parse(strUrl));
+    if (response.statusCode == 200) {
+      return salesMonthlyFromJson(response.body);
     } else {
       return null;
     }

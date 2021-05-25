@@ -25,6 +25,10 @@ class Option {
     this.runOption,
     this.logobrch,
     this.isLockPrice,
+    this.isLockPriceLower,
+    this.isLockCust,
+    this.isLockStockLower,
+    this.isCheckCredit,
   });
 
   int brchId;
@@ -42,6 +46,10 @@ class Option {
   String runOption;
   dynamic logobrch;
   String isLockPrice;
+  String isLockPriceLower;
+  String isLockCust;
+  String isCheckCredit;
+  String isLockStockLower;
 
   factory Option.fromJson(Map<String, dynamic> json) => Option(
     brchId: json["brchId"] == null ? null : json["brchId"],
@@ -59,6 +67,11 @@ class Option {
     runOption: json["runOption"] == null ? null : json["runOption"],
     logobrch: json["logobrch"],
     isLockPrice: json["isLockPrice"] == null ? null : json["isLockPrice"],
+    isLockPriceLower: json["isLockPriceLower"] == null ? null : json["isLockPriceLower"],
+    isLockCust: json["isLockCust"] == null ? null : json["isLockCust"],
+    isLockStockLower: json["isLockStockLower"] == null ? null : json["isLockStockLower"],
+    isCheckCredit: json["isCheckCredit"] == null ? null : json["isCheckCredit"],
+
   );
 
   Map<String, dynamic> toJson() => {
@@ -77,5 +90,9 @@ class Option {
     "runOption": runOption == null ? null : runOption,
     "logobrch": logobrch,
     "isLockPrice": isLockPrice == null ? null : isLockPrice,
+    "isLockPriceLower": isLockPriceLower == null ? null : isLockPriceLower,
+    "isLockCust": isLockCust == null ? null : isLockCust,
+    "isLockStockLower": isLockStockLower == null ? null : isLockStockLower,
+    "isCheckCredit": isCheckCredit == null ? null : isCheckCredit,
   };
 }

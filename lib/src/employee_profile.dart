@@ -8,6 +8,9 @@ import 'package:ismart_crm/charts/lineChart.dart';
 import 'package:ismart_crm/charts/pieChart.dart';
 import 'package:ismart_crm/charts/barChart.dart';
 import 'package:ismart_crm/charts/indicator.dart';
+import 'package:ismart_crm/models/sales.dart';
+import 'package:ismart_crm/models/sales_daily.dart';
+import 'package:ismart_crm/models/sales_monthly.dart';
 
 class EmployeeProfile extends StatefulWidget {
   @override
@@ -20,6 +23,9 @@ class _EmployeeProfileState extends State<EmployeeProfile> with TickerProviderSt
   int touchedIndex;
   Employee _employees;
   TabController _controller;
+  List<Sales> allSales = <Sales>[];
+  List<SalesDaily> allSalesDaily = <SalesDaily>[];
+  List<SalesMonthly> allSalesMonthly = <SalesMonthly>[];
   ApiService _apiService = ApiService();
 
   Future<void> getEmployee(String empId) async {
@@ -37,7 +43,16 @@ class _EmployeeProfileState extends State<EmployeeProfile> with TickerProviderSt
     super.initState();
     isShowingMainData = true;
     _controller = TabController(length: 3, vsync: this);
-    loadData();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      if(globals.options == null || globals.vatGroup == null || globals.allShipto == null
+      || globals.allCustomer == null || globals.allProduct == null || globals.allStock == null
+      || globals.allGoodsUnit == null || globals.allRemark == null || globals.allStockReserve == null) {
+        globals.showLoaderDialog(this.context, false);
+        await loadData();
+        Navigator.pop(this.context);
+      }
+    });
     // if(globals.allCustomer == null || globals.allProduct == null || globals.allGoodsUnit == null || globals.allShipto == null || globals.allStock == null || globals.allRemark == null){
     //   //_apiService.getCompany();
     //   loadData();
@@ -51,114 +66,146 @@ class _EmployeeProfileState extends State<EmployeeProfile> with TickerProviderSt
     await _apiService.getUnit();
     await _apiService.getShipto();
     await _apiService.getStock();
+    await _apiService.getStockReserve();
     await _apiService.getRemark();
   }
 
-  Widget lineChartBox(bool isShowingMainData){
-    return AspectRatio(
-      aspectRatio: 1.20,
-      child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(18)),
-          gradient: LinearGradient(
-            colors: [
-              Color(0xff2c274c),
-              Color(0xff46426c),
-            ],
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-          ),
-        ),
-        child: Stack(
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                const SizedBox(
-                  height: 60,
+  Widget lineChartBox(bool isShowingMainData) {
+    return FutureBuilder(
+      future: globals.selectedCycle == globals.annualCycle.monthly
+          ? _apiService.getSalesDaily()
+          : globals.selectedCycle == globals.annualCycle.quarterly
+          ? _apiService.getSalesMonthly()
+          : _apiService.getSales(),
+
+      builder: (BuildContext context, AsyncSnapshot<Object> snapShot) {
+        if(snapShot.hasData){
+          globals.selectedCycle == globals.annualCycle.monthly
+              ? allSalesDaily = snapShot.data
+              : globals.selectedCycle == globals.annualCycle.quarterly
+              ? allSalesMonthly = snapShot.data
+              : allSales = snapShot.data;
+
+          globals.selectedCycle == globals.annualCycle.monthly
+              ? allSalesDaily.sort((a, b) => a.xMonth.compareTo(b.xMonth))
+              : globals.selectedCycle == globals.annualCycle.quarterly
+              ? allSalesMonthly.sort((a, b) => a.xMonth.compareTo(b.xMonth))
+              : allSales.sort((a, b) => a.xDay.compareTo(b.xDay));
+
+          // allSales.sort((a, b) => a.xDay.compareTo(b.xDay));
+          // allSalesDaily.sort((a, b) => a.xMonth.compareTo(b.xMonth));
+          // allSalesMonthly.sort((a, b) => a.xMonth.compareTo(b.xMonth));
+          // summaryDaily(allSales);
+          return AspectRatio(
+            aspectRatio: 1.20,
+            child: Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(18)),
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xff2c274c),
+                    Color(0xff46426c),
+                  ],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
                 ),
-                Text(
-                  'Summary ${DateTime.now().year.toString()}',
-                  style: TextStyle(
-                    color: Color(0xff827daa),
-                    fontSize: 16,
+              ),
+              child: Stack(
+                children: <Widget>[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      const SizedBox(
+                        height: 60,
+                      ),
+                      Text(
+                        'Summary ${DateTime.now().year.toString()}',
+                        style: TextStyle(
+                          color: Color(0xff827daa),
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        globals.selectedCycle == globals.annualCycle.monthly ? 'Monthly Sales' : globals.selectedCycle == globals.annualCycle.quarterly ? 'Quarterly Sales' : 'Yearly Sales',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 2),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(
+                        height: 37,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 16.0, left: 6.0),
+                          child: globals.selectedCycle == globals.annualCycle.monthly
+                              ? barChart(allSalesDaily) : globals.selectedCycle == globals.annualCycle.quarterly
+                              ? lineChartQuarter(allSalesMonthly) : barChart1(),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  globals.selectedCycle == globals.annualCycle.monthly ? 'Monthly Sales' : globals.selectedCycle == globals.annualCycle.quarterly ? 'Quarterly Sales' : 'Yearly Sales',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(
-                  height: 37,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 16.0, left: 6.0),
-                    child: globals.selectedCycle == globals.annualCycle.monthly
-                        ? sampleData1() : globals.selectedCycle == globals.annualCycle.quarterly
-                        ? sampleData2() : barChart1(),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: IconButton(
+                            alignment: Alignment.centerLeft,
+                            icon: Icon(
+                              Icons.refresh,
+                              color: Colors.white.withOpacity(globals.isMainData ? 1.0 : 0.5),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                globals.isMainData = !globals.isMainData;
+                              });
+                            },
+                          )),
+                      TextButton(
+                        child: Text(
+                            'Month',
+                            style: TextStyle(color: globals.selectedCycle == globals.annualCycle.monthly ? Colors.white : Colors.grey)),
+                        onPressed: (){
+                          setState(() {
+                            globals.selectedCycle = globals.annualCycle.monthly;
+                          });
+                        },
+                      ),
+                      TextButton(
+                        child: Text('Quarter', style: TextStyle(color: globals.selectedCycle == globals.annualCycle.quarterly ? Colors.white : Colors.grey)),
+                        onPressed: (){
+                          setState(() {
+                            globals.selectedCycle = globals.annualCycle.quarterly;
+                          });
+                        },
+                      ),
+                      FlatButton(
+                        child: Text('Year', style: TextStyle(color: globals.selectedCycle == globals.annualCycle.yearly ? Colors.white : Colors.grey)),
+                        onPressed: (){
+                          setState(() {
+                            globals.selectedCycle = globals.annualCycle.yearly;
+                          });
+                        },
+                      )
+                    ],
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-              ],
+                ],
+              ),
             ),
-            Row(
-              children: [
-                Expanded(
-                    child: IconButton(
-                      alignment: Alignment.centerLeft,
-                  icon: Icon(
-                    Icons.refresh,
-                    color: Colors.white.withOpacity(globals.isMainData ? 1.0 : 0.5),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      globals.isMainData = !globals.isMainData;
-                    });
-                  },
-                )),
-                FlatButton(
-                  child: Text(
-                      'Month',
-                  style: TextStyle(color: globals.selectedCycle == globals.annualCycle.monthly ? Colors.white : Colors.grey)),
-                  onPressed: (){
-                    setState(() {
-                      globals.selectedCycle = globals.annualCycle.monthly;
-                    });
-                  },
-                ),
-                FlatButton(
-                  child: Text('Quarter', style: TextStyle(color: globals.selectedCycle == globals.annualCycle.quarterly ? Colors.white : Colors.grey)),
-                  onPressed: (){
-                    setState(() {
-                      globals.selectedCycle = globals.annualCycle.quarterly;
-                    });
-                  },
-                ),
-                FlatButton(
-                  child: Text('Year', style: TextStyle(color: globals.selectedCycle == globals.annualCycle.yearly ? Colors.white : Colors.grey)),
-                  onPressed: (){
-                    setState(() {
-                      globals.selectedCycle = globals.annualCycle.yearly;
-                    });
-                  },
-                )
-              ],
-            ),
-          ],
-        ),
-      ),
+          );
+        }
+        else{
+          return CircularProgressIndicator();
+        }
+      }
     );
   }
 
@@ -469,6 +516,7 @@ class _EmployeeProfileState extends State<EmployeeProfile> with TickerProviderSt
                     child: ListView(
                       children: [
                         Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SizedBox(height: 20),
                             lineChartBox(isShowingMainData),

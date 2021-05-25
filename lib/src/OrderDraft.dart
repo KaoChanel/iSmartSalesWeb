@@ -37,8 +37,8 @@ class _OrderDraftState extends State<OrderDraft> {
       setCustomer();
       initShipto();
       setHeader();
-      setDetails();
-      setRemark();
+      await setDetails();
+      await setRemark();
       calculateSummary();
       Navigator.pop(context);
     });

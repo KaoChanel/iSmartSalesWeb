@@ -7,7 +7,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="ismart_crm"
+        android:label="SmartSales BIS"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

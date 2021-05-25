@@ -822,10 +822,15 @@ class _SaleOrderViewState extends State<SaleOrderView> {
                     SizedBox(height: 10),
                   ],
                 ),
-                SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child:
-                      SaleOrderDetails(),),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SingleChildScrollView(
+                        // scrollDirection: Axis.horizontal,
+                        child:
+                          SaleOrderDetails(),),
+                  ],
+                ),
                 Row(
                   children: [
                     SizedBox(height: 80),

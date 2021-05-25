@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ismart_crm/models/item.dart';
 import 'package:ismart_crm/models/customer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -81,6 +83,68 @@ class _ContainerCustomerState extends State<ContainerCustomer> {
         )),
       ),
       body: content,
+    );
+  }
+
+  File _image;
+  final picker = ImagePicker();
+
+  _imgFromCamera() async {
+    PickedFile pickedFile = await picker.getImage(
+        source: ImageSource.camera, imageQuality: 50
+    );
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  _imgFromGallery() async {
+    PickedFile pickedFile = await  picker.getImage(
+        source: ImageSource.gallery, imageQuality: 50
+    );
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  _showImagePicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: Wrap(
+                children: <Widget>[
+                  ListTile(
+                      leading: Icon(Icons.photo_library),
+                      title: Text('Photo Library'),
+                      onTap: () {
+                        _imgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  ListTile(
+                    leading: Icon(Icons.photo_camera),
+                    title: Text('Camera'),
+                    onTap: () {
+                      _imgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
     );
   }
 
@@ -275,7 +339,9 @@ class _ContainerCustomerState extends State<ContainerCustomer> {
         Container(
           padding: EdgeInsets.symmetric(vertical: 83.0),
           child: ElevatedButton.icon(
-              onPressed: (){},
+              onPressed: (){
+                _showImagePicker(this.context);
+              },
               icon: Icon(Icons.camera_alt),
               label: Text('เพิ่มรูปภาพ'),
               style: ElevatedButton.styleFrom(

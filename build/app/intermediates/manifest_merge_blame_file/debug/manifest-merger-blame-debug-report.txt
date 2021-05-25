@@ -46,8 +46,8 @@
 32        android:debuggable="true"
 33        android:icon="@mipmap/ic_launcher"
 33-->D:\FlutterWebApp\ismart_crm_web\android\app\src\main\AndroidManifest.xml:11:9-43
-34        android:label="ismart_crm" >
-34-->D:\FlutterWebApp\ismart_crm_web\android\app\src\main\AndroidManifest.xml:10:9-35
+34        android:label="SmartSales BIS" >
+34-->D:\FlutterWebApp\ismart_crm_web\android\app\src\main\AndroidManifest.xml:10:9-39
 35        <activity
 35-->D:\FlutterWebApp\ismart_crm_web\android\app\src\main\AndroidManifest.xml:12:9-40:20
 36            android:name="com.bisgroup.ismart_crm.MainActivity"
@@ -111,45 +111,54 @@
 75            android:value="2" />
 75-->D:\FlutterWebApp\ismart_crm_web\android\app\src\main\AndroidManifest.xml:45:13-30
 76
-77        <provider
-77-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:11:9-19:20
-78            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
-78-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:12:13-82
-79            android:authorities="com.bisgroup.ismart_crm.flutter.image_provider"
-79-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:13:13-74
-80            android:exported="false"
-80-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:14:13-37
-81            android:grantUriPermissions="true" >
-81-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:15:13-47
-82            <meta-data
-82-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:16:13-18:75
-83                android:name="android.support.FILE_PROVIDER_PATHS"
-83-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:17:17-67
-84                android:resource="@xml/flutter_image_picker_file_paths" />
-84-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:18:17-72
-85        </provider> <!-- Needs to be explicitly declared on P+ -->
-86        <uses-library
-86-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\3d89c457ae682479c8c41cb3c0a5438a\jetified-play-services-maps-17.0.0\AndroidManifest.xml:33:9-35:40
-87            android:name="org.apache.http.legacy"
-87-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\3d89c457ae682479c8c41cb3c0a5438a\jetified-play-services-maps-17.0.0\AndroidManifest.xml:34:13-50
-88            android:required="false" />
-88-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\3d89c457ae682479c8c41cb3c0a5438a\jetified-play-services-maps-17.0.0\AndroidManifest.xml:35:13-37
-89
-90        <activity
-90-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\acf1048a45935c18697cc73673005ec4\jetified-play-services-base-17.0.0\AndroidManifest.xml:23:9-26:75
-91            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-91-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\acf1048a45935c18697cc73673005ec4\jetified-play-services-base-17.0.0\AndroidManifest.xml:24:13-79
-92            android:exported="false"
-92-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\acf1048a45935c18697cc73673005ec4\jetified-play-services-base-17.0.0\AndroidManifest.xml:25:13-37
-93            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-93-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\acf1048a45935c18697cc73673005ec4\jetified-play-services-base-17.0.0\AndroidManifest.xml:26:13-72
+77        <activity
+77-->[:url_launcher] D:\FlutterWebApp\ismart_crm_web\build\url_launcher\intermediates\library_manifest\debug\AndroidManifest.xml:8:9-11:74
+78            android:name="io.flutter.plugins.urllauncher.WebViewActivity"
+78-->[:url_launcher] D:\FlutterWebApp\ismart_crm_web\build\url_launcher\intermediates\library_manifest\debug\AndroidManifest.xml:9:13-74
+79            android:exported="false"
+79-->[:url_launcher] D:\FlutterWebApp\ismart_crm_web\build\url_launcher\intermediates\library_manifest\debug\AndroidManifest.xml:10:13-37
+80            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+80-->[:url_launcher] D:\FlutterWebApp\ismart_crm_web\build\url_launcher\intermediates\library_manifest\debug\AndroidManifest.xml:11:13-71
+81
+82        <provider
+82-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:11:9-19:20
+83            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
+83-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:12:13-82
+84            android:authorities="com.bisgroup.ismart_crm.flutter.image_provider"
+84-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:13:13-74
+85            android:exported="false"
+85-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:14:13-37
+86            android:grantUriPermissions="true" >
+86-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:15:13-47
+87            <meta-data
+87-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:16:13-18:75
+88                android:name="android.support.FILE_PROVIDER_PATHS"
+88-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:17:17-67
+89                android:resource="@xml/flutter_image_picker_file_paths" />
+89-->[:image_picker] D:\FlutterWebApp\ismart_crm_web\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:18:17-72
+90        </provider> <!-- Needs to be explicitly declared on P+ -->
+91        <uses-library
+91-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\3d89c457ae682479c8c41cb3c0a5438a\jetified-play-services-maps-17.0.0\AndroidManifest.xml:33:9-35:40
+92            android:name="org.apache.http.legacy"
+92-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\3d89c457ae682479c8c41cb3c0a5438a\jetified-play-services-maps-17.0.0\AndroidManifest.xml:34:13-50
+93            android:required="false" />
+93-->[com.google.android.gms:play-services-maps:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\3d89c457ae682479c8c41cb3c0a5438a\jetified-play-services-maps-17.0.0\AndroidManifest.xml:35:13-37
 94
-95        <meta-data
-95-->[com.google.android.gms:play-services-basement:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\9757ef8dc224f868d1bd1249dcb5da7e\jetified-play-services-basement-17.0.0\AndroidManifest.xml:23:9-25:69
-96            android:name="com.google.android.gms.version"
-96-->[com.google.android.gms:play-services-basement:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\9757ef8dc224f868d1bd1249dcb5da7e\jetified-play-services-basement-17.0.0\AndroidManifest.xml:24:13-58
-97            android:value="@integer/google_play_services_version" />
-97-->[com.google.android.gms:play-services-basement:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\9757ef8dc224f868d1bd1249dcb5da7e\jetified-play-services-basement-17.0.0\AndroidManifest.xml:25:13-66
-98    </application>
+95        <activity
+95-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\acf1048a45935c18697cc73673005ec4\jetified-play-services-base-17.0.0\AndroidManifest.xml:23:9-26:75
+96            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+96-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\acf1048a45935c18697cc73673005ec4\jetified-play-services-base-17.0.0\AndroidManifest.xml:24:13-79
+97            android:exported="false"
+97-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\acf1048a45935c18697cc73673005ec4\jetified-play-services-base-17.0.0\AndroidManifest.xml:25:13-37
+98            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+98-->[com.google.android.gms:play-services-base:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\acf1048a45935c18697cc73673005ec4\jetified-play-services-base-17.0.0\AndroidManifest.xml:26:13-72
 99
-100</manifest>
+100        <meta-data
+100-->[com.google.android.gms:play-services-basement:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\9757ef8dc224f868d1bd1249dcb5da7e\jetified-play-services-basement-17.0.0\AndroidManifest.xml:23:9-25:69
+101            android:name="com.google.android.gms.version"
+101-->[com.google.android.gms:play-services-basement:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\9757ef8dc224f868d1bd1249dcb5da7e\jetified-play-services-basement-17.0.0\AndroidManifest.xml:24:13-58
+102            android:value="@integer/google_play_services_version" />
+102-->[com.google.android.gms:play-services-basement:17.0.0] C:\Users\Lenovo\.gradle\caches\transforms-2\files-2.1\9757ef8dc224f868d1bd1249dcb5da7e\jetified-play-services-basement-17.0.0\AndroidManifest.xml:25:13-66
+103    </application>
+104
+105</manifest>
